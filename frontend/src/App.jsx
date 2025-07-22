@@ -1,0 +1,13 @@
+import React from 'react';
+import Placeholder from './components/Placeholder';
+
+function App() {
+  return (
+    <div>
+      <h1>Welcome to COMP 440 Online Store</h1>
+      <Placeholder />
+    </div>
+  );
+}
+
+export default App;
