@@ -1,8 +1,13 @@
 from flask import Flask
 from config import Config
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Initialize SQLAlchemy
+from models import db
+db.init_app(app)
 
 # Register blueprints
 from routes.auth import auth_bp
