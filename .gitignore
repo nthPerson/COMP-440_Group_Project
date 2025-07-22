@@ -1,2 +1,18 @@
 # Environment
 .venv
+backend/venv/
+backend/.venv/
+.env
+backend/.env
+frontend/.env
+
+# npm packages 
+node_modules/
+frontend/node_modules
+
+# IDE folders
+.vscode/
+.idea/
+
+# pychache
+__pycache__
