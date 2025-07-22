@@ -21,6 +21,25 @@ This project implements a secure, full-stack online marketplace web application 
 - **ORM / Querying**: SQLAlchemy (optional) or raw parameterized SQL
 - **Security**: Input validation, parameterized statements, hashed passwords (e.g. bcrypt)
 
+## Project Structure
+
+```
+/ (root)
+├── backend/               # Flask application
+│   ├── app.py             # Flask entry point
+│   ├── models.py          # SQLAlchemy models or schema definitions
+│   ├── routes/            # Blueprint modules (auth, items, reviews, analytics)
+│   ├── config.py          # Configuration (env variables)
+│   └──requirements.txt    # Python dependencies
+├── frontend/              # React application
+│   ├── public/            # Static assets
+│   ├── src/               # React components, services, styles
+│   ├── package.json       # JS dependencies & scripts
+│   └── vite.config.js     # (or CRA config)
+├── package.json           # Global dependencies & scripts
+└── README.md              # This file
+```
+
 ## Team Members & Contributions
 
 | Member            | Contributions                                          |
