@@ -1,14 +1,23 @@
 from flask import Flask
 from config import Config
-from flask_sqlalchemy import SQLAlchemy
+from models import db, User  
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config.from_object(Config)
-print("CONNECTING TO:", app.config["SQLALCHEMY_DATABASE_URI"])
+# print("CONNECTING TO:", app.config["SQLALCHEMY_DATABASE_URI"])  # Use this to see what DB the app is trying to connect to
 
-# Initialize SQLAlchemy
-from models import db
+# Initialize SQLAlchemy, aka connect the app to the DB
 db.init_app(app)
+
+# Set up session management with Flask-Login
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(username):
+    return User.query.get(username)
 
 # Register blueprints
 from routes.auth import auth_bp

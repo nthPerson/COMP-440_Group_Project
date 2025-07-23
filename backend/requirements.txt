@@ -1,3 +1,4 @@
+bcrypt==4.3.0
 blinker==1.9.0
 cffi==1.17.1
 click==8.2.1
@@ -5,6 +6,7 @@ concurrently==2.1
 cryptography==45.0.5
 dotenv==0.9.9
 Flask==3.1.1
+Flask-Login==0.6.3
 Flask-SQLAlchemy==3.1.1
 greenlet==3.2.3
 itsdangerous==2.2.0
