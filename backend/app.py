@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object(Config)
+print("CONNECTING TO:", app.config["SQLALCHEMY_DATABASE_URI"])
 
 # Initialize SQLAlchemy
 from models import db
