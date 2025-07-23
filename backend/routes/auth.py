@@ -16,7 +16,7 @@ def register():
         
     # 1.1) Get field data
     username, password = data['username'], data['password']
-    firstNmae, lastName = data['firstName'], data['lastName']
+    firstName, lastName = data['firstName'], data['lastName']
     email = data['email']
 
     # 2) Check username/email uniqueness
@@ -32,7 +32,7 @@ def register():
     user = User(
         username=username,
         password=pw_hash,
-        firstNmae=firstNmae,
+        firstName=firstName,
         lastName=lastName,
         email=email
     )
