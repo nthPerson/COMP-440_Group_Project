@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models import db, User
 import bcrypt
 from sqlalchemy.exc import IntegrityError
+from flask_login import login_user, logout_user, login_required, current_user  # Session management functions
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -56,9 +57,15 @@ def login():
     if not user:
         return jsonify({'message': 'Invalid username or password'}), 401
     
-    # Verify the password hash
+    # Verify the password hash (aka make sure the password is correct)
     if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-        # TODO Issue a JWT (not sure what that is yet) or set up a session. For now we will just acknowledge that the password was correct:
-        return jsonify({'message': 'Login successful! (under construction: no session started)'}), 200
+        login_user(user)  # Initiate user session with Flask-Login package 
+        return jsonify({'message': 'Login successful!'}), 200
 
     return jsonify({'message': 'Invalid username or password'}), 401
+
+@auth_bp.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'message': "User has been logged out"}), 200

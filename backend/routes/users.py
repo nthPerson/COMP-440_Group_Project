@@ -1,9 +1,11 @@
 from flask import Blueprint, request, jsonify
 from models import db, User
+from flask_login import login_required  # Ensures that only logged-in users can access CRUD APIs
 
 users_bp = Blueprint('users', __name__)
 
 @users_bp.route('/', methods=['GET'])  # /api/users/   -- Calling 'GET' returns the user db in a list
+@login_required
 def list_users():
     users = User.query.all()
     payload = [
@@ -18,6 +20,7 @@ def list_users():
     return jsonify(payload), 200
 
 @users_bp.route('/', methods=['POST'])  # /api/users/   -- Calling 'POST' creates a new user
+@login_required
 def create_user():
     data = request.get_json()
     user = User(
@@ -32,6 +35,7 @@ def create_user():
     return jsonify({'message': 'User created'}), 201
 
 @users_bp.route('/<username>', methods=['GET'])  # /api/users/<username>  -- Calling 'GET' returns the user's data
+@login_required
 def get_user(username):
     user = User.query.get_or_404(username)
     return jsonify({
@@ -42,6 +46,7 @@ def get_user(username):
     })
 
 @users_bp.route('/<username>', methods=['PUT'])  # /api/users/<username>  -- Calling 'PUT' updates the user's data
+@login_required
 def update_user(username):
     user = User.query.get_or_404(username)
     data = request.get_json()
@@ -52,6 +57,7 @@ def update_user(username):
     return jsonify({'message': 'User updated'})
 
 @users_bp.route('/<username>', methods=['DELETE'])  # /api/users/<username>  -- Calling 'DELETE' deletes the user's data
+@login_required
 def delete_user(username):
     user = User.query.get_or_404(username)
     db.session.delete(user)
