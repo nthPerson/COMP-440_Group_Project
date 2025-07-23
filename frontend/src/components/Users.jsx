@@ -9,6 +9,7 @@ export default function Users() {
     email: ''
   });
 
+  // fetch all users
   useEffect(() => {
     fetch('/api/users/')
       .then(r => r.json())
@@ -24,7 +25,31 @@ export default function Users() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
-    }).then(() => window.location.reload());
+    })
+      .then(() => fetch('/api/users/'))
+      .then(r => r.json())
+      .then(setUsers)
+      .then(() => setForm({ username:'', first_name:'', last_name:'', email:'' }));
+  };
+
+  const handleDelete = username => {
+    fetch(`/api/users/${username}`, { method: 'DELETE' })
+      .then(() => fetch('/api/users/'))
+      .then(r => r.json())
+      .then(setUsers);
+  };
+
+  const handleUpdate = (username) => {
+    const newName = prompt('New first name:');
+    if (!newName) return;
+    fetch(`/api/users/${username}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ first_name: newName })
+    })
+      .then(() => fetch('/api/users/'))
+      .then(r => r.json())
+      .then(setUsers);
   };
 
   return (
@@ -34,25 +59,35 @@ export default function Users() {
         <input
           name="username"
           placeholder="Username"
+          value={form.username}
           onChange={handleChange}
         />
         <input
           name="first_name"
           placeholder="First Name"
+          value={form.first_name}
           onChange={handleChange}
         />
         <input
           name="last_name"
           placeholder="Last Name"
+          value={form.last_name}
           onChange={handleChange}
         />
-        <input name="email" placeholder="Email" onChange={handleChange} />
+        <input
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+        />
         <button type="submit">Add User</button>
       </form>
       <ul>
         {users.map(u => (
           <li key={u.username}>
             {u.username} - {u.first_name} {u.last_name} ({u.email})
+            <button onClick={() => handleUpdate(u.username)}>Edit</button>
+            <button onClick={() => handleDelete(u.username)}>Delete</button>
           </li>
         ))}
       </ul>
