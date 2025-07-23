@@ -14,3 +14,6 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+    def get_id(self):  # Flask-Login will call this to store the user's ID for the current session
+        return self.username

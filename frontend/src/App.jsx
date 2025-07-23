@@ -1,14 +1,20 @@
 import React from 'react';
-import Placeholder from './components/Placeholder';
-import Users from './components/Users';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import Login       from './pages/Login';
+import Register    from './pages/Register';
+import HomePage    from './pages/HomePage';
 
 function App() {
   return (
-    <div>
-      <h1>Welcome to the COMP 440 Online Store!</h1>
-      {/* <Placeholder /> */}
-      <Users />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/"        element={<LandingPage />} />
+        <Route path="/login"   element={<Login />} />
+        <Route path="/register"element={<Register />} />
+        <Route path="/home"    element={<HomePage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
