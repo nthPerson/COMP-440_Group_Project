@@ -5,7 +5,9 @@
   "scripts": {
     "start:backend": "cd backend && flask run",
     "start:frontend": "cd frontend && npm run dev",
-    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "dev:backend": "cd backend && flask --debug run",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run start:frontend\""
   },
   "devDependencies": {
     "concurrently": "^8.0.0"
