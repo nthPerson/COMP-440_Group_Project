@@ -58,8 +58,7 @@ def login():
     
     # Verify the password hash
     if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-        # TODO Issue a JWT or set up a session. For now we will just acknowledge that the password was correct:
+        # TODO Issue a JWT (not sure what that is yet) or set up a session. For now we will just acknowledge that the password was correct:
         return jsonify({'message': 'Login successful! (under construction: no session started)'}), 200
-
 
     return jsonify({'message': 'Invalid username or password'}), 401
