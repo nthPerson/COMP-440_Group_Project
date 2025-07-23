@@ -14,6 +14,9 @@ db.init_app(app)
 from routes.auth import auth_bp
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
+from routes.users import users_bp
+app.register_blueprint(users_bp, url_prefix='/api/users')
+
 # Placeholder for other blueprints
 
 if __name__ == '__main__':
