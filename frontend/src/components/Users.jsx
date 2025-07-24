@@ -11,7 +11,9 @@ export default function Users() {
 
   // fetch all users
   useEffect(() => {
-    fetch('/api/users/')
+    fetch('/api/users/', { 
+        credentials:'include'  // Send login credentials to backend session manager (Flask-Login)
+    })
       .then(r => r.json())
       .then(setUsers);
   }, []);
@@ -23,6 +25,7 @@ export default function Users() {
     e.preventDefault();
     fetch('/api/users/', {
       method: 'POST',
+      credentials:'include',  // Send login credentials to backend session manager (Flask-Login)
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
     })
@@ -33,7 +36,10 @@ export default function Users() {
   };
 
   const handleDelete = username => {
-    fetch(`/api/users/${username}`, { method: 'DELETE' })
+    fetch(`/api/users/${username}`, { 
+        method: 'DELETE', 
+        credentials:'include',  // Send login credentials to backend session manager (Flask-Login)
+    })
       .then(() => fetch('/api/users/'))
       .then(r => r.json())
       .then(setUsers);
@@ -44,6 +50,7 @@ export default function Users() {
     if (!newName) return;
     fetch(`/api/users/${username}`, {
       method: 'PUT',
+      credentials:'include',  // Send login credentials to backend session manager (Flask-Login)
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ first_name: newName })
     })
