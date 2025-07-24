@@ -9,7 +9,6 @@ export default function Register() {
   const navigate = useNavigate();
 
   const handleChange = e => {
-    // setForm({ ...form, [e.target.name]: e.target.value });
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   }
@@ -43,7 +42,6 @@ export default function Register() {
       <h2>Register</h2>
       {error && <p style={{ color:'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
-
         <div>
           <input
             name="username"
@@ -105,21 +103,6 @@ export default function Register() {
             required
           />
         </div>
-
-        {/* {['username','password','firstName','lastName','email'].map(field => (
-          <div key={field}>
-            <input
-              name={field}
-              type={field==='password' ? 'password':'text'}
-              placeholder={field[0].toUpperCase()+field.slice(1)}
-              value={form[field]}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        ))} */}
-
-
         <button type="submit">Register</button>
       </form>
       <p>
