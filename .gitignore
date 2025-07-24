@@ -1,4 +1,5 @@
 # Environment
+.python-version
 .venv
 backend/venv/
 backend/.venv/

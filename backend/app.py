@@ -29,4 +29,4 @@ app.register_blueprint(users_bp, url_prefix='/api/users')
 # Placeholder for other blueprints
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='::', port=5000, debug=True)
