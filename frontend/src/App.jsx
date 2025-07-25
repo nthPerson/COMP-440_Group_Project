@@ -4,17 +4,20 @@ import LandingPage from './pages/LandingPage';
 import Login       from './pages/Login';
 import Register    from './pages/Register';
 import HomePage    from './pages/HomePage';
+import './styles/global.css';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/"        element={<LandingPage />} />
-        <Route path="/login"   element={<Login />} />
-        <Route path="/register"element={<Register />} />
-        <Route path="/home"    element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="app-container">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/"        element={<LandingPage />} />
+          <Route path="/login"   element={<Login />} />
+          <Route path="/register"element={<Register />} />
+          <Route path="/home"    element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 
