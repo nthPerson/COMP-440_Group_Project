@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import db, User
+from ..models import db, User
 from flask_login import login_required  # Ensures that only logged-in users can access CRUD APIs
 
 users_bp = Blueprint('users', __name__)

@@ -17,3 +17,4 @@ frontend/node_modules
 
 # pychache
 __pycache__
+.pytest_cache

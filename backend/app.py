@@ -1,6 +1,6 @@
 from flask import Flask
-from config import Config
-from models import db, User  
+from .config import Config
+from .models import db, User  
 from flask_login import LoginManager
 
 app = Flask(__name__)
@@ -20,10 +20,10 @@ def load_user(username):
     return User.query.get(username)
 
 # Register blueprints
-from routes.auth import auth_bp
+from .routes.auth import auth_bp
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
-from routes.users import users_bp
+from .routes.users import users_bp
 app.register_blueprint(users_bp, url_prefix='/api/users')
 
 # Placeholder for other blueprints
