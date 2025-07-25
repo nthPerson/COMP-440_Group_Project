@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..models import db, User
+from models import db, User
 import bcrypt
 from sqlalchemy.exc import IntegrityError
 from flask_login import login_user, logout_user, login_required, current_user  # Session management functions
