@@ -2,9 +2,14 @@ from flask import Flask
 from config import Config
 from models import db, User  
 from flask_login import LoginManager
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Enable CORS for frontend-backend communication
+CORS(app, supports_credentials=True)
+
 # print("CONNECTING TO:", app.config["SQLALCHEMY_DATABASE_URI"])  # Use this to see what DB the app is trying to connect to
 
 # Initialize SQLAlchemy, aka connect the app to the DB

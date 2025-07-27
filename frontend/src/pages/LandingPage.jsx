@@ -5,7 +5,7 @@ export default function LandingPage() {
   return (
     <div className="page-container">
       <div className="content-wrapper" style={{ maxWidth: '600px', textAlign: 'center' }}>
-        <h1>🛍️ COMP 440 Online Store</h1>
+        <h1> COMP 440 Online Store</h1>
         <p style={{ 
           fontSize: '1.1rem', 
           color: 'var(--gray-600)', 
@@ -33,7 +33,7 @@ export default function LandingPage() {
           marginTop: 'var(--spacing-xl)'
         }}>
           <h3 style={{ marginBottom: 'var(--spacing-md)', color: 'var(--gray-700)' }}>
-            ✨ Features
+             Features
           </h3>
           <div style={{ 
             display: 'grid', 
@@ -42,19 +42,19 @@ export default function LandingPage() {
             textAlign: 'left'
           }}>
             <div>
-              <strong style={{ color: 'var(--primary-color)' }}>🔒 Secure</strong>
+              <strong style={{ color: 'var(--primary-color)' }}> Secure</strong>
               <p style={{ fontSize: '0.9rem', color: 'var(--gray-600)', margin: 0 }}>
                 Protected user accounts
               </p>
             </div>
             <div>
-              <strong style={{ color: 'var(--secondary-color)' }}>🔍 Search</strong>
+              <strong style={{ color: 'var(--secondary-color)' }}> Search</strong>
               <p style={{ fontSize: '0.9rem', color: 'var(--gray-600)', margin: 0 }}>
                 Find items by category
               </p>
             </div>
             <div>
-              <strong style={{ color: 'var(--accent-color)' }}>⭐ Reviews</strong>
+              <strong style={{ color: 'var(--accent-color)' }}> Reviews</strong>
               <p style={{ fontSize: '0.9rem', color: 'var(--gray-600)', margin: 0 }}>
                 Rate and review items
               </p>

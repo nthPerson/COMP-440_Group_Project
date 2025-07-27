@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Register() {
@@ -6,20 +6,44 @@ export default function Register() {
     username:'', password:'', passwordConfirm: '', firstName:'', lastName:'', email:''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [validations, setValidations] = useState({
+    username: false,
+    email: false,
+    password: false,
+    passwordMatch: false
+  });
   const navigate = useNavigate();
+
+  // Real-time validation
+  useEffect(() => {
+    setValidations({
+      username: form.username.length >= 3,
+      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email),
+      password: form.password.length >= 6,
+      passwordMatch: form.password && form.passwordConfirm && form.password === form.passwordConfirm
+    });
+  }, [form]);
 
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+    if (error) setError('');
+    if (success) setSuccess('');
   }
 
   const handleSubmit = async e => {
     e.preventDefault();
 
-    // Make sure that the user has entered matching passwords in both fields
-    if (form.password !== form.passwordConfirm) {
-      setError("Passwords do not match. Please ensure both password fields are identical.");
+    // Validate all fields
+    if (!validations.username || !validations.email || !validations.password || !validations.passwordMatch) {
+      setError('Please fill in all fields correctly');
+      return;
+    }
+
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      setError('First name and last name are required');
       return;
     }
 
@@ -36,7 +60,8 @@ export default function Register() {
       });
       
       if (resp.ok) {
-        navigate('/home');
+        setSuccess('🎉 Account created successfully! Redirecting...');
+        setTimeout(() => navigate('/home'), 2000);
       } else {
         const { message } = await resp.json();
         setError(message || 'Registration failed');
@@ -67,17 +92,19 @@ export default function Register() {
         
         {error && <div className="alert alert-error">{error}</div>}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
           <div className="form-group">
             <input
-              className="form-input"
+              className={`form-input ${validations.username ? 'valid' : ''}`}
               name="username"
-              placeholder="Choose a username"
+              placeholder="Choose a unique username"
               value={form.username}
               onChange={handleChange}
               onKeyPress={handleKeyPress}
               required
-              autoComplete="username"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
           </div>
 
@@ -90,7 +117,9 @@ export default function Register() {
               onChange={handleChange}
               onKeyPress={handleKeyPress}
               required
-              autoComplete="given-name"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
           </div>
 
@@ -103,7 +132,9 @@ export default function Register() {
               onChange={handleChange}
               onKeyPress={handleKeyPress}
               required
-              autoComplete="family-name"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
           </div>
 
@@ -117,7 +148,9 @@ export default function Register() {
               onChange={handleChange}
               onKeyPress={handleKeyPress}
               required
-              autoComplete="email"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
           </div>
           
@@ -131,7 +164,9 @@ export default function Register() {
               onChange={handleChange}
               onKeyPress={handleKeyPress}
               required
-              autoComplete="new-password"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
           </div>
           
@@ -145,7 +180,9 @@ export default function Register() {
               onChange={handleChange}
               onKeyPress={handleKeyPress}
               required
-              autoComplete="new-password"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
             {form.passwordConfirm && (
               <div className={`password-match ${passwordsMatch ? 'match' : 'no-match'}`}>

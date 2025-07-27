@@ -208,13 +208,13 @@ export default function Users() {
                     onClick={() => handleUpdate(user.username)}
                     className="btn btn-secondary btn-small"
                   >
-                    ✏️ Edit
+                    Edit
                   </button>
                   <button 
                     onClick={() => handleDelete(user.username)}
                     className="btn btn-danger btn-small"
                   >
-                    🗑️ Delete
+                    Delete
                   </button>
                 </div>
               </div>

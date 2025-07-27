@@ -13,7 +13,7 @@ def register():
     # 1) Check required fields
     for field in ('username', 'password', 'firstName', 'lastName', 'email'):
         if not data.get(field):
-            return jsonify({'message', f'Missing field: {field}'}), 400
+            return jsonify({'message': f'Missing field: {field}'}), 400
         
     # 1.1) Get field data
     username, password = data['username'], data['password']
@@ -69,3 +69,14 @@ def login():
 def logout():
     logout_user()
     return jsonify({'message': "User has been logged out"}), 200
+
+@auth_bp.route('/status', methods=['GET'])
+@login_required
+def status():
+    """Check if user is authenticated and return user info"""
+    return jsonify({
+        'username': current_user.username,
+        'firstName': current_user.firstName,
+        'lastName': current_user.lastName,
+        'email': current_user.email
+    }), 200

@@ -52,7 +52,7 @@ export default function Login() {
         
         {error && <div className="alert alert-error">{error}</div>}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
           <div className="form-group">
             <input
               className="form-input"
@@ -62,7 +62,9 @@ export default function Login() {
               onChange={handleChange}
               onKeyPress={handleKeyPress}
               required
-              autoComplete="username"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
           </div>
           
@@ -76,7 +78,9 @@ export default function Login() {
               onChange={handleChange}
               onKeyPress={handleKeyPress}
               required
-              autoComplete="current-password"
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
           </div>
           
