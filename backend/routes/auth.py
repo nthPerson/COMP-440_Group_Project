@@ -44,7 +44,10 @@ def register():
         db.session.rollback()
         return jsonify({'message': 'Database error when adding user to database'}), 500
     
-    return jsonify({'message': 'User registered successfully!'}), 201
+    # Automatically log user in after successful registration
+    login_user(user)
+    
+    return jsonify({'message': 'User registered successfully and logged in!'}), 201
 
 @auth_bp.route('/login', methods=['POST'])
 def login():

@@ -9,13 +9,24 @@ export default function Users() {
     email: ''
   });
 
+  // Helper function to redirect when '401 unauthorized' is returned by the backend (aka when a call to a @login_required API function is made without a valid user session)
+  function checkAuth(resp) {
+    if (resp.status === 401) {
+      window.location.href = '/login';  // Send user to login page so they can start a valid user session
+      throw new Error('Unauthorized');  // Throw an error to stop promise chains (some JavaScript shit)
+    }
+    return resp;
+  }
+
   // fetch all users
   useEffect(() => {
     fetch('/api/users/', { 
         credentials:'include'  // Send login credentials to backend session manager (Flask-Login)
     })
+      .then(checkAuth)  // Check for 401 error message
       .then(r => r.json())
-      .then(setUsers);
+      .then(setUsers)
+      .catch(() => {}); // Ignore after redirect
   }, []);
 
   const handleChange = e =>
@@ -29,10 +40,13 @@ export default function Users() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
     })
-      .then(() => fetch('/api/users/'))
+      .then(checkAuth)  // Check for 401 error message
+      .then(() => fetch('/api/users/', { credentials: 'include' }))
+      .then(checkAuth)  // ... (same as comment above)
       .then(r => r.json())
       .then(setUsers)
-      .then(() => setForm({ username:'', first_name:'', last_name:'', email:'' }));
+      .then(() => setForm({ username:'', first_name:'', last_name:'', email:'' }))
+      .catch(() => {});  // Ignore after redirect
   };
 
   const handleDelete = username => {
@@ -40,9 +54,12 @@ export default function Users() {
         method: 'DELETE', 
         credentials:'include',  // Send login credentials to backend session manager (Flask-Login)
     })
-      .then(() => fetch('/api/users/'))
+      .then(checkAuth)  // Check for 401 error message
+      .then(() => fetch('/api/users/', { credentials: 'include' }))
+      .then(checkAuth)  // ...
       .then(r => r.json())
-      .then(setUsers);
+      .then(setUsers)
+      .catch(() => {});  // ...
   };
 
   const handleUpdate = (username) => {
@@ -54,9 +71,12 @@ export default function Users() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ first_name: newName })
     })
-      .then(() => fetch('/api/users/'))
+      .then(checkAuth)  // Check for 401 error message
+      .then(() => fetch('/api/users/', { credentials: 'include' }))
+      .then(checkAuth)  // ...
       .then(r => r.json())
-      .then(setUsers);
+      .then(setUsers)
+      .catch(() => {});
   };
 
   return (
