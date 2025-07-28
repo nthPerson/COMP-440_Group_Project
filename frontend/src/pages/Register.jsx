@@ -15,6 +15,7 @@ export default function Register() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setError('');
 
     // Make sure that the user has entered matching passwords in both fields
     if (form.password != form.passwordConfirm) {
