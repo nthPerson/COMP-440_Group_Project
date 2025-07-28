@@ -33,7 +33,7 @@ export default function LandingPage() {
           marginTop: 'var(--spacing-xl)'
         }}>
           <h3 style={{ marginBottom: 'var(--spacing-md)', color: 'var(--gray-700)' }}>
-             Features
+             Features (Under Construction)
           </h3>
           <div style={{ 
             display: 'grid', 

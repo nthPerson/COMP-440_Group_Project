@@ -1,8 +1,10 @@
 # COMP 440: Online Store Database Project
 
+### Phase 1 Video Link: https://youtu.be/wrSrChX4lJ4
+
 ## Overview
 
-This project implements a secure, full-stack online marketplace web application for the COMP 440 Database Design course (Summer 2025). Users can register and log in, post items for sale, search listings by category, and write reviews. Advanced analytics queries allow insights into user behavior and item performance. The application emphasizes security, particularly protection against SQL injection attacks.
+This project implements a secure, full-stack online marketplace web application for the COMP 440 Database Design course (Summer 2025). Users can currently register and log in, and in future phases of the project they will be able to post items for sale, search listings by category, and write reviews. Advanced analytics queries will allow insights into user behavior and item performance. The application emphasizes security, particularly protection against SQL injection attacks.
 
 ## Product Vision
 
@@ -15,11 +17,11 @@ This project implements a secure, full-stack online marketplace web application 
 
 ## Tech Stack
 
-- **Backend**: Python 3.10, Flask, Flask-Login (or JWT), Flask-MySQL (PyMySQL or mysql-connector-python)
-- **Frontend**: React 18 (Create React App or Vite)
-- **Database**: MySQL 8.x
-- **ORM / Querying**: SQLAlchemy (optional) or raw parameterized SQL
-- **Security**: Input validation, parameterized statements, hashed passwords (e.g. bcrypt)
+- **Backend**: Python 3.10, Flask, Flask-Login, PyMySQL
+- **Frontend**: React 18 and Vite
+- **Database**: MySQL 8.4 LTS
+- **ORM / Querying**: SQLAlchemy for parameterized SQL queries
+- **Security**: Input validation, parameterized statements, and hashed passwords using bcrypt
 
 ## Project Structure
 
@@ -35,7 +37,7 @@ This project implements a secure, full-stack online marketplace web application 
 │   ├── public/            # Static assets
 │   ├── src/               # React components, services, styles
 │   ├── package.json       # JS dependencies & scripts
-│   └── vite.config.js     # (or CRA config)
+│   └── vite.config.js     # Proxy configuration
 ├── package.json           # Global dependencies & scripts
 └── README.md              # This file
 ```
@@ -46,6 +48,7 @@ This project implements a secure, full-stack online marketplace web application 
 | ----------------- | ------------------------------------------------------ |
 | **Bella Felipe**  | TBD                                                    |
 | **Sarah Hussein** | TBD                                                    |
+| **Christine Nguyen** | TBD                                                 |
 | **Robert Ashe**   | TBD                                                    |
 
 ## License
