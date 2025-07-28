@@ -6,6 +6,7 @@ backend/.venv/
 .env
 backend/.env
 frontend/.env
+venv
 
 # npm packages 
 node_modules/
