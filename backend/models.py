@@ -1,3 +1,4 @@
+import datetime
 from flask_sqlalchemy import SQLAlchemy  # Database management
 from flask_login import UserMixin  # Session management (avoids the need to write is_authenticated, is_active, etc. to handle user sessions)
 
@@ -17,3 +18,37 @@ class User(UserMixin, db.Model):
     
     def get_id(self):  # Flask-Login will call this to store the user's ID for the current session
         return self.username
+    
+
+# Association table for many-to-many relationship between Item and Category
+item_category = db.Table('item_category', 
+                         db.Column('item_id', db.Integer, db.ForeignKey('item.id'), primary_key=True),
+                         db.Column('category_name', db.String(64), db.ForeignKey('category.name'), primary_key=True)
+                         )
+
+class Item(db.Model):
+    __tablename__ = 'item'
+    
+    # Auto-incrementing ID
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    date_poseted = db.Column(db.Date, nullable=False, default=lambda: datetime.date.today())
+    price = db.Column(db.Numeric(10, 2), nullable=False)
+
+    # Who posted the item?
+    posted_by = db.Column(db.String(64), db.ForeignKey('user.username'), nullable=False)
+    user = db.relationship('User', backref=db.backref('items', lazy=True))
+
+    # Categories (many-to-many)
+    categories = db.relationship('Category', secondary=item_category, backref=db.backref('items', lazy='dynamic'), lazy='dynamic')
+
+    def __repr__(self):
+        return f'<Item {self.id} "{self.title}">'
+
+class Category(db.Model):
+    __tablename__ = 'category'
+    name = db.Column(db.String(64), primary_key=True)
+
+    def __repr__(self):
+        return f'<Category {self.name}>'
