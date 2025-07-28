@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Register() {
@@ -6,216 +6,109 @@ export default function Register() {
     username:'', password:'', passwordConfirm: '', firstName:'', lastName:'', email:''
   });
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [validations, setValidations] = useState({
-    username: false,
-    email: false,
-    password: false,
-    passwordMatch: false
-  });
   const navigate = useNavigate();
-
-  // Real-time validation
-  useEffect(() => {
-    setValidations({
-      username: form.username.length >= 3,
-      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email),
-      password: form.password.length >= 6,
-      passwordMatch: form.password && form.passwordConfirm && form.password === form.passwordConfirm
-    });
-  }, [form]);
 
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-    if (error) setError('');
-    if (success) setSuccess('');
   }
 
   const handleSubmit = async e => {
     e.preventDefault();
-
-    // Validate all fields
-    if (!validations.username || !validations.email || !validations.password || !validations.passwordMatch) {
-      setError('Please fill in all fields correctly');
-      return;
-    }
-
-    if (!form.firstName.trim() || !form.lastName.trim()) {
-      setError('First name and last name are required');
-      return;
-    }
-
     setError('');
-    setIsLoading(true);
 
-    try {
-      const { passwordConfirm, ...payload } = form;
-      const resp = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(payload)
-      });
-      
-      if (resp.ok) {
-        setSuccess('🎉 Account created successfully! Redirecting...');
-        setTimeout(() => navigate('/home'), 2000);
-      } else {
-        const { message } = await resp.json();
-        setError(message || 'Registration failed');
-      }
-    } catch (err) {
-      setError('Network error. Please try again.');
-    } finally {
-      setIsLoading(false);
+    // Make sure that the user has entered matching passwords in both fields
+    if (form.password != form.passwordConfirm) {
+      alert("Please make sure your password matches in both fields. Thanks!");
+      return;
+    }
+    setError('');
+    const { passwordConfirm, ...payload } = form;
+    const resp = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    });
+    if (resp.ok) {
+      navigate('/home');
+    } else {
+      const { message } = await resp.json();
+      setError(message || 'Registration failed');
     }
   };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSubmit(e);
-    }
-  };
-
-  const passwordsMatch = form.password && form.passwordConfirm && form.password === form.passwordConfirm;
-  const passwordsDontMatch = form.password && form.passwordConfirm && form.password !== form.passwordConfirm;
 
   return (
-    <div className="page-container">
-      <div className="content-wrapper">
-        <h2>Create Account</h2>
-        <p style={{ textAlign: 'center', color: 'var(--gray-600)', marginBottom: 'var(--spacing-lg)' }}>
-          Join our online store community
-        </p>
-        
-        {error && <div className="alert alert-error">{error}</div>}
-        
-        <form onSubmit={handleSubmit} autoComplete="off">
-          <div className="form-group">
-            <input
-              className={`form-input ${validations.username ? 'valid' : ''}`}
-              name="username"
-              placeholder="Choose a unique username"
-              value={form.username}
-              onChange={handleChange}
-              onKeyPress={handleKeyPress}
-              required
-              autoComplete="off"
-              data-lpignore="true"
-              data-form-type="other"
-            />
-          </div>
-
-          <div className="form-group">
-            <input
-              className="form-input"
-              name="firstName"
-              placeholder="First name"
-              value={form.firstName}
-              onChange={handleChange}
-              onKeyPress={handleKeyPress}
-              required
-              autoComplete="off"
-              data-lpignore="true"
-              data-form-type="other"
-            />
-          </div>
-
-          <div className="form-group">
-            <input
-              className="form-input"
-              name="lastName"
-              placeholder="Last name"
-              value={form.lastName}
-              onChange={handleChange}
-              onKeyPress={handleKeyPress}
-              required
-              autoComplete="off"
-              data-lpignore="true"
-              data-form-type="other"
-            />
-          </div>
-
-          <div className="form-group">
-            <input
-              className="form-input"
-              name="email"
-              type="email"
-              placeholder="Email address"
-              value={form.email}
-              onChange={handleChange}
-              onKeyPress={handleKeyPress}
-              required
-              autoComplete="off"
-              data-lpignore="true"
-              data-form-type="other"
-            />
-          </div>
-          
-          <div className="form-group">
-            <input
-              className="form-input"
-              name="password"
-              type="password"
-              placeholder="Create a password"
-              value={form.password}
-              onChange={handleChange}
-              onKeyPress={handleKeyPress}
-              required
-              autoComplete="off"
-              data-lpignore="true"
-              data-form-type="other"
-            />
-          </div>
-          
-          <div className="form-group">
-            <input
-              className="form-input"
-              name="passwordConfirm"
-              type="password"
-              placeholder="Confirm your password"
-              value={form.passwordConfirm}
-              onChange={handleChange}
-              onKeyPress={handleKeyPress}
-              required
-              autoComplete="off"
-              data-lpignore="true"
-              data-form-type="other"
-            />
-            {form.passwordConfirm && (
-              <div className={`password-match ${passwordsMatch ? 'match' : 'no-match'}`}>
-                {passwordsMatch ? (
-                  <>✓ Passwords match</>
-                ) : (
-                  <>✗ Passwords do not match</>
-                )}
-              </div>
-            )}
-          </div>
-          
-          <button 
-            type="submit" 
-            className="btn btn-primary btn-full-width"
-            disabled={isLoading || passwordsDontMatch}
-          >
-            {isLoading ? (
-              <>
-                <span className="loading"></span>
-                Creating account...
-              </>
-            ) : (
-              'Create Account'
-            )}
-          </button>
-        </form>
-        
-        <p style={{ textAlign: 'center', marginTop: 'var(--spacing-lg)', color: 'var(--gray-600)' }}>
-          Already have an account?{' '}
-          <Link to="/login" className="link">Sign in here</Link>
-        </p>
-      </div>
+    <div style={{ maxWidth:400, margin:'2rem auto' }}>
+      <h2>Register</h2>
+      {error && <p style={{ color:'red' }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <input
+            name="username"
+            placeholder="Username"
+            value={form.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <input
+            name="passwordConfirm"
+            type="password"
+            placeholder="Confirm Password"
+            value={form.passwordConfirm}
+            onChange={handleChange}
+            required
+          />
+          {form.passwordConfirm && (
+            <p style={{ color: form.password === form.passwordConfirm ? 'green' : 'red' }}>
+              {form.password === form.passwordConfirm ? 'Passwords match' : 'Passwords do not match'}
+            </p>
+          )}
+        </div>
+        <div>
+          <input
+            name="firstName"
+            placeholder="FirstName"
+            value={form.firstName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <input
+            name="lastName"
+            placeholder="LastName"
+            value={form.lastName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <input
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit">Register</button>
+      </form>
+      <p>
+        Already have an account? <Link to="/login">Log in here</Link>.
+      </p>
     </div>
   );
 }
