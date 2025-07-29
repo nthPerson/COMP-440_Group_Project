@@ -5,10 +5,10 @@ from datetime import datetime, date
 
 create_bp = Blueprint('create', __name__)
 
-@create_bp.route('/new', methods=['POST'])  
+@create_bp.route('/newitem', methods=['POST'])  
 @login_required
 def create_item():
-  data = request.get_json() #data is requested for the input fields for item creation
+  data = request.get_json() # data is requested for the input fields for item creation
   
   title = data.get('title', '').strip()
   description = data.get('description', '').strip()
@@ -20,7 +20,7 @@ def create_item():
     return jsonify({'error': 'Enter a title'}), 400
   if not description:
     return jsonify({'error': 'Enter a description'}), 400
-  if not price is None or not isinstance(price, (int, float)) or price <= 0: #need to make sure price field is not empty and not negative
+  if not price is None or not isinstance(price, (int, float)) or price <= 0: # need to make sure price field is not empty and not negative
     return jsonify({'error': 'Price must be a positive number'}), 400
   if not categories or not isinstance(categories, list) or len(categories) == 0:
     return jsonify({'error': 'At least one category is required'}), 400
