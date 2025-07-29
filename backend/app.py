@@ -12,8 +12,19 @@ app.config.from_object(Config)
 # Initialize SQLAlchemy, aka connect the app to the DB
 db.init_app(app)
 
-with app.app_context():
-    db.create_all()
+""" To create tables with SQLAlchemy (aka our app), we can run these commands:
+        cd backend
+        flask shell
+        from models import db; db.create_all()
+
+    Placing table creation in the codebase works, but since we don't do it very often we can
+    just perform this operation in the terminal so we don't have to worry about whether or not 
+    we have table creation on or off in different versions of the codebase.
+ """
+# with app.app_context():  
+#     db.create_all()
+
+
 # Set up session management with Flask-Login
 login_manager = LoginManager()
 # login_manager.login_view = 'auth.login'
