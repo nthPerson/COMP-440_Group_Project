@@ -29,11 +29,10 @@ item_category = db.Table('item_category',
 class Item(db.Model):
     __tablename__ = 'item'
     
-    # Auto-incrementing ID
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Auto-incrementing ID
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    date_poseted = db.Column(db.Date, nullable=False, default=lambda: datetime.date.today())
+    date_posted = db.Column(db.Date, nullable=False, default=lambda: datetime.date.today())
     price = db.Column(db.Numeric(10, 2), nullable=False)
 
     # Who posted the item?
