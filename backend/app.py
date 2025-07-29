@@ -33,7 +33,10 @@ app.register_blueprint(auth_bp, url_prefix='/api/auth')
 from routes.users import users_bp
 app.register_blueprint(users_bp, url_prefix='/api/users')
 
-# Placeholder for other blueprints
+# Placeholder for Post Item (item creation) Blueprint
+
+from routes.reviews import reviews_bp
+app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
 
 if __name__ == '__main__':
     app.run(host='::', port=5000, debug=True)

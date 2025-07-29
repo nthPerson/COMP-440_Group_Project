@@ -51,3 +51,28 @@ class Category(db.Model):
 
     def __repr__(self):
         return f'<Category {self.name}>'
+
+class Review(db.Model):
+    __tablename__ = 'review'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    review_date = db.Column(db.Date, nullable=False, default=lambda: datetime.date.today())
+    score = db.Column(db.Enum('Excellent', 'Good', 'Fair', 'Poor', name='review_score'), nullable=False)  # Score must be one of the four allowed values (hence the Enum)
+    remark = db.Column(db.Text, nullable=True)
+
+    # Who made the review?
+    user_id = db.Column(db.String(64), db.ForeignKey('user.username'), nullable=False)
+    user = db.relationship('User', backref=db.backref('reviews', lazy='dynamic'))
+
+    # Which item is being reviewed?
+    item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
+    item = db.relationship('Item', backref=db.backref('reviews', lazy='dynamic'))
+
+    # Enforce the "one review per user per item" external constraint
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'item_id', name='uq_user_item_review'),
+    )
+
+    def __repr__(self):
+        return f'<Review {self.id} by {self.user_id} on item {self.item_id}>'
+
