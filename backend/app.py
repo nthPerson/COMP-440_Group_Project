@@ -33,7 +33,8 @@ app.register_blueprint(auth_bp, url_prefix='/api/auth')
 from routes.users import users_bp
 app.register_blueprint(users_bp, url_prefix='/api/users')
 
-# Placeholder for Post Item (item creation) Blueprint
+from routes.create import create_bp
+app.register_blueprint(create_bp, url_prefix= '/api/create')
 
 from routes.reviews import reviews_bp
 app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
