@@ -2,14 +2,18 @@ from flask import Flask, jsonify
 from config import Config
 from models import db, User  
 from flask_login import LoginManager
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file we make sure .env is loaded before config class is used
 
 app = Flask(__name__)
 app.config.from_object(Config)
-# print("CONNECTING TO:", app.config["SQLALCHEMY_DATABASE_URI"])  # Use this to see what DB the app is trying to connect to
+#print("CONNECTING TO:", app.config["SQLALCHEMY_DATABASE_URI"])  # Use this to see what DB the app is trying to connect to
 
 # Initialize SQLAlchemy, aka connect the app to the DB
 db.init_app(app)
 
+with app.app_context():
+    db.create_all()
 # Set up session management with Flask-Login
 login_manager = LoginManager()
 # login_manager.login_view = 'auth.login'
