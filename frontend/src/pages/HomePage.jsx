@@ -11,7 +11,7 @@ export default function HomePage() {
 
   useEffect(() => {
     // Check authentication and load user data
-    checkAuth();
+    // checkAuth();
     loadStats();
   }, []);
 
