@@ -2,8 +2,8 @@ from flask import Flask, jsonify
 from config import Config
 from models import db, User  
 from flask_login import LoginManager
-from dotenv import load_dotenv
-load_dotenv()  # Load environment variables from .env file we make sure .env is loaded before config class is used
+# from dotenv import load_dotenv  # We are using os.getenv() in config.py to get environment variables
+# load_dotenv()  # (see above comment for why this is commented out) Load environment variables from .env file we make sure .env is loaded before config class is used
 
 app = Flask(__name__)
 app.config.from_object(Config)
