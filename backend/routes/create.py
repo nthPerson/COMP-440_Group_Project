@@ -8,7 +8,7 @@ create_bp = Blueprint('create', __name__)
 @create_bp.route('/new', methods=['POST'])  
 @login_required
 def create_item():
-  data = request.get_json() #data is requested for the input fields fopr item creation
+  data = request.get_json() #data is requested for the input fields for item creation
   
   title = data.get('title', '').strip()
   description = data.get('description', '').strip()
