@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
-from models import db, Item
+from models import db, Item, Category
 from flask_login import login_required, current_user
 from datetime import datetime, date
+from sqlalchemy import func
 
 create_bp = Blueprint('create', __name__)
 
@@ -20,8 +21,44 @@ def create_item():
     return jsonify({'error': 'Enter a title'}), 400
   if not description:
     return jsonify({'error': 'Enter a description'}), 400
-  if not price is None or not isinstance(price, (int, float)) or price <= 0: # need to make sure price field is not empty and not negative
+  if price is None or not isinstance(price, (int, float)) or price <= 0: # need to make sure price field is not empty and not negative
     return jsonify({'error': 'Price must be a positive number'}), 400
   if not categories or not isinstance(categories, list) or len(categories) == 0:
     return jsonify({'error': 'At least one category is required'}), 400
+  
+  today = date.today()
+  count = Item.query.filter( # queries the Item table to count how many items have been posted today
+    Item.posted_by == current_user.username,
+    func.date(Item.date_posted) == today
+  ).count()
+  
+  if count >=2:
+    return jsonify({'error': 'Daily limit reached: only 2 items can be posted in a day'}), 400
+  
+  # we need the following input fields for a valid item creation
+  new_item = Item(
+    title = title,
+    description = description,
+    price = price,
+    posted_by = current_user.username,
+    date_posted = date.today()
+  )
+
+# attach categories to items
+  for cat_name in categories:
+    cat_name = cat_name.strip().lower()
+    if not cat_name:
+      continue
+    category = Category.query.get(cat_name) # checks if the category exists in DB so that if it doesn't it can be created
+    if not category:
+      category = Category(name=cat_name)
+      db.session.add(category)
+    new_item.categories.append(category) # links the category to the item
+
+  # add new items to database
+  db.session.add(new_item)
+  db.session.commit()
+  
+  return jsonify({'message': 'Item created successfully'}), 201
+
  
