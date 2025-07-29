@@ -33,8 +33,8 @@ app.register_blueprint(auth_bp, url_prefix='/api/auth')
 from routes.users import users_bp
 app.register_blueprint(users_bp, url_prefix='/api/users')
 
-from routes.create import create_bp
-app.register_blueprint(create_bp, url_prefix= '/api/create')
+from routes.items import items_bp
+app.register_blueprint(items_bp, url_prefix= '/api/items')
 
 from routes.reviews import reviews_bp
 app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
