@@ -35,7 +35,7 @@ def create_item():
   if count >=2:
     return jsonify({'error': 'Daily limit reached: only 2 items can be posted in a day'}), 400
   
-  # we need the following input fields for a valid item creation
+  # creates a new instance of the Item class, with all of these required input fields
   new_item = Item(
     title = title,
     description = description,
@@ -49,7 +49,7 @@ def create_item():
     cat_name = cat_name.strip().lower()
     if not cat_name:
       continue
-    category = Category.query.get(cat_name) # checks if the category exists in DB so that if it doesn't it can be created
+    category = Category.query.get(cat_name) # checks if the category exists in DB so that if it doesn't exist it can be created
     if not category:
       category = Category(name=cat_name)
       db.session.add(category)
