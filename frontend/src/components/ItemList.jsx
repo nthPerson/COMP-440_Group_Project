@@ -66,7 +66,7 @@ export default function ItemList() {
                             {item.categories.map(c => c.name).join(', ')}
                         </p>
                         <p>
-                            <strong>Rating:</strong> {item.star_rating.toFixed(1)}/5{' '}
+                            {item.star_rating.toFixed(1)}/5{' '}
                             <span style={{ color: '#f5b301', fontSize: '1.2rem' }}>
                                 {(() => {
                                     const full = Math.floor(item.star_rating);
