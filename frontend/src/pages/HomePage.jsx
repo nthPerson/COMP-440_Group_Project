@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Users from '../components/Users';
+import NewItemForm from '../components/NewItemForm';
+import ItemList from '../components/ItemList';
 // Import optimized styles
 import '../styles/global.css';
 import '../styles/HomePage.css';
@@ -132,8 +134,21 @@ export default function HomePage() {
 
         {/* User Management Section */}
         <div className="user-management">
-          <h3 className="section-title">User Management</h3>
+          <h3 className="section-title"> User Management</h3>
           <Users onStatsUpdate={loadStats} />
+        </div>
+
+        {/* Item Management Section */}
+        <div className="item-management">
+          <h3 className="section-title"> Item Management</h3>
+          <div className="item-management-grid">
+            <div className="item-form-section">
+              <NewItemForm />
+            </div>
+            <div className="item-list-section">
+              <ItemList />
+            </div>
+          </div>
         </div>
       </div>
     </div>

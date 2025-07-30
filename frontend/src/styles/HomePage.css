@@ -264,20 +264,24 @@
 }
 
 .btn-logout {
-  background: var(--gray-600);
+  background: linear-gradient(135deg, var(--danger-color), #dc2626);
   color: var(--white);
   padding: var(--spacing-md) var(--spacing-lg);
   border: none;
   border-radius: var(--border-radius);
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-normal);
+  /* GPU acceleration */
+  transform: translateZ(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-logout:hover {
-  background: var(--gray-700);
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 /* ================================
@@ -313,6 +317,133 @@
   margin-bottom: var(--spacing-lg);
 }
 
+/* ================================
+   ITEM MANAGEMENT SECTION
+   ================================ */
+.item-management {
+  margin-top: var(--spacing-2xl);
+}
+
+.item-management-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  margin-top: var(--spacing-lg);
+}
+
+.item-form-section,
+.item-list-section {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+}
+
+/* ================================
+   NEW ITEM FORM STYLES
+   ================================ */
+.new-item-form h2 {
+  color: var(--gray-800);
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-lg);
+  text-align: left;
+}
+
+.new-item-form .form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.new-item-form input,
+.new-item-form textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  font-family: var(--font-primary);
+  background: var(--white);
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.new-item-form input:focus,
+.new-item-form textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+.new-item-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.new-item-form .btn {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  width: 100%;
+  /* GPU acceleration */
+  transform: translateZ(0);
+}
+
+.new-item-form .btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* ================================
+   ITEM LIST STYLES
+   ================================ */
+.item-list-section h2 {
+  color: var(--gray-800);
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-lg);
+  text-align: left;
+}
+
+.item-list-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item-list-section li {
+  border: 1px solid var(--gray-200);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--border-radius);
+  background: var(--gray-50);
+  transition: all var(--transition-fast);
+}
+
+.item-list-section li:hover {
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.item-list-section li h3 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-sm);
+  font-size: 1.1rem;
+}
+
+.item-list-section li p {
+  margin-bottom: var(--spacing-sm);
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+
+.item-list-section li strong {
+  color: var(--gray-800);
+  margin-right: var(--spacing-xs);
+}
 /* ================================
    RESPONSIVE DESIGN
    ================================ */
@@ -354,6 +485,12 @@
   .user-actions {
     justify-content: center;
   }
+  
+  /* Item management responsive */
+  .item-management-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
 }
 
 @media (max-width: 480px) {
@@ -368,5 +505,10 @@
   
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .item-form-section,
+  .item-list-section {
+    padding: var(--spacing-lg);
   }
 }
