@@ -80,44 +80,74 @@ export default function Users() {
   };
 
   return (
-    <div>
-      <h2>User Management</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="users-component">
+      <form onSubmit={handleSubmit} className="user-form">
         <input
+          className="user-form-input"
           name="username"
           placeholder="Username"
           value={form.username}
           onChange={handleChange}
+          required
         />
         <input
+          className="user-form-input"
           name="first_name"
           placeholder="First Name"
           value={form.first_name}
           onChange={handleChange}
+          required
         />
         <input
+          className="user-form-input"
           name="last_name"
           placeholder="Last Name"
           value={form.last_name}
           onChange={handleChange}
+          required
         />
         <input
+          className="user-form-input"
           name="email"
+          type="email"
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
+          required
         />
-        <button type="submit">Add User</button>
+        <button type="submit" className="user-form-button">
+          Add User
+        </button>
       </form>
-      <ul>
-        {users.map(u => (
-          <li key={u.username}>
-            {u.username} - {u.first_name} {u.last_name} ({u.email})
-            <button onClick={() => handleUpdate(u.username)}>Edit</button>
-            <button onClick={() => handleDelete(u.username)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      
+      <div className="user-list">
+        {users.length === 0 ? (
+          <div className="loading-text">Loading users...</div>
+        ) : (
+          users.map(u => (
+            <div key={u.username} className="user-item">
+              <div className="user-info">
+                <div className="user-name">{u.username}</div>
+                <div className="user-email">{u.first_name} {u.last_name} • {u.email}</div>
+              </div>
+              <div className="user-actions">
+                <button 
+                  onClick={() => handleUpdate(u.username)}
+                  className="btn-small btn-edit"
+                >
+                  Edit
+                </button>
+                <button 
+                  onClick={() => handleDelete(u.username)}
+                  className="btn-small btn-delete"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
