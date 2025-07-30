@@ -42,6 +42,13 @@ This project implements a secure, full-stack online marketplace web application 
 └── README.md              # This file
 ```
 
+## Build
+
+To create tables with SQLAlchemy via our app, run these commands from a terminal:
+        cd backend
+        flask shell
+        from models import db; db.create_all()
+
 ## Team Members & Contributions
 
 | Member            | Contributions                                          |

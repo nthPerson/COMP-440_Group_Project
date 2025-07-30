@@ -2,13 +2,28 @@ from flask import Flask, jsonify
 from config import Config
 from models import db, User  
 from flask_login import LoginManager
+# from dotenv import load_dotenv  # We are using os.getenv() in config.py to get environment variables
+# load_dotenv()  # (see above comment for why this is commented out) Load environment variables from .env file we make sure .env is loaded before config class is used
 
 app = Flask(__name__)
 app.config.from_object(Config)
-# print("CONNECTING TO:", app.config["SQLALCHEMY_DATABASE_URI"])  # Use this to see what DB the app is trying to connect to
+#print("CONNECTING TO:", app.config["SQLALCHEMY_DATABASE_URI"])  # Use this to see what DB the app is trying to connect to
 
 # Initialize SQLAlchemy, aka connect the app to the DB
 db.init_app(app)
+
+""" To create tables with SQLAlchemy (aka our app), we can run these commands:
+        cd backend
+        flask shell
+        from models import db; db.create_all()
+
+    Placing table creation in the codebase works, but since we don't do it very often we can
+    just perform this operation in the terminal so we don't have to worry about whether or not 
+    we have table creation on or off in different versions of the codebase.
+ """
+# with app.app_context():  
+#     db.create_all()
+
 
 # Set up session management with Flask-Login
 login_manager = LoginManager()
