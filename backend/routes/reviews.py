@@ -60,5 +60,6 @@ def list_reviews_for_item(item_id):
 def get_star_rating(item_id):
     item = Item.query.get_or_404(item_id)
     rating = item.calculate_star_rating()
-    return jsonify({'item_id': item.id, 'star_rating': rating}), 200
+    review_count = item.reviews.count()
+    return jsonify({'item_id': item.id, 'star_rating': rating, 'review_count': review_count}), 200
 

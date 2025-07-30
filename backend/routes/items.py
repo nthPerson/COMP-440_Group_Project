@@ -76,7 +76,9 @@ def list_items():
       'price': str(item.price),
       'posted_by': item.posted_by,
       'date_posted': item.date_posted.isoformat(),
-      'categories': [{'name': c.name} for c in item.categories]
+      'categories': [{'name': c.name} for c in item.categories],
+      'star_rating': item.star_rating,
+      'review_count': item.reviews.count()
     })
   
   return jsonify(result), 200
