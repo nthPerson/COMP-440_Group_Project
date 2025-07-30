@@ -4,9 +4,9 @@ from flask_login import login_required, current_user
 from datetime import datetime, date
 from sqlalchemy import func
 
-create_bp = Blueprint('create', __name__)
+items_bp = Blueprint('item', __name__)
 
-@create_bp.route('/newitem', methods=['POST'])  
+@items_bp.route('/newitem', methods=['POST'])  
 @login_required
 def create_item():
   data = request.get_json() # data is requested for the input fields for item creation
@@ -44,7 +44,7 @@ def create_item():
     date_posted = date.today()
   )
 
-# attach categories to items
+  # attach categories to items
   for cat_name in categories:
     cat_name = cat_name.strip().lower()
     if not cat_name:
@@ -60,5 +60,25 @@ def create_item():
   db.session.commit()
   
   return jsonify({'message': 'Item created successfully'}), 201
+
+
+@items_bp.route('/list_items', methods=['GET'])
+@login_required
+def list_items():
+  items = Item.query.order_by(Item.date_posted.desc()).all()
+  result = []
+
+  for item in items:
+    result.append({
+      'id': item.id,
+      'title': item.title,
+      'description': item.description,
+      'price': str(item.price),
+      'posted_by': item.posted_by,
+      'date_posted': item.date_posted.isoformat(),
+      'categories': [{'name': c.name} for c in item.categories]
+    })
+  
+  return jsonify(result), 200
 
  

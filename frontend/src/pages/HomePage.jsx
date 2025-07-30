@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Users from '../components/Users';
+import NewItemForm from '../components/NewItemForm';
+import ItemList from '../components/ItemList';
 
 export default function HomePage() {
   const [error, setError] = useState('');
@@ -9,29 +11,19 @@ export default function HomePage() {
   const [stats, setStats] = useState({ totalUsers: 0, recentActivity: 0 });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check authentication and load user data
-    // checkAuth();
-    loadStats();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const resp = await fetch('/api/auth/status', { credentials: 'include' });
-      if (resp.ok) {
-        const userData = await resp.json();
-        setUser(userData);
-      } else {
-        navigate('/login');
+  // // helper to redirect on 401
+  const checkAuth = resp => {
+      if (resp.status === 401) {
+          window.location.href = '/login';
+          throw new Error('Unauthorized');
       }
-    } catch (err) {
-      navigate('/login');
-    }
+      return resp;
   };
 
   const loadStats = async () => {
     try {
       const resp = await fetch('/api/users/', { credentials: 'include' });
+      await checkAuth(resp);
       if (resp.ok) {
         const users = await resp.json();
         setStats({
@@ -47,6 +39,16 @@ export default function HomePage() {
       console.log('Stats loading failed:', err);
     }
   };
+
+  // Hook: fetch stats on page load (TODO: Consider removing all program logic out of HomePage.jsx and into component files)
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  // Called after a new item is created
+  const handleItemCreated = () => {
+    loadStats();
+  }
 
   const handleLogout = async () => {
     setError('');
@@ -202,6 +204,12 @@ export default function HomePage() {
              {error}
           </div>
         )}
+
+        {/* New Item Creation Form and List */}
+        <div style={{ margin: '2rem 0', padding: '1rem', border: '1px solid #ddd' }}>
+          <NewItemForm onItemCreated={handleItemCreated} />
+          <ItemList />
+        </div>
         
         {/* Enhanced User Management Section */}
         <div style={{
