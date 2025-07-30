@@ -19,9 +19,9 @@
 
 .auth-content {
   width: 100%;
-  max-width: 520px;
-  min-width: 450px;
-  padding: var(--spacing-2xl) 3rem;
+  max-width: 600px;
+  min-width: 520px;
+  padding: var(--spacing-2xl) 3.5rem;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: var(--border-radius-xl);
@@ -115,13 +115,13 @@
   padding: var(--spacing-lg) var(--spacing-xl);
   border: 2px solid var(--gray-200);
   border-radius: var(--border-radius-lg);
-  font-size: 1.1rem;
+  font-size: 1.125rem;
   font-family: var(--font-primary);
   background: rgba(255, 255, 255, 0.9);
   transition: all var(--transition-normal);
   outline: none;
   position: relative;
-  min-height: 56px;
+  min-height: 58px;
   /* GPU acceleration for smooth interactions */
   transform: translateZ(0);
 }
@@ -168,13 +168,13 @@
   padding: var(--spacing-lg) var(--spacing-xl);
   border: none;
   border-radius: var(--border-radius-lg);
-  font-size: 1.1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   font-family: var(--font-primary);
   cursor: pointer;
   transition: all var(--transition-normal);
   text-decoration: none;
-  min-height: 56px;
+  min-height: 58px;
   gap: var(--spacing-sm);
   position: relative;
   overflow: hidden;
