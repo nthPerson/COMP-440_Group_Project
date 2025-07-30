@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NewItemForm from '../components/NewItemForm';
-import ItemList from '../components/ItemList';
+import Users from '../components/Users';
 // Import optimized styles
-import '../styles/global.css';
+import '../styles/global-optimized.css';
 import '../styles/HomePage.css';
 
 export default function HomePage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [stats, setStats] = useState({ totalUsers: 0, recentActivity: 0 });
   const navigate = useNavigate();
 
   // Helper to redirect on 401
@@ -19,6 +19,26 @@ export default function HomePage() {
       throw new Error('Unauthorized');
     }
     return resp;
+  };
+
+  const loadStats = async () => {
+    try {
+      const resp = await fetch('/api/users/', { credentials: 'include' });
+      await checkAuth(resp);
+      if (resp.ok) {
+        const users = await resp.json();
+        setStats({
+          totalUsers: users.length,
+          recentActivity: users.filter(u => {
+            const created = new Date(u.created_at || Date.now());
+            const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            return created > dayAgo;
+          }).length
+        });
+      }
+    } catch (err) {
+      console.log('Stats loading failed:', err);
+    }
   };
 
   const loadUser = async () => {
@@ -35,6 +55,7 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    loadStats();
     loadUser();
   }, []);
 
@@ -64,12 +85,12 @@ export default function HomePage() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
-        {/* Clean Header with Sign Out */}
-        <div className="item-management-header">
-          <div className="header-content">
-            <h1 className="page-title"> Item Management</h1>
-            <p className="page-subtitle">
-              Welcome back, <strong>{user?.firstName || 'Admin'}</strong>! Manage your inventory below.
+        {/* Enhanced Dashboard Header */}
+        <div className="dashboard-header">
+          <div>
+            <h1 className="dashboard-title">🏪 Control Panel</h1>
+            <p className="dashboard-user-info">
+              Welcome back, <strong>{user?.firstName || 'Admin'}</strong>! Ready to manage your platform?
             </p>
           </div>
           
@@ -89,6 +110,19 @@ export default function HomePage() {
           </button>
         </div>
 
+        {/* Stats Cards */}
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-value">{stats.totalUsers}</div>
+            <div className="stat-label">Total Users</div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-value">{stats.recentActivity}</div>
+            <div className="stat-label">Recent Activity</div>
+          </div>
+        </div>
+
         {/* Error Message */}
         {error && (
           <div className="error-message">
@@ -96,16 +130,10 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Item Management Section */}
-        <div className="item-management">
-          <div className="item-management-grid">
-            <div className="item-form-section">
-              <NewItemForm />
-            </div>
-            <div className="item-list-section">
-              <ItemList />
-            </div>
-          </div>
+        {/* User Management Section */}
+        <div className="user-management">
+          <h3 className="section-title">User Management</h3>
+          <Users onStatsUpdate={loadStats} />
         </div>
       </div>
     </div>

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+// Import optimized styles
+import '../styles/global.css';
+import '../styles/AuthForms.css';
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -60,7 +63,7 @@ export default function Register() {
       });
       
       if (resp.ok) {
-        setSuccess('🎉 Account created successfully! Redirecting...');
+        setSuccess(' Account created successfully! Redirecting...');
         setTimeout(() => navigate('/home'), 2000);
       } else {
         const { message } = await resp.json();
@@ -83,8 +86,8 @@ export default function Register() {
   const passwordsDontMatch = form.password && form.passwordConfirm && form.password !== form.passwordConfirm;
 
   return (
-    <div className="page-container">
-      <div className="content-wrapper">
+    <div className="auth-container">
+      <div className="auth-content">
         <h2>Create Account</h2>
         <p style={{ textAlign: 'center', color: 'var(--gray-600)', marginBottom: 'var(--spacing-lg)' }}>
           Join our online store community
@@ -92,7 +95,7 @@ export default function Register() {
         
         {error && <div className="alert alert-error">{error}</div>}
         
-        <form onSubmit={handleSubmit} autoComplete="off">
+        <form onSubmit={handleSubmit} autoComplete="off" className="auth-form">
           <div className="form-group">
             <input
               className={`form-input ${validations.username ? 'valid' : ''}`}
@@ -197,7 +200,7 @@ export default function Register() {
           
           <button 
             type="submit" 
-            className="btn btn-primary btn-full-width"
+            className="auth-btn auth-btn-primary"
             disabled={isLoading || passwordsDontMatch}
           >
             {isLoading ? (
@@ -213,7 +216,7 @@ export default function Register() {
         
         <p style={{ textAlign: 'center', marginTop: 'var(--spacing-lg)', color: 'var(--gray-600)' }}>
           Already have an account?{' '}
-          <Link to="/login" className="link">Sign in here</Link>
+          <Link to="/login" className="auth-link">Sign in here</Link>
         </p>
       </div>
     </div>

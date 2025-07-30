@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+// Import optimized styles
+import '../styles/global.css';
+import '../styles/AuthForms.css';
 
 export default function Login() {
   const [form, setForm] = useState({ username:'', password:'' });
@@ -43,8 +46,8 @@ export default function Login() {
   };
 
   return (
-    <div className="page-container">
-      <div className="content-wrapper">
+    <div className="auth-container">
+      <div className="auth-content">
         <h2>Welcome Back</h2>
         <p style={{ textAlign: 'center', color: 'var(--gray-600)', marginBottom: 'var(--spacing-lg)' }}>
           Sign in to your account
@@ -52,7 +55,7 @@ export default function Login() {
         
         {error && <div className="alert alert-error">{error}</div>}
         
-        <form onSubmit={handleSubmit} autoComplete="off">
+        <form onSubmit={handleSubmit} autoComplete="off" className="auth-form">
           <div className="form-group">
             <input
               className="form-input"
@@ -86,7 +89,7 @@ export default function Login() {
           
           <button 
             type="submit" 
-            className="btn btn-primary btn-full-width"
+            className="auth-btn auth-btn-primary"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -102,7 +105,7 @@ export default function Login() {
         
         <p style={{ textAlign: 'center', marginTop: 'var(--spacing-lg)', color: 'var(--gray-600)' }}>
           Don't have an account?{' '}
-          <Link to="/register" className="link">Create one here</Link>
+          <Link to="/register" className="auth-link">Create one here</Link>
         </p>
       </div>
     </div>
