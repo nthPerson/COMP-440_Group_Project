@@ -41,7 +41,7 @@ export default function Register() {
 
     // Validate all fields
     if (!validations.username || !validations.email || !validations.password || !validations.passwordMatch) {
-      setError('Please fill in all fields correctly');
+      setError('Please fill in all fields correctly');  // TODO: Make error messages more specific. The user currently has no way of knowing what mistake invalidates their input
       return;
     }
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ReviewForm from "./ReviewForm";
 
 /**
  * props.onReview? potential future callback to add review UI per item
@@ -65,10 +66,13 @@ export default function ItemList() {
                 {item.categories.map(c => c.name).join(', ')}
                 </p>
 
-                {/*
-                // Later on in the project, we can render a <ReviewForm itemId={item.id} onSubmitted={…} />
-                // here to choose Excellent/Good/Fair/Poor and add review remarks.
-                */}
+                <ReviewForm
+                    itemId={item.id}
+                    onReviewSubmitted={() => {
+                        // Implement star rating calculation stuff here
+                        // Might use window.dispatchEvent(new Event('reviewCreated')); to notify other components of the new reivew
+                    }}                
+                />
             </li>
             ))}
         </ul>
