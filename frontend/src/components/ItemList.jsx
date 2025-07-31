@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReviewForm from "./ReviewForm";
-
+import StarRating from './StarRating';
 /**
  * props.onReview? potential future callback to add review UI per item
  */
@@ -66,15 +66,8 @@ export default function ItemList() {
                             {item.categories.map(c => c.name).join(', ')}
                         </p>
                         <p>
-                            {item.star_rating.toFixed(1)}/5{' '}
-                            <span style={{ color: '#f5b301', fontSize: '1.2rem' }}>
-                                {(() => {
-                                    const full = Math.floor(item.star_rating);
-                                    const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
-                                    const empty = 5 - full - (half ? 1 : 0);
-                                    return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
-                                })()}
-                            </span>{' '}
+                        <StarRating rating={item.star_rating} reviewCount={item.review_count} />
+
                             <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
                         </p>
                         <ReviewForm
