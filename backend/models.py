@@ -2,6 +2,13 @@ import datetime
 from flask_sqlalchemy import SQLAlchemy  # Database management
 from flask_login import UserMixin  # Session management (avoids the need to write is_authenticated, is_active, etc. to handle user sessions)
 
+# Score-to-star mapping
+REVIEW_SCORE_MAP = {
+    'Excellent': 5.0,
+    'Good': 3.75,
+    'Fair': 2.5,
+    'Poor': 1.25
+}
 db = SQLAlchemy()  # This is the tool our app uses to interact with the database (automates queries, etc.)
 
 # User table schema: user(username*, password, firstName, lastName, email)  -- note that the * indicates the primary key
@@ -41,9 +48,18 @@ class Item(db.Model):
 
     # Categories (many-to-many)
     categories = db.relationship('Category', secondary=item_category, backref=db.backref('items', lazy='dynamic'), lazy='dynamic')
+    
+    star_rating = db.Column(db.Float, default=0.0) # new column is added in the db
 
     def __repr__(self):
         return f'<Item {self.id} "{self.title}">'
+    
+    def calculate_star_rating(self):
+        reviews = self.reviews.all()
+        if not reviews:
+            return 0.0
+        total = sum(REVIEW_SCORE_MAP.get(r.score, 0) for r in reviews) # uses our REVIEW_SCORE_MAP to map each score to a number
+        return round(total / len(reviews), 2)  # rounded to 2 decimal places
 
 class Category(db.Model):
     __tablename__ = 'category'

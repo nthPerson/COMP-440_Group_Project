@@ -5,7 +5,7 @@ import ReviewForm from "./ReviewForm";
  * props.onReview? potential future callback to add review UI per item
  */
 export default function ItemList() {
-// export default function ItemList({ onReview }) {
+    // export default function ItemList({ onReview }) {
     const [items, setItems] = useState([]);
 
     const checkAuth = resp => {
@@ -44,38 +44,49 @@ export default function ItemList() {
 
     return (
         <div>
-        <h2>Available Items</h2>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-            {items.map(item => (
-            <li key={item.id}
-                style={{
-                    border: '1px solid #ddd',
-                    padding: '1rem',
-                    marginBottom: '1rem',
-                    borderRadius: '4px'
-                }}>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-                <p>
-                <strong>Price:</strong> ${parseFloat(item.price).toFixed(2)} 
-                <strong>Posted by:</strong> {item.posted_by} 
-                <strong>Date:</strong> {new Date(item.date_posted).toLocaleDateString()}
-                </p>
-                <p>
-                <strong>Categories:</strong>{' '}
-                {item.categories.map(c => c.name).join(', ')}
-                </p>
-
-                <ReviewForm
+            <h2>Available Items</h2>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+                {items.map(item => (
+                    <li key={item.id}
+                        style={{
+                            border: '1px solid #ddd',
+                            padding: '1rem',
+                            marginBottom: '1rem',
+                            borderRadius: '4px'
+                        }}>
+                        <h3>{item.title}</h3>
+                        <p>{item.description}</p>
+                        <p>
+                            <strong>Price:</strong> ${parseFloat(item.price).toFixed(2)}
+                            <strong>Posted by:</strong> {item.posted_by}
+                            <strong>Date:</strong> {new Date(item.date_posted).toLocaleDateString()}
+                        </p>
+                        <p>
+                            <strong>Categories:</strong>{' '}
+                            {item.categories.map(c => c.name).join(', ')}
+                        </p>
+                        <p>
+                            {item.star_rating.toFixed(1)}/5{' '}
+                            <span style={{ color: '#f5b301', fontSize: '1.2rem' }}>
+                                {(() => {
+                                    const full = Math.floor(item.star_rating);
+                                    const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
+                                    const empty = 5 - full - (half ? 1 : 0);
+                                    return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
+                                })()}
+                            </span>{' '}
+                            <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
+                        </p>
+                        <ReviewForm
                     itemId={item.id}
                     onReviewSubmitted={() => {
                         // Implement star rating calculation stuff here
                         // Might use window.dispatchEvent(new Event('reviewCreated')); to notify other components of the new reivew
                     }}                
                 />
-            </li>
-            ))}
-        </ul>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }

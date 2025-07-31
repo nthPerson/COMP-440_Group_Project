@@ -41,6 +41,7 @@ def create_review(item_id):
         remark=remark
     )
     db.session.add(review)
+    item.star_rating = item.calculate_star_rating() # update item's star rating and store the value back into the star review column
     db.session.commit()
     return jsonify({'message': 'Review submitted'}), 201
 
@@ -55,4 +56,10 @@ def list_reviews_for_item(item_id):
         'remark': r.remark
     } for r in reviews]), 200
 
+@reviews_bp.route('/item/<int:item_id>/rating', methods=['GET'])
+def get_star_rating(item_id):
+    item = Item.query.get_or_404(item_id)
+    rating = item.calculate_star_rating()
+    review_count = item.reviews.count()
+    return jsonify({'item_id': item.id, 'star_rating': rating, 'review_count': review_count}), 200
 
