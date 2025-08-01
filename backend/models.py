@@ -92,3 +92,22 @@ class Review(db.Model):
     def __repr__(self):
         return f'<Review {self.id} by {self.user_id} on item {self.item_id}>'
 
+
+# Social "follow" table
+class Follow(db.Model):
+    __tablename__ = 'follow'
+
+    #  The user being followed (followee)
+    user_username = db.Column(db.String(64), db.ForeignKey('user.username'), primary_key=True)
+
+    # The user doing the following (follower)
+    follower_username = db.Column(db.String(64), db.ForeignKey('user.username'), primary_key=True)
+
+    # Relationships back to user
+    user = db.relationship('User', foreign_keys=[user_username], backref=db.backref('followers', lazy='dynamic'))
+    follower = db.relationship('User', foreign_keys=[follower_username], backref=db.backref('following', lazy='dynamic'))
+
+
+
+
+
