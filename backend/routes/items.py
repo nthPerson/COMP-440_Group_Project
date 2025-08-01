@@ -159,3 +159,20 @@ def get_categories():
         'category_count': len(result),
         'categories': result
     }), 200
+
+
+@items_bp.route('/<int:item_id>', methods=['GET'])
+def get_item(item_id):
+    item = Item.query.get_or_404(item_id)
+    return jsonify({
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'price': str(item.price),
+        'posted_by': item.posted_by,
+        'date_posted': item.date_posted.isoformat(),
+        'categories': [{'name': c.name} for c in item.categories],
+        'star_rating': item.star_rating,
+        'review_count': item.reviews.count()
+    }), 200
+
