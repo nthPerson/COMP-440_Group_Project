@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NewItemForm from '../components/NewItemForm';
 import ItemList from '../components/ItemList';
-// Import optimized styles
+import SearchInterface from '../components/SearchInterface';
+// Import organized styles - separated for better maintainability
 import '../styles/global.css';
-import '../styles/HomePage.css';
+import '../styles/layout/HomePage.css';
+import '../styles/components/SearchInterface.css';
+import '../styles/components/ItemManagement.css';
 
 export default function HomePage() {
   const [error, setError] = useState('');
@@ -64,19 +67,60 @@ export default function HomePage() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
-        {/* Clean Header with Sign Out */}
-        <div className="item-management-header">
-          <div className="header-content">
-            <h1 className="page-title"> Item Management</h1>
-            <p className="page-subtitle">
-              Welcome back, <strong>{user?.firstName || 'Admin'}</strong>! Manage your inventory below.
-            </p>
+        {/* CENTERED HEADER - As Requested */}
+        <div className="page-header">
+          <h1 className="page-title">Item Management</h1>
+          <p className="page-subtitle">
+            Welcome back, <span className="user-name">{user?.firstName || 'Sara'}</span>! Manage your inventory below.
+          </p>
+        </div>
+
+        {/* Error Message Display */}
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+
+        {/* PHASE 2: Search Interface - Optimized for Performance */}
+        <div className="content-section">
+          <SearchInterface />
+        </div>
+
+        {/* Section Divider for Visual Separation */}
+        <div className="section-divider"></div>
+
+        {/* ITEM MANAGEMENT: Vertical Layout (Form Above, List Below) */}
+        <div className="item-management">
+          <div className="item-management-layout">
+            {/* New Item Form Section */}
+            <div className="item-form-section">
+              <NewItemForm />
+            </div>
+            
+            {/* Item List Section - Enhanced with Collapse Feature */}
+            <div className="item-list-section">
+              <ItemList />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* BOTTOM NAVIGATION - Sign Out Button Moved to Bottom as Requested */}
+      <div className="bottom-navigation">
+        <div className="bottom-nav-content">
+          <div className="user-info">
+            <div className="user-avatar">
+              {(user?.firstName || 'S').charAt(0).toUpperCase()}
+            </div>
+            <span>Logged in as <strong>{user?.firstName || 'Sara'}</strong></span>
           </div>
           
           <button 
             onClick={handleLogout} 
             className="btn-logout"
             disabled={isLoading}
+            title="Sign out of your account"
           >
             {isLoading ? (
               <>
@@ -84,28 +128,15 @@ export default function HomePage() {
                 Signing out...
               </>
             ) : (
-              'Sign Out'
+              <>
+                {/* Logout Icon with improved sizing */}
+                <svg className="logout-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                </svg>
+                Sign Out
+              </>
             )}
           </button>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
-
-        {/* Item Management Section */}
-        <div className="item-management">
-          <div className="item-management-grid">
-            <div className="item-form-section">
-              <NewItemForm />
-            </div>
-            <div className="item-list-section">
-              <ItemList />
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -52,19 +52,30 @@ def register():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()  # Data sent with request (login fields: username, password)
+    print(f"Login attempt with data: {data}")  # Debug print
+    
     username, password = data.get('username'), data.get('password')
     if not username or not password:
+        print("Missing credentials")  # Debug print
         return jsonify({'message': 'Missing credentials (username or password)'}), 400
     
     user = User.query.get(username)
+    print(f"User found: {user}")  # Debug print
+    
     if not user:
+        print(f"No user found with username: {username}")  # Debug print
         return jsonify({'message': 'Invalid username or password'}), 401
     
     # Verify the password hash (aka make sure the password is correct)
-    if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+    password_check = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
+    print(f"Password check result: {password_check}")  # Debug print
+    
+    if password_check:
         login_user(user)  # Initiate user session with Flask-Login package 
+        print("Login successful!")  # Debug print
         return jsonify({'message': 'Login successful!'}), 200
 
+    print("Password verification failed")  # Debug print
     return jsonify({'message': 'Invalid username or password'}), 401
 
 @auth_bp.route('/logout', methods=['POST'])

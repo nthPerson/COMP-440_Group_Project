@@ -282,10 +282,22 @@
   line-height: 1.5;
 }
 
-.item-list-section li strong {
-  color: var(--gray-800);
-  margin-right: var(--spacing-xs);
-}
+/**
+ * HOMEPAGE STYLES - LEGACY FILE
+ * 
+ * This file has been refactored and organized into:
+ * - /layout/HomePage.css - Main layout and header styles
+ * - /components/SearchInterface.css - Search component styles
+ * - /components/ItemManagement.css - Item management styles
+ * 
+ * Keeping this file for backward compatibility
+ * All styles have been moved to their respective component files
+ */
+
+/* Legacy styles - these are now handled by the new modular CSS architecture */
+/* If you see any broken styles, check the new organized CSS files */
+
+/* This file can be safely deleted once all components are confirmed working */
 
 /* ================================
    IMPROVED BUTTON STYLES
