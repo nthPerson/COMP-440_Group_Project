@@ -19,13 +19,13 @@
 
 .dashboard-content {
   flex: 1;
-  max-width: 1400px; /* Limit maximum width */
+  max-width: 1400px;
   width: 100%;
-  margin: 0 auto; /* Center the content */
+  margin: 0 auto;
   padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg); /* Reduced from xl to lg for tighter spacing */
+  gap: var(--spacing-lg); /* Consistent spacing throughout */
 }
 
 /* ================================
@@ -63,14 +63,11 @@
 }
 
 /* ================================
-   CONTENT SECTIONS
+   CONTENT SECTIONS - UNIFIED DESIGN
    ================================ */
 .content-section {
-  background: var(--white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
-  overflow: hidden; /* Prevent content overflow */
+  /* Remove all styling to eliminate double border effect */
+  /* Let child components handle their own styling */
 }
 
 /* ================================

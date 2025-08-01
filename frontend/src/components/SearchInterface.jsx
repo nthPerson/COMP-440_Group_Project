@@ -131,7 +131,7 @@ export default function SearchInterface() {
 
     return (
         <div className="search-interface">
-            <h2 className="search-title">🔍 Search Items by Category</h2>
+            <h2 className="search-title"> Search Items by Category</h2>
             
             {/* SEARCH FORM - Phase 2 Requirement */}
             <form onSubmit={handleSearchSubmit} className="search-form">

@@ -22,14 +22,14 @@
 }
 
 /* ================================
-   NEW ITEM FORM SECTION
+   NEW ITEM FORM SECTION - UNIFIED DESIGN
    ================================ */
 .item-form-section {
   background: var(--white);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm); /* Unified shadow */
+  border: none; /* Remove border for unified design */
   margin-bottom: var(--spacing-lg);
 }
 
@@ -37,19 +37,19 @@
   color: var(--gray-800);
   font-size: 1.25rem;
   margin-bottom: var(--spacing-lg);
-  text-align: center; /* Center the title */
+  text-align: center;
   font-weight: 600;
 }
 
 /* ================================
-   ITEM LIST SECTION - ENHANCED
+   ITEM LIST SECTION - UNIFIED DESIGN
    ================================ */
 .item-list-section {
   background: var(--white);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm); /* Unified shadow */
+  border: none; /* Remove border for unified design */
 }
 
 .item-list-header {
@@ -146,25 +146,38 @@
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* Force 2 columns for 2x2 layout */
   gap: var(--spacing-lg);
+  justify-items: stretch; /* Ensure cards fill the space */
 }
 
+/* Ensure items fill the grid properly */
 .item-card {
-  border: 1px solid var(--gray-200);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 12px;
   padding: var(--spacing-lg);
-  border-radius: var(--border-radius-lg);
-  background: var(--gray-50);
-  transition: all var(--transition-fast);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  width: 100%; /* Fill available width */
+  min-height: 200px; /* Ensure minimum height for consistency */
   display: flex;
   flex-direction: column;
-  height: fit-content;
+  justify-content: space-between; /* Distribute content evenly */
 }
 
 .item-card:hover {
   background: var(--white);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+  transform: translateY(-4px); /* More pronounced lift */
+  border-color: var(--primary-color); /* Highlight border */
+  scale: 1.02; /* Subtle scale effect */
+}
+
+.item-card:hover h3 {
+  color: var(--primary-dark); /* Enhanced title color on hover */
 }
 
 .item-card h3 {
@@ -236,7 +249,7 @@
 }
 
 /* ================================
-   RATING DISPLAY
+   RATING DISPLAY - UNIFIED DESIGN
    ================================ */
 .item-rating {
   display: flex;
@@ -244,9 +257,9 @@
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
   padding: var(--spacing-sm);
-  background: var(--white);
+  background: var(--gray-50); /* Subtle background for consistency */
   border-radius: var(--border-radius);
-  border: 1px solid var(--gray-200);
+  border: none; /* Remove border for unified design */
 }
 
 .rating-stars {
@@ -304,11 +317,11 @@
 }
 
 /* ================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN - 2x2 GRID
    ================================ */
 @media (max-width: 768px) {
   .item-list-section ul {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Single column on mobile */
   }
   
   .item-meta {
@@ -319,6 +332,12 @@
     flex-direction: column;
     gap: var(--spacing-sm);
     align-items: stretch;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .item-list-section ul {
+    grid-template-columns: repeat(2, 1fr); /* Maintain 2x2 on tablet */
   }
 }
 
