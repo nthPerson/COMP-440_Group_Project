@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
 from sqlalchemy import func, case
-from models import db, Item, Category, Review, User
+from models import db, Item, Category, Review, User, Follow
 
 reports_bp = Blueprint('reports', __name__)
 
@@ -43,7 +43,7 @@ def users_two_categories():
 
     Method: GET /api/reports/users_two_categories
 
-    Returns: JSON array..... 
+    Returns: JSON array containing a list of users who posted two items on the same day. 
     Security: Requires user authentication (@login_required)
     """
     cat1 = request.args.get('cat1', '').strip().lower()
@@ -82,7 +82,7 @@ def items_only_good_excellent():
 
     Method: GET /api/reports/items_only_good_excellent
 
-    Returns: JSON array.....
+    Returns: JSON array containing a list of items with only 'Excellent' reviews.
     Security: Requires user authentication (@login_required)
     """
 
@@ -115,7 +115,7 @@ def top_posters():
 
     Method: GET /api/reports/top_posters
 
-    Returns: JSON array.....
+    Returns: JSON array containing a list of the user or users (if there is a tie) who posted the most items on a given date. 
     Security: Requires user authentication (@login_required)
     """
     date_s = request.args.get('date')
@@ -149,7 +149,7 @@ def users_all_poor():
 
     Method: GET /api/reports/users_all_poor
 
-    Returns: JSON array.....
+    Returns: JSON array containing a list of users who have only posted 'Poor' reviews.
     Security: Requires user authentication (@login_required)
     """
     query = (db.session.query(
@@ -175,7 +175,7 @@ def users_no_poor_reviews_on_items():
 
     Method: GET /api/reports/users_no_poor_reviews_on_items
 
-    Returns: JSON array.....
+    Returns: JSON array containing a list of users whose posted items have never received a 'Poor' review.
     Security: Requires user authentication (@login_required)
     """
     # Build an EXISTS subquery for "there is a poor review on this item"
@@ -198,6 +198,60 @@ def users_no_poor_reviews_on_items():
 
     users = [r[0] for r in rows]
     return jsonify({'users': users}), 200
+
+
+@reports_bp.route('/users_followed_by_both', methods=['GET'])
+@login_required
+def users_followed_by_both():
+    # TODO: complete return values, etc.
+    """
+    ADDITIONAL REQUIREMENT: List all users who are followed by both user1 and user2
+    Query params: ?user1=<username>&user2=<username>
+
+    Method: GET /api/reports/users_followed_by_both
+
+    Returns: JSON array containing a list of users who are followed by both user1 and user2.
+    Security: Requires user authentication (@login_required)
+    """
+    user1 = request.args.get('user1', '').strip()
+    user2 = request.args.get('user2', '').strip()
+    if not user1 or not user2:
+        return jsonify({'error': 'Please supply user1 and user1 query parameters'}), 400
+    
+    # All users followed by user1
+    f1 = { f.user_username for f in Follow.query.filter_by(follower_username=user1).all() }
+
+    # All users followed by user2
+    f2 = { f.user_username for f in Follow.query.filter_by(follower_username=user1).all() }
+
+    # All users followed by both user1 and user2
+    mutual_followers = sorted(f1 & f2) # This uses the logical and operator (&), which works like a union here
+
+    return jsonify({'users': mutual_followers}), 200
+
+
+@reports_bp.route('/users_never_posted', methods=['GET'])
+@login_required
+def users_never_posted():
+    # TODO: complete return values, etc.
+    """
+    ADDITIONAL REQUIREMENT: List all registered users who have never posted an item
+
+    Method: GET /api/reports/users_never_posted
+
+    Returns: JSON array containing a list of users who have never posted an item.
+    Security: Requires user authentication (@login_required)
+    """
+    # Set of all users who have posted an item
+    have_posted = { r[0] for r in db.session.query(Item.posted_by).distinct().all() }
+
+    # Set of all users
+    all_users = {user.username for user in User.query.all() }
+
+    # Set of users that have never posted an item
+    never_posted = sorted(all_users - have_posted)
+
+    return jsonify({'users': never_posted}), 200
 
 
 
