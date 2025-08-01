@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ item.title }}</h1>
+<p>Categories: {{ categories|join(', ') }}</p>
+<p>Rating: {{ item.star_rating }}/5 ({{ review_count }} reviews)</p>
+<p>{{ item.description }}</p>
+{% endblock %}
