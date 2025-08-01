@@ -1,0 +1,353 @@
+/**
+ * ITEM MANAGEMENT COMPONENT STYLES
+ * Vertical Layout Design - Form Above, List Below
+ * 
+ * Purpose: Clean, organized item management with better space utilization
+ * Layout: Vertical stacking instead of side-by-side for better readability
+ */
+
+/* ================================
+   ITEM MANAGEMENT CONTAINER
+   ================================ */
+.item-management {
+  width: 100%;
+  max-width: 1200px; /* Limit maximum width */
+  margin: 0 auto; /* Center the content */
+}
+
+.item-management-layout {
+  display: flex;
+  flex-direction: column; /* Vertical layout instead of grid */
+  gap: var(--spacing-xl);
+}
+
+/* ================================
+   NEW ITEM FORM SECTION - UNIFIED DESIGN
+   ================================ */
+.item-form-section {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm); /* Unified shadow */
+  border: none; /* Remove border for unified design */
+  margin-bottom: var(--spacing-lg);
+}
+
+.item-form-section h2 {
+  color: var(--gray-800);
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ================================
+   ITEM LIST SECTION - UNIFIED DESIGN
+   ================================ */
+.item-list-section {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm); /* Unified shadow */
+  border: none; /* Remove border for unified design */
+}
+
+.item-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--gray-200);
+  margin-bottom: var(--spacing-lg);
+}
+
+.item-list-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm); /* Proper spacing between title and count */
+}
+
+.item-list-title {
+  color: var(--gray-800);
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.item-count {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: 4px 10px; /* Better padding for alignment */
+  border-radius: var(--border-radius);
+  font-size: 0.8rem; /* Slightly smaller for better proportion */
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px; /* Minimum width for single digits */
+  height: 24px; /* Fixed height for consistent alignment */
+  line-height: 1; /* Perfect vertical alignment */
+}
+
+/* ================================
+   COLLAPSIBLE ITEM LIST
+   ================================ */
+.items-collapse-toggle {
+  background: none;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.items-collapse-toggle:hover {
+  background: var(--primary-color);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.collapse-icon {
+  transition: transform var(--transition-fast);
+}
+
+.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+/* ================================
+   ITEM CARDS - ENHANCED DESIGN
+   ================================ */
+.items-container {
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.items-container.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.items-container.expanded {
+  max-height: 2000px; /* Sufficient for scrolling */
+  opacity: 1;
+}
+
+.item-list-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Force 2 columns for 2x2 layout */
+  gap: var(--spacing-lg);
+  justify-items: stretch; /* Ensure cards fill the space */
+}
+
+/* Ensure items fill the grid properly */
+.item-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 12px;
+  padding: var(--spacing-lg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  width: 100%; /* Fill available width */
+  min-height: 200px; /* Ensure minimum height for consistency */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribute content evenly */
+}
+
+.item-card:hover {
+  background: var(--white);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+  transform: translateY(-4px); /* More pronounced lift */
+  border-color: var(--primary-color); /* Highlight border */
+  scale: 1.02; /* Subtle scale effect */
+}
+
+.item-card:hover h3 {
+  color: var(--primary-dark); /* Enhanced title color on hover */
+}
+
+.item-card h3 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-sm);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.item-card p {
+  margin-bottom: var(--spacing-sm);
+  color: var(--gray-600);
+  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
+.item-card strong {
+  color: var(--gray-800);
+  margin-right: var(--spacing-xs);
+}
+
+/* ================================
+   ITEM DETAILS
+   ================================ */
+.item-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  font-size: 0.85rem;
+}
+
+.item-meta-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.meta-label {
+  color: var(--gray-500);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.meta-value {
+  color: var(--gray-800);
+  font-weight: 600;
+}
+
+.item-categories {
+  margin-bottom: var(--spacing-md);
+}
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.category-item {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* ================================
+   RATING DISPLAY - UNIFIED DESIGN
+   ================================ */
+.item-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: var(--gray-50); /* Subtle background for consistency */
+  border-radius: var(--border-radius);
+  border: none; /* Remove border for unified design */
+}
+
+.rating-stars {
+  color: #f5b301;
+  font-size: 1.1rem;
+}
+
+.rating-info {
+  font-size: 0.85rem;
+  color: var(--gray-600);
+}
+
+/* ================================
+   REVIEW FORM INTEGRATION
+   ================================ */
+.review-section {
+  border-top: 1px solid var(--gray-200);
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+/* ================================
+   EMPTY STATE
+   ================================ */
+.no-items-message {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--gray-600);
+}
+
+.no-items-message h3 {
+  color: var(--gray-700);
+  margin-bottom: var(--spacing-sm);
+}
+
+.no-items-message p {
+  font-size: 0.9rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.create-first-item {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.create-first-item:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* ================================
+   RESPONSIVE DESIGN - 2x2 GRID
+   ================================ */
+@media (max-width: 768px) {
+  .item-list-section ul {
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
+  
+  .item-meta {
+    grid-template-columns: 1fr;
+  }
+  
+  .item-list-header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: stretch;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .item-list-section ul {
+    grid-template-columns: repeat(2, 1fr); /* Maintain 2x2 on tablet */
+  }
+}
+
+@media (max-width: 480px) {
+  .item-form-section,
+  .item-list-section {
+    padding: var(--spacing-md);
+  }
+  
+  .item-card {
+    padding: var(--spacing-md);
+  }
+}

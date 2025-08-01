@@ -1,0 +1,213 @@
+/**
+ * REVIEW FORM COMPONENT STYLES
+ * Enhanced Professional Design with Color-Coded Ratings
+ * 
+ * Purpose: Beautiful, intuitive review submission interface
+ * Features: Color-coded dropdown, professional buttons, smooth animations
+ */
+
+/* ================================
+   REVIEW FORM CONTAINER
+   ================================ */
+.review-form {
+  background: var(--white);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  border: 2px solid var(--gray-200);
+  margin-top: var(--spacing-md);
+  transition: all var(--transition-normal);
+}
+
+.review-form:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+/* ================================
+   REVIEW FORM LAYOUT
+   ================================ */
+.review-form-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.review-form-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+/* ================================
+   COLOR-CODED RATING SELECT
+   ================================ */
+.rating-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.rating-label {
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.95rem;
+}
+
+.rating-select {
+  padding: 12px 18px; /* Larger padding */
+  border: 2px solid var(--gray-300);
+  border-radius: 10px; /* More rounded */
+  font-size: 1.1rem; /* Larger font */
+  font-weight: 600;
+  background: var(--white);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: 140px; /* Wider select */
+  min-height: 50px; /* Taller select */
+}
+
+/* Color-coded options based on rating */
+.rating-select.excellent {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #065f46;
+}
+
+.rating-select.good {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #1e40af;
+}
+
+.rating-select.fair {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  color: #92400e;
+}
+
+.rating-select.poor {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+  color: #991b1b;
+}
+
+.rating-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ================================
+   PROFESSIONAL SUBMIT BUTTON
+   ================================ */
+.review-submit-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: var(--white);
+  border: none;
+  padding: 14px 28px; /* Larger padding */
+  border-radius: 12px; /* More rounded */
+  font-weight: 700;
+  font-size: 1.1rem; /* Larger font */
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  min-width: 140px; /* Wider button */
+  min-height: 50px; /* Taller button */
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.review-submit-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.review-submit-btn:active {
+  transform: translateY(0);
+}
+
+.review-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ================================
+   ENHANCED TEXTAREA
+   ================================ */
+.review-textarea {
+  width: 100%;
+  padding: 16px 20px; /* Larger padding */
+  border: 2px solid var(--gray-300);
+  border-radius: 10px; /* More rounded */
+  font-family: var(--font-primary);
+  font-size: 1.1rem; /* Larger font */
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 100px; /* Taller textarea */
+  transition: all var(--transition-fast);
+  background: var(--white);
+}
+
+.review-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.review-textarea::placeholder {
+  color: var(--gray-500);
+  font-style: italic;
+}
+
+/* ================================
+   STATUS MESSAGES
+   ================================ */
+.review-message {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.review-message.success {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.review-message.error {
+  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+   ================================ */
+@media (max-width: 768px) {
+  .review-form-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .rating-select {
+    min-width: auto;
+  }
+  
+  .review-submit-btn {
+    min-width: auto;
+  }
+}

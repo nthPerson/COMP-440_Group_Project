@@ -83,4 +83,79 @@ def list_items():
   
   return jsonify(result), 200
 
- 
+
+@items_bp.route('/search', methods=['GET'])
+@login_required 
+def search_items():
+    """
+    PHASE 2 REQUIREMENT: Search Interface Implementation
+    
+    Purpose: Search for items by category name
+    Method: GET /api/items/search?category=<category_name>
+    
+    Returns: JSON array of items that match the category
+    Security: Requires user authentication (@login_required)
+    
+    Example Usage: GET /api/items/search?category=electronics
+    """
+    # Get the category parameter from query string
+    category_name = request.args.get('category', '').strip().lower()
+    
+    # Validate input - category is required
+    if not category_name:
+        return jsonify({
+            'error': 'Category parameter is required',
+            'usage': 'GET /api/items/search?category=<category_name>'
+        }), 400
+    
+    # Query database for items that have the specified category
+    # Uses SQLAlchemy join to find items connected to categories
+    items = Item.query.join(Item.categories).filter(
+        Category.name == category_name
+    ).order_by(Item.date_posted.desc()).all()
+    
+    # Format results for frontend consumption
+    result = []
+    for item in items:
+        result.append({
+            'id': item.id,
+            'title': item.title,
+            'description': item.description,
+            'price': str(item.price),
+            'posted_by': item.posted_by,
+            'date_posted': item.date_posted.isoformat(),
+            'categories': [{'name': c.name} for c in item.categories],
+            'star_rating': item.star_rating,
+            'review_count': item.reviews.count()
+        })
+    
+    # Return results with metadata
+    return jsonify({
+        'category': category_name,
+        'item_count': len(result),
+        'items': result
+    }), 200
+
+
+@items_bp.route('/categories', methods=['GET'])
+@login_required
+def get_categories():
+    """
+    PHASE 2 HELPER: Get all available categories
+    
+    Purpose: Provide list of all categories for search autocomplete/dropdown
+    Method: GET /api/items/categories
+    
+    Returns: JSON array of category names
+    Security: Requires user authentication (@login_required)
+    """
+    # Get all categories from database, ordered alphabetically
+    categories = Category.query.order_by(Category.name).all()
+    
+    # Format as simple array of category names
+    result = [{'name': category.name} for category in categories]
+    
+    return jsonify({
+        'category_count': len(result),
+        'categories': result
+    }), 200

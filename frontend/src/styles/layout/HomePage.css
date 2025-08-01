@@ -1,0 +1,261 @@
+/**
+ * HOMEPAGE LAYOUT STYLES
+ * Main Page Structure and Header Components
+ * 
+ * Purpose: Clean layout with centered content and bottom navigation
+ * Design: Professional dashboard with organized sections
+ */
+
+/* ================================
+   MAIN DASHBOARD CONTAINER
+   ================================ */
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-primary);
+}
+
+.dashboard-content {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg); /* Consistent spacing throughout */
+}
+
+/* ================================
+   CENTERED HEADER SECTION
+   ================================ */
+.page-header {
+  text-align: center; /* Center alignment as requested */
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  margin-bottom: var(--spacing-lg);
+}
+
+.page-title {
+  color: var(--gray-800);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm) 0;
+  text-align: center;
+}
+
+.page-subtitle {
+  color: var(--gray-600);
+  font-size: 1.1rem;
+  margin: 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.user-name {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* ================================
+   CONTENT SECTIONS - UNIFIED DESIGN
+   ================================ */
+.content-section {
+  /* Remove all styling to eliminate double border effect */
+  /* Let child components handle their own styling */
+}
+
+/* ================================
+   ERROR MESSAGE STYLING
+   ================================ */
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--danger-color);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ================================
+   BOTTOM NAVIGATION - IMPROVED LAYOUT
+   ================================ */
+.bottom-navigation {
+  background: var(--white);
+  border-top: 2px solid var(--gray-200);
+  padding: var(--spacing-xl) var(--spacing-lg); /* More vertical padding */
+  margin-top: auto; /* Push to bottom */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-nav-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 60px; /* Ensure adequate height */
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg); /* Increased gap for better spacing */
+  color: var(--gray-700);
+  font-size: 0.95rem;
+  flex: 1; /* Take available space */
+}
+
+.user-avatar {
+  width: 40px; /* Slightly larger avatar */
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ================================
+   SIGN OUT BUTTON - IMPROVED SPACING
+   ================================ */
+.btn-logout {
+  background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+  color: var(--white);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-xl); /* More horizontal padding */
+  border-radius: var(--border-radius-lg); /* Slightly more rounded */
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  box-shadow: var(--shadow-sm);
+  min-width: 140px; /* Ensure adequate width */
+  justify-content: center; /* Center content */
+  height: 44px; /* Fixed height for consistent appearance */
+}
+
+.btn-logout:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-logout:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.logout-icon {
+  width: 18px; /* Slightly larger icon */
+  height: 18px;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.loading {
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================================
+   SECTION DIVIDERS - REDUCED SPACING
+   ================================ */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gray-200), transparent);
+  margin: var(--spacing-lg) 0; /* Reduced from xl to lg for better spacing */
+}
+
+/* ================================
+   RESPONSIVE DESIGN - IMPROVED
+   ================================ */
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: var(--spacing-md);
+    gap: var(--spacing-md); /* Tighter spacing on mobile */
+  }
+  
+  .page-header {
+    padding: var(--spacing-lg);
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+  }
+  
+  .bottom-nav-content {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    text-align: center;
+    min-height: auto;
+    padding: var(--spacing-md) 0;
+  }
+  
+  .user-info {
+    justify-content: center;
+    gap: var(--spacing-md);
+  }
+  
+  .btn-logout {
+    min-width: 120px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-content {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+  
+  .page-header {
+    padding: var(--spacing-md);
+  }
+  
+  .page-title {
+    font-size: 1.25rem;
+  }
+  
+  .bottom-navigation {
+    padding: var(--spacing-md);
+  }
+  
+  .user-info {
+    font-size: 0.85rem;
+  }
+  
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+}
