@@ -1,6 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from config import Config
-from models import db, User  
+from models import db, User, Item
 from flask_login import LoginManager
 # from dotenv import load_dotenv  # We are using os.getenv() in config.py to get environment variables
 # load_dotenv()  # (see above comment for why this is commented out) Load environment variables from .env file we make sure .env is loaded before config class is used
@@ -53,6 +53,41 @@ app.register_blueprint(items_bp, url_prefix= '/api/items')
 
 from routes.reviews import reviews_bp
 app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
+
+
+@app.route('/')
+def home():
+    items = Item.query.order_by(Item.date_posted.desc()).all()
+    formatted = []
+    for item in items:
+        formatted.append({
+            'id': item.id,
+            'title': item.title,
+            'categories': [c.name for c in item.categories],
+            'star_rating': item.star_rating,
+            'review_count': item.reviews.count(),
+        })
+    return render_template('index.html', items=formatted)
+
+
+@app.route('/item/<int:item_id>')
+def item_detail(item_id):
+    item = Item.query.get_or_404(item_id)
+    categories = [c.name for c in item.categories]
+    reviews = item.reviews.all()
+    return render_template(
+        'item_detail.html',
+        item=item,
+        categories=categories,
+        reviews=reviews,
+        review_count=len(reviews),
+    )
+
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
 
 if __name__ == '__main__':
     app.run(host='::', port=5000, debug=True)

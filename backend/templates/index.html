@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mb-4">Items</h1>
+<div class="row row-cols-1 gy-3">
+  {% for item in items %}
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="{{ url_for('item_detail', item_id=item.id) }}" class="item-title-link">{{ item.title }}</a>
+        </h5>
+        <p class="card-text">Categories: {{ item.categories|join(', ') }}</p>
+        <p class="card-text">
+          <a href="{{ url_for('item_detail', item_id=item.id) }}" class="text-decoration-none text-warning">
+            {{ '★' * (item.star_rating|round(0,'floor')|int) }}{{ '☆' * (5-(item.star_rating|round(0,'floor')|int)) }}
+            ({{ item.review_count }} reviews)
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
