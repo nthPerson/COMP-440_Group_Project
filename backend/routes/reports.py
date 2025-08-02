@@ -38,7 +38,10 @@ def most_expensive_by_category():
 def users_two_categories():
     # TODO: complete return values, etc.
     """
-    PHASE 3 REQUIREMENT: Find users who posted two items on the same day, one in category X and one in category Y.
+    PHASE 3 REQUIREMENT: Find users who posted at least two items on the same day, one in category X and one in category Y.
+    Requires two text fields in the UI that each take an item category: search will return the user (or users) who (the 
+    same user) posted two different items on the same dat, such that one item has a category in the first text field and 
+    the other has a category in the second text field.
     Query params: ?cat1=<X>&cat2=<Y>
 
     Method: GET /api/reports/users_two_categories

@@ -1,0 +1,33 @@
+.navbar {
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  font-weight: 600;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.nav-right .nav-link {
+  margin-left: var(--spacing-md);
+  text-decoration: none;
+  color: var(--gray-700);
+  transition: color var(--transition-fast);
+}
+
+.nav-right .nav-link:hover {
+  color: var(--primary-dark);
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
