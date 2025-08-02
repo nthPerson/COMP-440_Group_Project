@@ -27,7 +27,8 @@ export default function Login() {
       });
       
       if (resp.ok) {
-        navigate('/home');
+        navigate('/');
+        // navigate('/home');
       } else {
         const { message } = await resp.json();
         setError(message || 'Login failed');

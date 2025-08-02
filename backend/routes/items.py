@@ -63,7 +63,7 @@ def create_item():
 
 
 @items_bp.route('/list_items', methods=['GET'])
-@login_required
+# No @login_required for items shown on the front page
 def list_items():
   items = Item.query.order_by(Item.date_posted.desc()).all()
   result = []
@@ -83,6 +83,23 @@ def list_items():
   
   return jsonify(result), 200
 
+
+@items_bp.route('/<int:item_id>', methods=['GET'])
+def get_item(item_id):
+  """ Return detailed information for a single item """
+  item = Item.query.get_or_404(item_id)
+  data = {
+      'id': item.id,
+      'title': item.title,
+      'description': item.description,
+      'price': str(item.price),
+      'posted_by': item.posted_by,
+      'date_posted': item.date_posted.isoformat(),
+      'categories': [{'name': c.name} for c in item.categories],
+      'star_rating': item.star_rating,
+      'review_count': item.reviews.count()
+  }
+  return jsonify(data), 200
 
 @items_bp.route('/search', methods=['GET'])
 @login_required 

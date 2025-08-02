@@ -64,7 +64,8 @@ export default function Register() {
       
       if (resp.ok) {
         setSuccess(' Account created successfully! Redirecting...');
-        setTimeout(() => navigate('/home'), 2000);
+        setTimeout(() => navigate('/'), 2000);
+        // setTimeout(() => navigate('/home'), 2000);
       } else {
         const { message } = await resp.json();
         setError(message || 'Registration failed');
