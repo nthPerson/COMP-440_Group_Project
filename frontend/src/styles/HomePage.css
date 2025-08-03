@@ -15,6 +15,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-lg);
+   background: linear-gradient(135deg, #ede9fe 0%, #f3f4f6 100%);
 }
 
 .dashboard-content {

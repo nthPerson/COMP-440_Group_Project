@@ -11,6 +11,7 @@ import Item        from './pages/Item';
 import Seller      from './pages/Seller';
 import UserProfile from './pages/UserProfile';
 import Reports     from './pages/Reports';
+import ItemManagement from './pages/ItemManagement';
 import './styles/global.css';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/profile"           element={<UserProfile />} />
           <Route path="/reports"           element={<Reports />} />
           <Route path="/login"             element={<Login />} />
+          <Route path="/item-management"   element={<ItemManagement />} />
           <Route path="/register"          element={<Register />} />
         </Routes>
       </BrowserRouter>
