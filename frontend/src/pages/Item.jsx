@@ -5,11 +5,14 @@ import ReviewForm from '../components/ReviewForm';
 import '../styles/global.css';
 import '../styles/layout/HomePage.css';
 import '../styles/components/ItemManagement.css';
+import SuggestedCarousel from '../components/SuggestedCarousel';
+
 
 export default function Item() {
   const { id } = useParams();
   const [item, setItem] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [similarItems, setSimilarItems] = useState([]);
 
   const loadItem = () => {
     fetch(`/api/items/${id}`)
@@ -27,6 +30,11 @@ export default function Item() {
     loadItem();
     loadReviews();
   }, [id]);
+  useEffect(() => {
+    if (item && item.categories.length > 0) {
+      loadSuggestedItems(item.categories[0].name); // use first category
+    }
+  }, [item]);
 
   const handleReviewSubmitted = () => {
     loadItem();
@@ -41,7 +49,15 @@ export default function Item() {
       </>
     );
   }
-
+  const loadSuggestedItems = (categoryName) => {
+    fetch(`/api/items/search?category=${encodeURIComponent(categoryName)}`) // or use /public_search
+      .then(res => res.json())
+      .then(data => {
+        const filtered = data.items.filter(i => i.id !== parseInt(id)); // exclude current item
+        setSimilarItems(filtered);
+      });
+  };
+  
   return (
     <>
       <Navbar />
@@ -86,6 +102,8 @@ export default function Item() {
               {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
             </span>
           </div>
+          {similarItems.length > 0 && <SuggestedCarousel items={similarItems} />}
+
           <h3>Reviews</h3>
           <ul>
             {reviews.map(r => (
