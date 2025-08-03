@@ -31,7 +31,7 @@ def most_expensive_by_category():
                      'date_posted': top_item.date_posted.isoformat()
                 })
 
-        return jsonify(results), 200
+    return jsonify(results), 200
     
 @reports_bp.route('/users_two_categories', methods=['GET'])
 @login_required
@@ -40,7 +40,7 @@ def users_two_categories():
     """
     PHASE 3 REQUIREMENT: Find users who posted at least two items on the same day, one in category X and one in category Y.
     Requires two text fields in the UI that each take an item category: search will return the user (or users) who (the 
-    same user) posted two different items on the same dat, such that one item has a category in the first text field and 
+    same user) posted two different items on the same day, such that one item has a category in the first text field and 
     the other has a category in the second text field.
     Query params: ?cat1=<X>&cat2=<Y>
 
@@ -102,7 +102,7 @@ def items_only_good_excellent():
               out.append({
                    'item_id': item.id,
                    'title': item.title,
-                   'review_cout': len(revs)
+                   'review_count': len(revs)
               })
     
     return jsonify({'items': out}), 200
@@ -171,7 +171,6 @@ def users_all_poor():
 @reports_bp.route('/users_no_poor_reviews_on_items', methods=['GET'])
 @login_required
 def users_no_poor_reviews_on_items():
-    # TODO: complete return values, etc.
     """
     PHASE 3 REQUIREMENT: List users who have posted items, none of which have ever received a 'Poor' review.
     Items with no reviews count as 'OK'.
@@ -206,7 +205,6 @@ def users_no_poor_reviews_on_items():
 @reports_bp.route('/users_followed_by_both', methods=['GET'])
 @login_required
 def users_followed_by_both():
-    # TODO: complete return values, etc.
     """
     ADDITIONAL REQUIREMENT: List all users who are followed by both user1 and user2
     Query params: ?user1=<username>&user2=<username>
@@ -219,13 +217,13 @@ def users_followed_by_both():
     user1 = request.args.get('user1', '').strip()
     user2 = request.args.get('user2', '').strip()
     if not user1 or not user2:
-        return jsonify({'error': 'Please supply user1 and user1 query parameters'}), 400
+        return jsonify({'error': 'Please supply user1 and user2 query parameters'}), 400
     
     # All users followed by user1
     f1 = { f.user_username for f in Follow.query.filter_by(follower_username=user1).all() }
 
     # All users followed by user2
-    f2 = { f.user_username for f in Follow.query.filter_by(follower_username=user1).all() }
+    f2 = { f.user_username for f in Follow.query.filter_by(follower_username=user2).all() }
 
     # All users followed by both user1 and user2
     mutual_followers = sorted(f1 & f2) # This uses the logical and operator (&), which works like a union here
@@ -236,7 +234,6 @@ def users_followed_by_both():
 @reports_bp.route('/users_never_posted', methods=['GET'])
 @login_required
 def users_never_posted():
-    # TODO: complete return values, etc.
     """
     ADDITIONAL REQUIREMENT: List all registered users who have never posted an item
 
