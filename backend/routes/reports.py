@@ -226,7 +226,7 @@ def users_followed_by_both():
     f2 = { f.user_username for f in Follow.query.filter_by(follower_username=user2).all() }
 
     # All users followed by both user1 and user2
-    mutual_followers = sorted(f1 & f2) # This uses the logical and operator (&), which works like a union here
+    mutual_followers = sorted(f1 & f2) # This uses the logical and operator (&), which works like an intersection here
 
     return jsonify({'users': mutual_followers}), 200
 
