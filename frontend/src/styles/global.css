@@ -212,3 +212,8 @@ h3 {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
+a:link,
+a:visited {
+  color: #000000; /* or another color like var(--gray-800) */
+  text-decoration: none;       /* optional: remove underline */
+}
