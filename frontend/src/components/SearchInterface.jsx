@@ -1,279 +1,314 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import '../styles/components/SearchInterface.css';
 
-/**
- * PHASE 2 REQUIREMENT: Search Interface Component
- * 
- * Purpose: Implement search form for finding items by category
- * Requirements Met:
- * - Form interface for category input
- * - Results displayed as table/list
- * - Real-time search as user types
- * 
- * Used in: HomePage component as part of item management
- */
-export default function SearchInterface() {
-    // State management for search functionality
-    const [searchCategory, setSearchCategory] = useState('');
+const SearchInterface = () => {
+    // Core search state
+    const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const [allCategories, setAllCategories] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
-    const [searchError, setSearchError] = useState('');
     const [hasSearched, setHasSearched] = useState(false);
+    const [searchError, setSearchError] = useState('');
+    
+    // Categories and items data
+    const [categories, setCategories] = useState([]);
+    const [allItems, setAllItems] = useState([]); // Store all items to avoid losing data
+    
+    // Search timeout for debouncing
+    const [searchTimeout, setSearchTimeout] = useState(null);
 
     /**
-     * Authentication helper - redirects to login on 401 errors
-     * This ensures search only works for authenticated users
+     * Get rating class for color coding
      */
-    const checkAuth = (resp) => {
-        if (resp.status === 401) {
-            window.location.href = '/login';
-            throw new Error('Unauthorized');
-        }
-        return resp;
+    const getRatingClass = (rating) => {
+        if (!rating) return 'rating-badge';
+        const ratingLower = rating.toLowerCase();
+        return `rating-badge rating-${ratingLower}`;
     };
 
     /**
-     * Load all available categories for autocomplete suggestions
-     * Called on component mount to populate category dropdown
+     * Format rating display
      */
-    const loadCategories = async () => {
-        try {
-            const resp = await fetch('/api/items/categories', {
-                credentials: 'include'
-            });
-            checkAuth(resp);
-            
-            if (resp.ok) {
-                const data = await resp.json();
-                setAllCategories(data.categories);
+    const formatRating = (rating) => {
+        if (!rating) return 'N/A';
+        return rating.charAt(0).toUpperCase() + rating.slice(1).toLowerCase();
+    };
+    useEffect(() => {
+        const loadInitialData = async () => {
+            try {
+                // Load categories
+                const categoriesResponse = await fetch('http://localhost:5000/api/categories');
+                if (categoriesResponse.ok) {
+                    const categoriesData = await categoriesResponse.json();
+                    setCategories(categoriesData.categories || categoriesData);
+                }
+
+                // Load all items initially to show data
+                const itemsResponse = await fetch('http://localhost:5000/api/items/search?q=');
+                if (itemsResponse.ok) {
+                    const itemsData = await itemsResponse.json();
+                    setAllItems(itemsData.items || []);
+                    setSearchResults(itemsData.items || []);
+                    setHasSearched(true);
+                }
+            } catch (error) {
+                console.error('Failed to load initial data:', error);
+                setSearchError('Failed to load data. Please refresh the page.');
             }
-        } catch (error) {
-            console.error('Failed to load categories:', error);
+        };
+        
+        loadInitialData();
+        
+        // Cleanup timeout on unmount
+        return () => {
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+        };
+    }, [searchTimeout]);
+
+    /**
+     * Handle search input with debouncing
+     */
+    const handleSearchInput = (value) => {
+        setSearchQuery(value);
+        
+        // Clear previous timeout
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
         }
+        
+        // Set new timeout for debounced search
+        const newTimeout = setTimeout(() => {
+            performSearch(value.trim());
+        }, 300); // 300ms debounce
+        
+        setSearchTimeout(newTimeout);
     };
 
     /**
-     * CORE SEARCH FUNCTIONALITY
-     * Performs the actual search API call when user enters a category
+     * Perform simple search
      */
-    const performSearch = async (category) => {
-        if (!category.trim()) {
-            setSearchResults([]);
-            setSearchError('');
-            setHasSearched(false);
-            return;
-        }
-
+    const performSearch = async (query) => {
         setIsSearching(true);
         setSearchError('');
-        setHasSearched(true);
-
+        
         try {
-            // Call the backend search API with category parameter
-            const resp = await fetch(`/api/items/search?category=${encodeURIComponent(category.trim())}`, {
-                credentials: 'include'
+            // Build simple query parameters
+            const params = new URLSearchParams({
+                q: query || '' // Send empty query to get all items
             });
-            checkAuth(resp);
-
-            const data = await resp.json();
-
-            if (resp.ok) {
-                setSearchResults(data.items);
-                if (data.items.length === 0) {
-                    setSearchError(`No items found in category "${category}"`);
-                }
-            } else {
-                setSearchError(data.error || 'Search failed');
-                setSearchResults([]);
+            
+            const response = await fetch(`http://localhost:5000/api/items/search?${params}`);
+            
+            if (!response.ok) {
+                throw new Error(`Search failed: ${response.status}`);
             }
+            
+            const data = await response.json();
+            const searchResults = data.items || [];
+            
+            setSearchResults(searchResults);
+            setHasSearched(true);
+            
         } catch (error) {
-            setSearchError('Network error. Please try again.');
-            setSearchResults([]);
             console.error('Search error:', error);
+            setSearchError('Failed to search items. Please try again.');
+            setSearchResults([]);
         } finally {
             setIsSearching(false);
         }
     };
 
     /**
-     * Handle form submission - prevents page reload and triggers search
+     * Get suggested categories based on current results
      */
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
-        performSearch(searchCategory);
+    const getSuggestedCategories = () => {
+        return categories.slice(0, 5); // Show first 5 categories as suggestions
     };
-
-    /**
-     * Handle input changes - triggers search as user types (debounced)
-     */
-    const handleCategoryChange = (e) => {
-        const value = e.target.value;
-        setSearchCategory(value);
-        
-        // Debounce search - wait 500ms after user stops typing
-        clearTimeout(window.searchTimeout);
-        window.searchTimeout = setTimeout(() => {
-            performSearch(value);
-        }, 500);
-    };
-
-    /**
-     * Load categories when component mounts
-     */
-    useEffect(() => {
-        loadCategories();
-        
-        // Cleanup timeout on unmount
-        return () => {
-            clearTimeout(window.searchTimeout);
-        };
-    }, []);
 
     return (
         <div className="search-interface">
-            <h2 className="search-title"> Search Items by Category</h2>
-            
-            {/* SEARCH FORM - Phase 2 Requirement */}
-            <form onSubmit={handleSearchSubmit} className="search-form">
+            {/* MAIN SEARCH INPUT */}
+            <div className="search-form">
                 <div className="search-input-group">
                     <input
                         type="text"
                         className="search-input"
-                        placeholder="Enter category name (e.g., electronics, books, clothing)"
-                        value={searchCategory}
-                        onChange={handleCategoryChange}
-                        list="categories-datalist"
+                        placeholder="Search items by title, description, or category..."
+                        value={searchQuery}
+                        onChange={(e) => handleSearchInput(e.target.value)}
                     />
-                    
-                    {/* Autocomplete suggestions using HTML5 datalist */}
-                    <datalist id="categories-datalist">
-                        {allCategories.map(category => (
-                            <option key={category.name} value={category.name} />
-                        ))}
-                    </datalist>
-                    
-                    <button 
-                        type="submit" 
-                        className="search-button"
-                        disabled={isSearching}
-                    >
-                        {isSearching ? 'Searching...' : 'Search'}
-                    </button>
                 </div>
-            </form>
 
-            {/* AVAILABLE CATEGORIES DISPLAY */}
-            {allCategories.length > 0 && (
-                <div className="categories-preview">
-                    <p className="categories-label">Available categories:</p>
-                    <div className="categories-tags">
-                        {allCategories.slice(0, 8).map(category => (
-                            <button
-                                key={category.name}
-                                className="category-tag"
-                                onClick={() => {
-                                    setSearchCategory(category.name);
-                                    performSearch(category.name);
-                                }}
-                            >
-                                {category.name}
-                            </button>
-                        ))}
-                        {allCategories.length > 8 && (
-                            <span className="categories-more">+{allCategories.length - 8} more</span>
-                        )}
+                {/* CATEGORY SUGGESTIONS */}
+                {getSuggestedCategories().length > 0 && !searchQuery && (
+                    <div className="category-suggestions">
+                        <p className="suggestions-label"> Popular categories:</p>
+                        <div className="categories-tags">
+                            {getSuggestedCategories().map((category, index) => (
+                                <button
+                                    key={index}
+                                    className="category-tag"
+                                    onClick={() => handleSearchInput(category.name)}
+                                >
+                                    {category.name}
+                                </button>
+                            ))}
+                        </div>
                     </div>
+                )}
+            </div>
+
+            {/* SEARCH STATUS */}
+            {isSearching && (
+                <div className="search-status searching">
+                    <div className="search-spinner"></div>
+                    <span>Searching...</span>
                 </div>
             )}
 
-            {/* ERROR MESSAGES */}
-            {searchError && (
-                <div className="search-error">
-                    {searchError}
-                </div>
-            )}
-
-            {/* SEARCH RESULTS - Phase 2 Requirement: Table/List Display */}
+            {/* SEARCH RESULTS */}
             {hasSearched && !isSearching && (
                 <div className="search-results">
-                    {searchResults.length > 0 ? (
-                        <>
-                            <h3 className="results-header">
-                                Found {searchResults.length} item{searchResults.length !== 1 ? 's' : ''} 
-                                {searchCategory && ` in "${searchCategory}"`}
-                            </h3>
-                            
-                            {/* RESULTS TABLE - Responsive design */}
-                            <div className="results-table-container">
-                                <table className="results-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Item</th>
-                                            <th>Description</th>
-                                            <th>Price</th>
-                                            <th>Posted By</th>
-                                            <th>Date</th>
-                                            <th>Rating</th>
-                                            <th>Categories</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {searchResults.map(item => (
-                                            <tr key={item.id} className="result-row">
-                                                <td className="item-title">
-                                                    <strong>{item.title}</strong>
-                                                </td>
-                                                <td className="item-description">
+                    {/* RESULTS HEADER WITH STATS */}
+                    <div className="results-header">
+                        <h3>
+                            Search Results ({searchResults.length} found)
+                            {searchQuery && ` for "${searchQuery}"`}
+                        </h3>
+                        
+                        {priceStats && (
+                            <div className="price-stats">
+                                <span> Price Range: ${priceStats.minPrice.toFixed(2)} - ${priceStats.maxPrice.toFixed(2)}</span>
+                                <span> Average: ${priceStats.avgPrice.toFixed(2)}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* ERROR MESSAGE */}
+                    {searchError && (
+                        <div className="search-error">
+                            <p> {searchError}</p>
+                        </div>
+                    )}
+
+                    {/* RESULTS TABLE */}
+                    {searchResults.length > 0 && (
+                        <div className="results-table-container">
+                            <table className="results-table">
+                                <thead>
+                                    <tr>
+                                        <th> Item</th>
+                                        <th> Description</th>
+                                        <th> Price</th>
+                                        <th> Posted By</th>
+                                        <th> Date</th>
+                                        <th> Rating</th>
+                                        <th> Categories</th>
+                                        <th> Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {searchResults.map((item, index) => (
+                                        <tr key={item.id} className="result-row">
+                                            <td>
+                                                <div className="item-title">
+                                                    {item.title}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="item-description">
                                                     {item.description.length > 100 
                                                         ? `${item.description.substring(0, 100)}...`
                                                         : item.description
                                                     }
-                                                </td>
-                                                <td className="item-price">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="item-price">
                                                     ${parseFloat(item.price).toFixed(2)}
-                                                </td>
-                                                <td className="item-posted-by">
-                                                    {item.posted_by}
-                                                </td>
-                                                <td className="item-date">
-                                                    {new Date(item.date_posted).toLocaleDateString()}
-                                                </td>
-                                                <td className="item-rating">
-                                                    <div className="rating-display">
-                                                        <span className="stars">
-                                                            {'★'.repeat(Math.floor(item.star_rating))}
-                                                            {'☆'.repeat(5 - Math.floor(item.star_rating))}
-                                                        </span>
-                                                        <span className="rating-text">
-                                                            {item.star_rating.toFixed(1)} ({item.review_count})
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td className="item-categories">
-                                                    <div className="category-badges">
-                                                        {item.categories.map(cat => (
-                                                            <span key={cat.name} className="category-badge">
-                                                                {cat.name}
+                                                    {item.isPriceHigh && (
+                                                        <span className="price-indicator expensive"> Expensive</span>
+                                                    )}
+                                                    {item.isPriceLow && (
+                                                        <span className="price-indicator cheap"> Budget</span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="item-posted-by">
+                                                    {item.postedBy?.firstName} {item.postedBy?.lastName}
+                                                    <br />
+                                                    <small>(@{item.postedBy?.username})</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="item-date">
+                                                    {new Date(item.datePosted).toLocaleDateString()}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="rating-display">
+                                                    {item.averageRating ? (
+                                                        <div className="item-rating">
+                                                            <span className={getRatingClass(item.ratingCategory || 'good')}>
+                                                                {formatRating(item.ratingCategory || 'good')}
                                                             </span>
-                                                        ))}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </>
-                    ) : (
-                        !searchError && (
-                            <div className="no-results">
-                                <p>No items found{searchCategory && ` for category "${searchCategory}"`}.</p>
-                                <p>Try searching for: {allCategories.slice(0, 3).map(c => c.name).join(', ')}</p>
-                            </div>
-                        )
+                                                            <span className="item-rating-score">
+                                                                {item.averageRating.toFixed(1)}/5
+                                                            </span>
+                                                            <span className="item-rating-text">
+                                                                ({item.reviewCount} reviews)
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="no-rating">
+                                                            <span className="rating-badge">N/A</span>
+                                                            <span className="item-rating-text">No reviews yet</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="category-badges">
+                                                    {item.categories?.map((cat, catIndex) => (
+                                                        <span key={catIndex} className="category-badge">
+                                                            {cat}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <Link 
+                                                    to={`/item/${item.id}`} 
+                                                    className="view-item-btn"
+                                                >
+                                                    View Details
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
+                    {/* EMPTY RESULTS */}
+                    {searchResults.length === 0 && !searchError && (
+                        <div className="no-results">
+                            <div className="no-results-icon"> </div>
+                            <h3>No items found</h3>
+                            <p>Try adjusting your search terms or filters</p>
+                            {searchQuery.length === 1 && (
+                                <p> Tip: Single letter searches show items starting with "{searchQuery.toUpperCase()}"</p>
+                            )}
+                        </div>
                     )}
                 </div>
             )}
         </div>
     );
-}
+};
+
+export default SearchInterface;
