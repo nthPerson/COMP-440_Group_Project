@@ -7,20 +7,42 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch('/api/auth/status', { credentials: 'include' })
-      .then(res => (res.ok ? res.json() : null))
-      .then (data => {
-        if (data && data.id) {
-          setUser(data);  // Only set a user if /api/auth/status returns all user data
-        } else {
-          setUser(null);
-        }
-      })
-      .catch(() => {
-        setUser(null);  // Explicityly set user to null on any error
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/auth/status', { credentials: 'include' })
+  //     .then(res => (res.ok ? res.json() : null))
+  //     .then(data => setUser(data))
+  //     .catch(() => {});
+  // }, []);
+  
+  // useEffect(() => {
+  //   fetch('/api/auth/status', { credentials: 'include' })
+  //     .then(res => (res.ok ? res.json() : null))
+  //     .then (data => {
+  //       if (data && data.id) {
+  //         setUser(data);  // Only set a user if /api/auth/status returns all user data
+  //       } else {
+  //         setUser(null);
+  //       }
+  //     })
+  //     .catch(() => {
+  //       setUser(null);  // Explicityly set user to null on any error
+  //     });
+  // }, []);
+
+    useEffect(() => {
+      fetch('/api/auth/status', { credentials: 'include' })
+        .then(res => res.json()) // Always parse JSON since we always return 200
+        .then (data => {
+          if (data && data.username) {
+            setUser(data);  // Only set a user if /api/auth/status returns all user data
+          } else {
+            setUser(null);
+          }
+        })
+        .catch(() => {
+          setUser(null);  // Explicitly set user to null on any error
+        });
+    }, []);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
