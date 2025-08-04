@@ -39,7 +39,8 @@
   display: flex;
   gap: var(--spacing-sm); /* Reduced gap */
   align-items: center;
-  max-width: 600px; /* Limit width to prevent expansion */
+  max-width: 800px; /* Limit width to prevent expansion */
+  width: 100%; /* Full width for better responsiveness */
 }
 
 .search-input {
