@@ -1,133 +1,126 @@
 /**
- * REVIEW FORM COMPONENT STYLES
- * Enhanced Professional Design with Color-Coded Ratings
+ * REVIEW FORM COMPONENT STYLES - MINIMALIST WHITE THEME
+ * CR440-106: Unified design with clean, professional appearance
  * 
  * Purpose: Beautiful, intuitive review submission interface
- * Features: Color-coded dropdown, professional buttons, smooth animations
+ * Features: Minimalist design, excellent readability, smooth interactions
  */
 
 /* ================================
-   REVIEW FORM CONTAINER
+   REVIEW FORM CONTAINER - UNIFIED WHITE THEME
    ================================ */
 .review-form {
   background: var(--white);
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-lg);
-  border: 2px solid var(--gray-200);
-  margin-top: var(--spacing-md);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: all var(--transition-normal);
 }
 
 .review-form:hover {
-  border-color: var(--primary-color);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* ================================
-   REVIEW FORM LAYOUT
+   FORM LAYOUT - CLEAN STRUCTURE
    ================================ */
-.review-form-header {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
 .review-form-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-md);
-  align-items: center;
-  margin-bottom: var(--spacing-md);
+  gap: 1.5rem;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
 }
 
 /* ================================
-   COLOR-CODED RATING SELECT
+   RATING SELECTION - MINIMALIST BUTTONS
    ================================ */
 .rating-select-wrapper {
-  position: relative;
   display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 300px;
 }
 
 .rating-label {
   font-weight: 600;
-  color: var(--gray-700);
+  color: var(--text-primary);
   font-size: 0.95rem;
+  margin-bottom: 0.5rem;
 }
 
-.rating-select {
-  padding: 12px 18px; /* Larger padding */
-  border: 2px solid var(--gray-300);
-  border-radius: 10px; /* More rounded */
-  font-size: 1.1rem; /* Larger font */
-  font-weight: 600;
+.rating-buttons-container {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.rating-button {
+  display: flex;  
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
   background: var(--white);
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-width: 140px; /* Wider select */
-  min-height: 50px; /* Taller select */
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-width: 80px;
+  height: 60px;
+  color: var(--text-secondary);
 }
 
-/* Color-coded options based on rating */
-.rating-select.excellent {
-  border-color: #10b981;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  color: #065f46;
+.rating-button:hover,
+.rating-button.hovered {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
 }
 
-.rating-select.good {
-  border-color: #3b82f6;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  color: #1e40af;
+.rating-button.selected {
+  border-color: var(--primary-color);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
 }
 
-.rating-select.fair {
-  border-color: #f59e0b;
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  color: #92400e;
-}
-
-.rating-select.poor {
-  border-color: #ef4444;
-  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-  color: #991b1b;
-}
-
-.rating-select:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+.rating-text {
+  font-size: 0.85rem;
+  line-height: 1;
+  font-weight: 600;
 }
 
 /* ================================
-   PROFESSIONAL SUBMIT BUTTON
+   SUBMIT BUTTON - CLEAN PROFESSIONAL STYLE
    ================================ */
 .review-submit-btn {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: var(--primary-color);
   color: var(--white);
   border: none;
-  padding: 14px 28px; /* Larger padding */
-  border-radius: 12px; /* More rounded */
-  font-weight: 700;
-  font-size: 1.1rem; /* Larger font */
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-  min-width: 140px; /* Wider button */
-  min-height: 50px; /* Taller button */
+  gap: 0.5rem;
+  height: 48px;
+  min-width: 160px;
   justify-content: center;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
-.review-submit-btn:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+.review-submit-btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
 }
 
 .review-submit-btn:active {
@@ -135,26 +128,27 @@
 }
 
 .review-submit-btn:disabled {
-  opacity: 0.6;
+  background: var(--gray-400);
   cursor: not-allowed;
   transform: none;
 }
 
 /* ================================
-   ENHANCED TEXTAREA
+   TEXTAREA - CLEAN INPUT STYLING
    ================================ */
 .review-textarea {
   width: 100%;
-  padding: 16px 20px; /* Larger padding */
-  border: 2px solid var(--gray-300);
-  border-radius: 10px; /* More rounded */
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
   font-family: var(--font-primary);
-  font-size: 1.1rem; /* Larger font */
-  line-height: 1.5;
-  resize: vertical;
-  min-height: 100px; /* Taller textarea */
-  transition: all var(--transition-fast);
   background: var(--white);
+  color: var(--text-primary);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 100px;
+  transition: all var(--transition-fast);
 }
 
 .review-textarea:focus {
@@ -164,50 +158,95 @@
 }
 
 .review-textarea::placeholder {
-  color: var(--gray-500);
+  color: var(--text-tertiary);
   font-style: italic;
 }
 
 /* ================================
-   STATUS MESSAGES
+   STATUS MESSAGES - CLEAN ALERTS
    ================================ */
 .review-message {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius);
-  font-size: 0.85rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
   font-weight: 500;
-  margin-top: var(--spacing-sm);
+  margin-top: 1rem;
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 0.5rem;
 }
 
 .review-message.success {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  background: #ecfdf5;
   color: #065f46;
-  border: 1px solid #10b981;
+  border: 1px solid #a7f3d0;
 }
 
 .review-message.error {
-  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+  background: #fef2f2;
   color: #991b1b;
-  border: 1px solid #ef4444;
+  border: 1px solid #fca5a5;
+}
+
+/* ================================
+   LOADING ANIMATION
+   ================================ */
+.btn-loading {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* ================================
    RESPONSIVE DESIGN
    ================================ */
 @media (max-width: 768px) {
+  .review-form {
+    padding: 1.5rem;
+  }
+
   .review-form-controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
-  .rating-select {
+
+  .rating-select-wrapper {
     min-width: auto;
   }
-  
+
+  .rating-buttons-container {
+    justify-content: center;
+  }
+
   .review-submit-btn {
-    min-width: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .review-form {
+    padding: 1.25rem;
+  }
+
+  .rating-button {
+    min-width: 70px;
+    height: 60px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .rating-emoji {
+    font-size: 1.1rem;
+  }
+
+  .rating-text {
+    font-size: 0.75rem;
   }
 }

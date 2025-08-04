@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import '../styles/components/ReviewForm.css';
 
 /**
- * ENHANCED REVIEW FORM COMPONENT
+ * BEAUTIFIED REVIEW FORM COMPONENT - CR440-106
  * 
  * Features:
- * - Color-coded rating dropdown (Excellent=Green, Good=Blue, Fair=Orange, Poor=Red)
- * - Professional submit button with gradient and hover effects
- * - Enhanced form styling with better spacing and typography
- * - Improved success/error message display
+ * - Clean, minimalist white design
+ * - Button-based rating selection with hover effects
+ * - Professional styling with excellent readability
+ * - Responsive design for all screen sizes
  * 
- * Purpose: Allow users to submit reviews with intuitive, professional interface
+ * Purpose: Allow users to submit reviews with beautiful, intuitive interface
  */
 export default function ReviewForm({ itemId, onReviewSubmitted }) {
     const [score, setScore] = useState('Excellent');
@@ -18,16 +18,23 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [hoveredRating, setHoveredRating] = useState('');
 
     /**
-     * Get CSS class for color-coded rating select
+     * Get rating info with colors (no emojis)
      */
-    const getRatingClass = (rating) => {
-        return rating.toLowerCase();
+    const getRatingInfo = (rating) => {
+        const ratingMap = {
+            'Excellent': { color: '#059669' },
+            'Good': { color: '#3b82f6' },
+            'Fair': { color: '#f59e0b' },
+            'Poor': { color: '#ef4444' }
+        };
+        return ratingMap[rating] || ratingMap['Excellent'];
     };
 
     /**
-     * Handle form submission with enhanced UX
+     * Handle form submission
      */
     const handleSubmit = async e => {
         e.preventDefault();
@@ -36,7 +43,6 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
         setIsSubmitting(true);
 
         try {
-            // POST payload for backend request
             const resp = await fetch(`/api/reviews/${itemId}`, {
                 method: 'POST',
                 credentials: 'include',
@@ -46,12 +52,10 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
             const body = await resp.json();
 
             if (resp.ok) {
-                // Reset fields and show success
                 setSuccess('✓ Review submitted successfully!');
                 setRemark('');
                 setScore('Excellent');
                 
-                // Notify parent component to reload reviews/stats
                 if (typeof onReviewSubmitted === 'function') {
                     onReviewSubmitted(itemId);
                 }
@@ -70,16 +74,20 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
             <div className="review-form-controls">
                 <div className="rating-select-wrapper">
                     <label className="rating-label">Rating:</label>
-                    <select 
-                        value={score} 
-                        onChange={e => setScore(e.target.value)}
-                        className={`rating-select ${getRatingClass(score)}`}
-                    >
-                        <option value="Excellent"> Excellent</option>
-                        <option value="Good"> Good</option>
-                        <option value="Fair"> Fair</option>
-                        <option value="Poor"> Poor</option>
-                    </select>
+                    <div className="rating-buttons-container">
+                        {['Excellent', 'Good', 'Fair', 'Poor'].map((rating) => (
+                            <button
+                                key={rating}
+                                type="button"
+                                className={`rating-button ${score === rating ? 'selected' : ''} ${hoveredRating === rating ? 'hovered' : ''}`}
+                                onClick={() => setScore(rating)}
+                                onMouseEnter={() => setHoveredRating(rating)}
+                                onMouseLeave={() => setHoveredRating('')}
+                            >
+                                <span className="rating-text">{rating}</span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <button 
@@ -89,12 +97,12 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
                 >
                     {isSubmitting ? (
                         <>
-                            <span className="loading"></span>
+                            <span className="btn-loading"></span>
                             Submitting...
                         </>
                     ) : (
                         <>
-                             Submit Review
+                            Submit Review
                         </>
                     )}
                 </button>
@@ -109,10 +117,9 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
                 />
             </div>
             
-            {/* Enhanced Status Messages */}
             {error && (
                 <div className="review-message error">
-                     {error}
+                    {error}
                 </div>
             )}
             {success && (
