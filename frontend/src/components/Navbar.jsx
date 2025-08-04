@@ -4,39 +4,23 @@ import '../styles/components/Navbar.css';
 import SearchInterface from './SearchInterface';
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
+  // pull the last-saved user out of sessionStorage  - if you do useState starting at null, it will always start at null state which causes the glitch
+  const [user, setUser] = useState(() => {
+    const raw = sessionStorage.getItem('user')
+    return raw ? JSON.parse(raw) : null
+  })
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   fetch('/api/auth/status', { credentials: 'include' })
-  //     .then(res => (res.ok ? res.json() : null))
-  //     .then(data => setUser(data))
-  //     .catch(() => {});
-  // }, []);
-  
-  // useEffect(() => {
-  //   fetch('/api/auth/status', { credentials: 'include' })
-  //     .then(res => (res.ok ? res.json() : null))
-  //     .then (data => {
-  //       if (data && data.id) {
-  //         setUser(data);  // Only set a user if /api/auth/status returns all user data
-  //       } else {
-  //         setUser(null);
-  //       }
-  //     })
-  //     .catch(() => {
-  //       setUser(null);  // Explicityly set user to null on any error
-  //     });
-  // }, []);
-
-    useEffect(() => {
+  useEffect(() => {
       fetch('/api/auth/status', { credentials: 'include' })
         .then(res => res.json()) // Always parse JSON since we always return 200
         .then (data => {
           if (data && data.username) {
             setUser(data);  // Only set a user if /api/auth/status returns all user data
+            sessionStorage.setItem('user', JSON.stringify(data)); // Store user data in sessionStorage
           } else {
             setUser(null);
+            sessionStorage.removeItem('user'); // Clear sessionStorage if no user
           }
         })
         .catch(() => {
