@@ -115,7 +115,7 @@ export default function ItemList() {
             <div className={`items-container ${isCollapsed ? 'collapsed' : 'expanded'}`}>
                 <ul>
                     {items.map(item => (
-                        <li key={item.id} className="item-card carousel-card">
+                        <li key={item.id} className="item-card">
                             {/* Item Title */}
                             <h3>{item.title}</h3>
                             
