@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from datetime import datetime, date
 from sqlalchemy import func
 
-items_bp = Blueprint('item', __name__)
+items_bp = Blueprint('items', __name__)
 
 @items_bp.route('/newitem', methods=['POST'])  
 @login_required

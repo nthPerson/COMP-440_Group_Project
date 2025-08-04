@@ -37,7 +37,7 @@ const SearchInterface = () => {
         const loadInitialData = async () => {
             try {
                 // Load categories
-                const categoriesResponse = await fetch('http://localhost:5000/api/categories');
+                const categoriesResponse = await fetch('http://localhost:5000/api/items/categories');
                 if (categoriesResponse.ok) {
                     const categoriesData = await categoriesResponse.json();
                     setCategories(categoriesData.categories || categoriesData);
