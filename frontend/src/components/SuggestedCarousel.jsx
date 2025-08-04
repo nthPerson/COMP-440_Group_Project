@@ -5,7 +5,7 @@ import '../styles/components/Carousel.css';
 
 export default function SuggestedCarousel({ items }) {
   const [startIndex, setStartIndex] = useState(0);
-  const visibleCount = 2; // Adjust based on screen width if needed
+  const visibleCount = 3; // Adjust based on screen width if needed
 
   const handlePrev = () => {
     setStartIndex(prev => Math.max(prev - 1, 0));
