@@ -12,6 +12,7 @@ import Seller      from './pages/Seller';
 import UserProfile from './pages/UserProfile';
 import Reports     from './pages/Reports';
 import ItemManagement from './pages/ItemManagement';
+import SearchResults from './pages/SearchResults';
 import './styles/global.css';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/login"             element={<Login />} />
           <Route path="/item-management"   element={<ItemManagement />} />
           <Route path="/register"          element={<Register />} />
+          <Route path="/search"            element={<SearchResults />} />
         </Routes>
       </BrowserRouter>
     </div>
