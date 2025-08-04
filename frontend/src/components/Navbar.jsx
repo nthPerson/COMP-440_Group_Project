@@ -10,8 +10,16 @@ export default function Navbar() {
   useEffect(() => {
     fetch('/api/auth/status', { credentials: 'include' })
       .then(res => (res.ok ? res.json() : null))
-      .then(data => setUser(data))
-      .catch(() => {});
+      .then (data => {
+        if (data && data.id) {
+          setUser(data);  // Only set a user if /api/auth/status returns all user data
+        } else {
+          setUser(null);
+        }
+      })
+      .catch(() => {
+        setUser(null);  // Explicityly set user to null on any error
+      });
   }, []);
 
   const handleLogout = async () => {
