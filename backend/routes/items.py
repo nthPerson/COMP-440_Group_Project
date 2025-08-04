@@ -155,7 +155,7 @@ def search_items():
 
 
 @items_bp.route('/categories', methods=['GET'])
-@login_required
+# Removed @login_required to allow public access
 def get_categories():
     """
     PHASE 2 HELPER: Get all available categories
