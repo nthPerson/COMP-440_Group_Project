@@ -4,7 +4,11 @@ import '../styles/components/Navbar.css';
 import SearchInterface from './SearchInterface';
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
+  // pull the last-saved user out of sessionStorage  - if you do useState starting at null, it will always start at null state which cuaause the glitch
+  const [user, setUser] = useState(() => {
+    const raw = sessionStorage.getItem('user')
+    return raw ? JSON.parse(raw) : null
+  })
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -35,8 +39,10 @@ export default function Navbar() {
         .then (data => {
           if (data && data.username) {
             setUser(data);  // Only set a user if /api/auth/status returns all user data
+            sessionStorage.setItem('user', JSON.stringify(data)); // Store user data in sessionStorage
           } else {
             setUser(null);
+            sessionStorage.removeItem('user'); // Clear sessionStorage if no user
           }
         })
         .catch(() => {

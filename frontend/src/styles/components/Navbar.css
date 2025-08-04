@@ -1,187 +1,203 @@
-/* ===============================
+/* --------------------------------------
    MAIN NAVBAR LAYOUT & BRAND
-   =============================== */
+   -------------------------------------- */
 .navbar {
-  background: var(--white);              
-  border: none;                          
-  box-shadow: none;                      
-  padding: 0 var(--spacing-lg);          
-  display: flex;                         
-  justify-content: space-between;        
-  align-items: stretch;      /* children fill navbar height */
-  position: relative;                    
-  z-index: 10;                           
-  height: 88px;              /* total navbar height */
-  overflow: visible;         /* let tabs’ bottom rounding show */
+  /* overall navbar height */
+  height: 88px;
+  /* white background behind everything */
+  background: var(--white);
+  /* remove any default borders */
+  border: none;
+  /* remove default shadows */
+  box-shadow: none;
+  /* horizontal padding inside navbar */
+  padding: 0 var(--spacing-lg);
+  /* use flexbox to lay out children */
+  display: flex;
+  /* spread children left/right */
+  justify-content: space-between;
+  /* stretch children to fill navbar height */
+  align-items: stretch;
+  /* ensure dropdowns or rounding aren’t clipped */
+  overflow: visible;
+  /* above other page content */
+  z-index: 10;
 }
 
 /* Brand/logo on the left */
 .nav-brand {
-  font-weight: 700;                      
-  color: var(--primary-color);           
-  font-size: 1.4rem;                     
-  letter-spacing: 1px;                   
-  text-decoration: none;                 
-  padding: 0 var(--spacing-md);          
-  align-self: center;        /* vertical center */
-  user-select: none;                     
-}
-
-
-/* ===============================
-   TABBED NAVIGATION STYLES
-   =============================== */
-/* Flex container for your tabs + logout */
-.nav-right {
-  display: flex;             /* horizontal row */
-  align-items: flex-end;     /* tabs hug bottom of navbar */
-  gap: 0;                    
-  position: relative;        
-  height: 100%;              /* same as navbar */
-}
-
-/* Base styles for both .nav-link (NavLink) and .nav-button (Logout) */
-.nav-link,
-.nav-button {
-  display: flex;             /* center text */
-  align-items: center;       /* vertical centering in 74px box */
-  justify-content: center;   /* horizontal centering */
-  height: 68px;              /* how tall each tab is */
-  padding: 0 40px;           /* left/right padding */
-  font-size: 1.18rem;        
-  font-weight: 700;          
+  /* vertically center inside navbar */
+  align-self: center;
+  /* bold, larger text */
+  font-weight: 700;
+  font-size: 1.4rem;
+  /* slight spacing between letters */
+  letter-spacing: 1px;
+  /* primary theme color */
   color: var(--primary-color);
-  background: transparent;    
-  border: none;              
-  text-decoration: none;     
-  box-shadow: none;          
-  cursor: pointer;           
-  transition:                
-    background 0.18s,
-    color 0.18s;
-  border-radius: 28px 28px 0 0;
-  z-index: 2;                
-  line-height: 1.3;          
-  margin: 0;                 /* remove any leftover margins */
+  /* left/right spacing around logo */
+  padding: 0 var(--spacing-md);
+  /* no underline */
+  text-decoration: none;
+  /* prevent user-select */
+  user-select: none;
 }
 
-/* Active tab */
-.nav-link.active,
-.nav-link[aria-current="page"] {
-  background: var(--primary-light);
-  color: var(--gray-800);
-  box-shadow: none;
-}
-
-/* Hover state */
-.nav-link:hover,
-.nav-button:hover {
-  color: var(--primary-dark);
-}
-
-
-/* ===============================
-   SEARCH BAR CENTERED IN NAV
-   =============================== */
+/* --------------------------------------
+   CENTERED SEARCH INTERFACE
+   -------------------------------------- */
 .nav-center {
-  flex: 1;                   /* take all middle space */
+  /* take up all leftover space */
+  flex: 1;
+  /* center children horizontally */
   display: flex;
-  justify-content: center;   
-  align-items: center;       
+  justify-content: center;
+  /* center children vertically */
+  align-items: center;
+  /* small margin so tabs don’t bump into it */
   margin: 0 var(--spacing-lg);
 }
 
-/* Hide SearchInterface extras */
+/* strip out extra bits from SearchInterface component */
 .navbar .search-interface,
 .navbar .search-form {
-  padding: 0; margin: 0; box-shadow: none; background: none;
+  margin: 0;              /* remove default margins */
+  padding: 0;             /* remove default padding */
+  background: none;       /* transparent background */
+  box-shadow: none;       /* no shadows */
 }
 .navbar .search-title,
 .navbar .categories-preview,
 .navbar .search-results,
 .navbar .search-error {
-  display: none;
+  display: none;          /* hide these sub-elements */
 }
 
-
-/* ===============================
-   EXTENDED SEARCH BAR WIDTH
-   =============================== */
-/* Parent wrappers for the input+button */
+/* make the search bar wider (max 1200px) */
 .search-interface,
 .search-form,
 .search-input-group {
-  width: 100%;
-  max-width: 1200px;         /* double previous size */
-  margin: 0 auto;
-  display: flex;             
-  align-items: center;       
+  display: flex;          /* row layout */
+  align-items: center;    /* vertical centering */
+  width: 100%;            /* fill parent */
+  max-width: 1200px;      /* cap width */
+  margin: 0 auto;         /* center horizontally */
 }
 
-/* The <select> or <input> itself */
+/* the text input itself */
 .search-input {
-  width: 100%;
-  min-width: 600px;          /* don’t shrink too far */
-  max-width: 1200px;         
-  font-size: 1.1rem;
-  padding: 0.7em 1.2em;
-  border-radius: 8px;
-  border: 1px solid var(--gray-200);
-  box-sizing: border-box;
+  flex: 1;                             /* fill available width */
+  min-width: 600px;                    /* prevent shrinking too far */
+  max-width: 1200px;                   /* cap width */
+  padding: 0.7em 1.2em;                /* inner spacing */
+  font-size: 1.1rem;                   /* slightly larger text */
+  border: 1px solid var(--gray-200);   /* light border */
+  border-radius: 8px;                  /* rounded corners */
+  box-sizing: border-box;              /* include padding in width */
 }
 
-/* tiny gap before the Search button */
+/* gap between input and button */
 .search-button {
   margin-left: var(--spacing-sm);
 }
 
+/* --------------------------------------
+   RIGHT-SIDE NAV LINKS & BUTTONS
+   -------------------------------------- */
+.nav-right {
+  display: flex;             /* row layout for tabs */
+  align-items: flex-end;     /* make tabs hug bottom of navbar */
+  height: 100%;              /* match navbar height */
+}
 
-/* ===============================
-   RESPONSIVE DESIGN
-   =============================== */
+/* base styles for both links and logout button */
+.nav-link,
+.nav-button {
+  display: flex;                       /* flex to center text */
+  align-items: center;                 /* vertical centering */
+  justify-content: center;             /* horizontal centering */
+  height: 68px;                        /* tab height */
+  padding: 0 40px;                     /* horizontal padding */
+  font-size: 1.18rem;                  /* tab font size */
+  font-weight: 700;                    /* bold text */
+  color: var(--primary-color);         /* primary color text */
+  background: transparent;             /* no bg by default */
+  border: none;                        /* no border */
+  text-decoration: none;               /* no underline */
+  cursor: pointer;                     /* pointer cursor on hover */
+  transition:
+    background 0.18s,
+    color 0.18s;                       /* smooth hover/active */
+  border-radius: 28px 28px 0 0;        /* top-rounded corners */
+  margin: 0;                           /* reset any margins */
+  box-shadow: none;                    /* no extra shadows */
+  line-height: 1.3;                    /* text line height */
+  z-index: 2;                          /* above other elements */
+}
+
+/* active tab style */
+.nav-link.active,
+.nav-link[aria-current="page"] {
+  background: var(--primary-light);    /* light primary bg */
+  color: var(--gray-800);              /* darker text */
+}
+
+/* hover state for both links and button */
+.nav-link:hover,
+.nav-button:hover {
+  color: var(--primary-dark);          /* darker shade on hover */
+}
+
+/* --------------------------------------
+   RESPONSIVE BREAKPOINTS
+   -------------------------------------- */
+/* tablets & small desktop */
 @media (max-width: 900px) {
-  .navbar { height: 64px; }
+  .navbar {
+    height: 64px;                      /* shorter navbar */
+  }
   .nav-link,
   .nav-button {
-    height: 50px;            /* shrink tabs */
-    padding: 0 18px;         
-    font-size: 1rem;         
-    border-radius: 20px 20px 4px 4px;
+    height: 50px;                      /* shorter tabs */
+    padding: 0 18px;                   /* less padding */
+    font-size: 1rem;                   /* smaller text */
+    border-radius: 20px 20px 4px 4px;  /* adjusted rounding */
   }
   .search-interface,
   .search-form,
   .search-input-group {
-    max-width: 800px;        
+    max-width: 800px;                  /* narrower search */
   }
   .search-input {
-    min-width: 300px;        
+    min-width: 300px;                  /* allow shrinking */
   }
 }
 
+/* phones */
 @media (max-width: 600px) {
   .navbar {
-    flex-direction: column;
-    align-items: stretch;
-    height: auto;
+    flex-direction: column;            /* stack brand, search, tabs */
+    align-items: stretch;              /* full width children */
+    height: auto;                      /* let content dictate height */
   }
   .nav-right {
-    gap: var(--spacing-sm);
-    padding-bottom: var(--spacing-sm);
-    justify-content: flex-start;
+    gap: var(--spacing-sm);            /* space between tabs */
+    padding-bottom: var(--spacing-sm); /* extra bottom padding */
+    justify-content: flex-start;       /* left-align tabs */
   }
   .nav-link,
   .nav-button {
-    height: 48px;
-    padding: 0 10px;
-    font-size: 0.95rem;
-    border-radius: 16px 16px 4px 4px;
+    height: 48px;                      /* even shorter tabs */
+    padding: 0 10px;                   /* minimal padding */
+    font-size: 0.95rem;                /* smaller text */
+    border-radius: 16px 16px 4px 4px;  /* tighter rounding */
   }
   .search-interface,
   .search-form,
   .search-input-group {
-    max-width: 100%;        
+    max-width: 100%;                   /* full width */
   }
   .search-input {
-    min-width: 100%;        
+    min-width: 100%;                   /* full width input */
   }
 }
