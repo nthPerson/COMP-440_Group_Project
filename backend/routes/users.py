@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import db, User
-from flask_login import login_required  # Ensures that only logged-in users can access CRUD APIs
+from flask_login import login_required, current_user  # Ensures that only logged-in users can access CRUD APIs
 
 users_bp = Blueprint('users', __name__)
 
@@ -63,3 +63,28 @@ def delete_user(username):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'message': 'User deleted'})
+
+@users_bp.route('/profile', methods=['GET'])
+@login_required
+def get_profile():
+    return jsonify({
+        'username': current_user.username,
+        'first_name': current_user.firstName,
+        'last_name': current_user.lastName,
+        'email': current_user.email
+    })
+
+@users_bp.route('/profile', methods=['POST'])
+@login_required
+def update_profile():
+    form = request.form
+
+    current_user.firstName = form.get('first_name', current_user.firstName)
+    current_user.lastName = form.get('last_name', current_user.lastName)
+    current_user.username = form.get('username', current_user.username)
+    current_user.email = form.get('email', current_user.email)
+
+    db.session.commit()
+
+    return jsonify({
+        'message': 'Profile updated successfully'}), 200
