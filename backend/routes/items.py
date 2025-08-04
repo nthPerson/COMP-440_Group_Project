@@ -102,7 +102,7 @@ def get_item(item_id):
   return jsonify(data), 200
 
 @items_bp.route('/search', methods=['GET'])
-@login_required 
+# @login_required might not need this bc we laso want unauthenticated users to be able to search items
 def search_items():
     """
     PHASE 2 REQUIREMENT: Search Interface Implementation
