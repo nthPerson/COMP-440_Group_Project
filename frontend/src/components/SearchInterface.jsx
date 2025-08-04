@@ -10,12 +10,6 @@ const SearchInterface = () => {
     const [hasSearched, setHasSearched] = useState(false);
     const [searchError, setSearchError] = useState('');
     
-    // Advanced search state
-    const [showAdvanced, setShowAdvanced] = useState(false);
-    const [sortBy, setSortBy] = useState('relevance');
-    const [priceFilter, setPriceFilter] = useState({ min: '', max: '' });
-    const [expenseFilter, setExpenseFilter] = useState('all'); // New: expensive/cheap filter
-    
     // Categories and items data
     const [categories, setCategories] = useState([]);
     const [allItems, setAllItems] = useState([]); // Store all items to avoid losing data
@@ -24,8 +18,21 @@ const SearchInterface = () => {
     const [searchTimeout, setSearchTimeout] = useState(null);
 
     /**
-     * Load initial data (categories and all items)
+     * Get rating class for color coding
      */
+    const getRatingClass = (rating) => {
+        if (!rating) return 'rating-badge';
+        const ratingLower = rating.toLowerCase();
+        return `rating-badge rating-${ratingLower}`;
+    };
+
+    /**
+     * Format rating display
+     */
+    const formatRating = (rating) => {
+        if (!rating) return 'N/A';
+        return rating.charAt(0).toUpperCase() + rating.slice(1).toLowerCase();
+    };
     useEffect(() => {
         const loadInitialData = async () => {
             try {
@@ -61,16 +68,7 @@ const SearchInterface = () => {
     }, [searchTimeout]);
 
     /**
-     * Handle filter changes - re-search when filters change
-     */
-    useEffect(() => {
-        if (hasSearched) {
-            handleFilterChange();
-        }
-    }, [sortBy, priceFilter.min, priceFilter.max, expenseFilter]);
-
-    /**
-     * Handle search input with debouncing and partial matching
+     * Handle search input with debouncing
      */
     const handleSearchInput = (value) => {
         setSearchQuery(value);
@@ -82,29 +80,24 @@ const SearchInterface = () => {
         
         // Set new timeout for debounced search
         const newTimeout = setTimeout(() => {
-            performAdvancedSearch(value.trim());
+            performSearch(value.trim());
         }, 300); // 300ms debounce
         
         setSearchTimeout(newTimeout);
     };
 
     /**
-     * Perform the advanced search with all filters and partial matching
+     * Perform simple search
      */
-    const performAdvancedSearch = async (query) => {
+    const performSearch = async (query) => {
         setIsSearching(true);
         setSearchError('');
         
         try {
-            // Build query parameters
+            // Build simple query parameters
             const params = new URLSearchParams({
-                q: query || '', // Send empty query to get all items
-                sort: sortBy
+                q: query || '' // Send empty query to get all items
             });
-            
-            // Add price filters if provided
-            if (priceFilter.min) params.append('minPrice', priceFilter.min);
-            if (priceFilter.max) params.append('maxPrice', priceFilter.max);
             
             const response = await fetch(`http://localhost:5000/api/items/search?${params}`);
             
@@ -113,16 +106,9 @@ const SearchInterface = () => {
             }
             
             const data = await response.json();
-            let filteredResults = data.items || [];
+            const searchResults = data.items || [];
             
-            // Apply expense filter on frontend
-            if (expenseFilter === 'expensive') {
-                filteredResults = filteredResults.filter(item => item.isPriceHigh);
-            } else if (expenseFilter === 'cheap') {
-                filteredResults = filteredResults.filter(item => item.isPriceLow);
-            }
-            
-            setSearchResults(filteredResults);
+            setSearchResults(searchResults);
             setHasSearched(true);
             
         } catch (error) {
@@ -135,43 +121,14 @@ const SearchInterface = () => {
     };
 
     /**
-     * Handle filter changes by re-running search
-     */
-    const handleFilterChange = () => {
-        performAdvancedSearch(searchQuery);
-    };
-
-    /**
      * Get suggested categories based on current results
      */
     const getSuggestedCategories = () => {
         return categories.slice(0, 5); // Show first 5 categories as suggestions
     };
 
-    /**
-     * Calculate price statistics from search results
-     */
-    const getPriceStats = () => {
-        if (searchResults.length === 0) return null;
-        
-        const prices = searchResults.map(item => parseFloat(item.price));
-        return {
-            minPrice: Math.min(...prices),
-            maxPrice: Math.max(...prices),
-            avgPrice: prices.reduce((sum, price) => sum + price, 0) / prices.length
-        };
-    };
-
-    const priceStats = getPriceStats();
-
     return (
         <div className="search-interface">
-            {/* ENHANCED SEARCH HEADER */}
-            <div className="search-header">
-                <h2>🔍 Advanced Item Search</h2>
-                <p>Search by keywords, filter by price, and sort results</p>
-            </div>
-
             {/* MAIN SEARCH INPUT */}
             <div className="search-form">
                 <div className="search-input-group">
@@ -182,71 +139,7 @@ const SearchInterface = () => {
                         value={searchQuery}
                         onChange={(e) => handleSearchInput(e.target.value)}
                     />
-                    
-                    <button 
-                        className="advanced-toggle-btn"
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        type="button"
-                    >
-                        {showAdvanced ? 'Hide Filters' : 'Advanced'}
-                    </button>
                 </div>
-
-                                {/* ADVANCED FILTERS */}
-                {showAdvanced && (
-                    <div className="advanced-filters">
-                        <div className="filter-row">
-                            <div className="price-filter">
-                                <label> Price Range:</label>
-                                <div className="price-inputs">
-                                    <input
-                                        type="number"
-                                        placeholder="Min $"
-                                        value={priceFilter.min}
-                                        onChange={(e) => setPriceFilter({...priceFilter, min: e.target.value})}
-                                        className="price-input"
-                                    />
-                                    <span>to</span>
-                                    <input
-                                        type="number"
-                                        placeholder="Max $"
-                                        value={priceFilter.max}
-                                        onChange={(e) => setPriceFilter({...priceFilter, max: e.target.value})}
-                                        className="price-input"
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div className="expense-filter">
-                                <label> Price Category:</label>
-                                <select 
-                                    value={expenseFilter} 
-                                    onChange={(e) => setExpenseFilter(e.target.value)}
-                                    className="expense-select"
-                                >
-                                    <option value="all"> All Items</option>
-                                    <option value="expensive"> Expensive Items</option>
-                                    <option value="cheap"> Budget Items</option>
-                                </select>
-                            </div>
-                            
-                            <div className="sort-filter">
-                                <label> Sort by:</label>
-                                <select 
-                                    value={sortBy} 
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                    className="sort-select"
-                                >
-                                    <option value="relevance"> Relevance</option>
-                                    <option value="price-high"> Price: High to Low</option>
-                                    <option value="price-low"> Price: Low to High</option>
-                                    <option value="date-new"> Newest First</option>
-                                    <option value="date-old"> Oldest First</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 {/* CATEGORY SUGGESTIONS */}
                 {getSuggestedCategories().length > 0 && !searchQuery && (
@@ -357,18 +250,24 @@ const SearchInterface = () => {
                                             </td>
                                             <td>
                                                 <div className="rating-display">
-                                                    <div className="stars">
-                                                        {item.averageRating 
-                                                            ? '⭐'.repeat(Math.round(item.averageRating))
-                                                            : '☆☆☆☆☆'
-                                                        }
-                                                    </div>
-                                                    <div className="rating-text">
-                                                        {item.averageRating 
-                                                            ? `${item.averageRating.toFixed(1)} (${item.reviewCount} reviews)`
-                                                            : 'No reviews'
-                                                        }
-                                                    </div>
+                                                    {item.averageRating ? (
+                                                        <div className="item-rating">
+                                                            <span className={getRatingClass(item.ratingCategory || 'good')}>
+                                                                {formatRating(item.ratingCategory || 'good')}
+                                                            </span>
+                                                            <span className="item-rating-score">
+                                                                {item.averageRating.toFixed(1)}/5
+                                                            </span>
+                                                            <span className="item-rating-text">
+                                                                ({item.reviewCount} reviews)
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="no-rating">
+                                                            <span className="rating-badge">N/A</span>
+                                                            <span className="item-rating-text">No reviews yet</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </td>
                                             <td>
