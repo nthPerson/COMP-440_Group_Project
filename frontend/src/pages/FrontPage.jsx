@@ -10,12 +10,13 @@ export default function FrontPage() {
   // const [items, setItems] = useState([]);
   const { items, isLoading, error } = useItemsList();
 
-  useEffect(() => {
-    fetch('/api/items/list_items')
-      .then(res => res.json())
-      .then(data => setItems(data))
-      .catch(() => {});
-  }, []);
+  // ItemsList context now handles loading items list
+  // useEffect(() => {
+  //   fetch('/api/items/list_items')
+  //     .then(res => res.json())
+  //     .then(data => setItems(data))
+  //     .catch(() => {});
+  // }, []);
 
   return (
     <>
