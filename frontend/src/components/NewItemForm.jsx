@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useItemsList } from "../contexts/ItemsListContext";
 import '../styles/components/NewItemForm.css';
 
 /**
@@ -14,6 +15,7 @@ import '../styles/components/NewItemForm.css';
  * Purpose: Allow users to create new items with a professional, intuitive interface
  */
 export default function NewItemForm() {
+    const { addItem } = useItemsList();
     const [form, setForm] = useState({
         title: '',
         description: '',
@@ -39,10 +41,10 @@ export default function NewItemForm() {
      */
     const handleSubmit = async e => {
         e.preventDefault();
+        setIsSubmitting(true);
         setError('');
         setSuccess('');
-        setIsSubmitting(true);
-
+        
         try {
             // Parse comma-separated list of categories into array of strings
             const cats = form.categories
@@ -76,6 +78,7 @@ export default function NewItemForm() {
                 return;
             }
 
+
             // POST request to the backend create_item() route
             const resp = await fetch('/api/items/newitem', {
                 method: 'POST',
@@ -86,6 +89,10 @@ export default function NewItemForm() {
             const data = await resp.json();
 
             if (resp.ok) {
+                // Add the new item to the global item list state immediately
+                if (data.item) {
+                    addItem(data.item);
+                }
                 // Clear form and show success
                 setForm({ title: '', description: '', price: '', categories: '' });
                 setSuccess('Item created successfully! It will appear in the list below.');
@@ -93,7 +100,7 @@ export default function NewItemForm() {
                 // Create new event to let parent page know that a new item has been created
                 window.dispatchEvent(new Event('itemCreated'));
             } else {
-                // Show server-side error with emoji
+                // Show server-side error
                 setError(`${data.error || 'Failed to create item'}`);
             }
         } catch (err) {
