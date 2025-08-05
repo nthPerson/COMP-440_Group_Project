@@ -30,6 +30,7 @@ export default function SearchInterface() {
 
   return (
     <div className="search-interface">
+      {/* MAIN SEARCH INPUT */}
       <form onSubmit={handleSearchSubmit} className="search-form">
         <input
           type="text"

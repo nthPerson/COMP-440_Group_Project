@@ -97,12 +97,3 @@ def status():
         }), 200
     else:
         return jsonify({'username': None}), 200  # Return success in both cases to allow for unauthenticated user check on app launch
-
-
-
-    # return jsonify({
-    #     'username': current_user.username,
-    #     'firstName': current_user.firstName,
-    #     'lastName': current_user.lastName,
-    #     'email': current_user.email
-    # }), 200

@@ -7,7 +7,7 @@
  */
 
 /* ================================
-   AUTH FORM CONTAINER
+   AUTH FORM CONTAINER - WHITE BACKGROUND
    ================================ */
 .auth-container {
   min-height: 100vh;
@@ -15,6 +15,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-lg);
+  background: #ffffff !important;
 }
 
 .auth-content {
@@ -22,14 +23,26 @@
   max-width: 600px;
   min-width: 520px;
   padding: var(--spacing-2xl) 3.5rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  background: #ffffff !important;
   border-radius: var(--border-radius-xl);
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--gray-200);
   /* Smooth entrance animation */
   animation: slideUpAuth 0.6s ease-out;
   position: relative;
+}
+
+/* Fix invisible text in auth forms */
+.auth-container h1,
+.auth-container h2,
+.auth-container h3,
+.auth-container p,
+.auth-container span,
+.auth-container button,
+.auth-btn,
+.auth-btn-primary {
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
 }
 
 /* ================================
@@ -198,8 +211,9 @@
 }
 
 .auth-btn-primary {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: var(--white);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   box-shadow: var(--shadow-md);
   width: 100%;
   margin-bottom: var(--spacing-md);

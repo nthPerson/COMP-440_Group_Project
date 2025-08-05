@@ -27,6 +27,9 @@ export default function Login() {
       });
       
       if (resp.ok) {
+        //sessionStorage.setItem('user', JSON.stringify({ username: form.username })); // Store user data in sessionStorage
+        const data = await resp.json();
+        sessionStorage.setItem('user', JSON.stringify(data));
         navigate('/');
         // navigate('/home');
       } else {
