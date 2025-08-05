@@ -11,6 +11,7 @@ import Seller      from './pages/Seller';
 import UserProfile from './pages/UserProfile';
 import Reports     from './pages/Reports';
 import ItemManagement from './pages/ItemManagement';
+import SearchResults from './pages/SearchResults';
 import './styles/global.css';
 
 // import LandingPage from './pages/LandingPage';  // Deprecated (from single-page UI)
@@ -30,7 +31,8 @@ function App() {
             <Route path="/login"             element={<Login />} />
             <Route path="/item-management"   element={<ItemManagement />} />
             <Route path="/register"          element={<Register />} />
-          </Routes>
+            <Route path="/search"            element={<SearchResults />} />
+        </Routes>
         </BrowserRouter>
       </ItemsListProvider>
     </div>
