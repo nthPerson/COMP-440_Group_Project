@@ -24,7 +24,7 @@ export const ItemsListProvider = ({ children }) => {
             if (!res.ok) {
                 throw new Error(`HTTP error! Status: ${res.status}`);
             }
-            const data = await res.json()
+            const data = await res.json();
             setItems(data);
             setLastFetch(Date.now());
         } catch (error) {
