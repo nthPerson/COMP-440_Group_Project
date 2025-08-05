@@ -12,8 +12,11 @@ import ReviewForm from "./ReviewForm";
  * 
  * Purpose: Display all available items with reviews in an organized, collapsible format
  */
-export default function ItemList() {
-    const [items, setItems] = useState([]);
+export default function ItemList({ items: overrideItems = null }) {
+    // NEW: Accept an optional `overrideItems` prop. If provided, we will render
+    // those items instead of fetching from `/api/items/list_items`.
+    // This enables reuse for search results.
+    const [items, setItems] = useState(overrideItems || []);
     const [isCollapsed, setIsCollapsed] = useState(false); // Collapse state for space management
 
     /**
@@ -33,6 +36,9 @@ export default function ItemList() {
      * Called on component mount and when new items are created
      */
     const loadItems = async () => {
+        // NEW: If overrideItems is provided, skip the network fetch
+        if (overrideItems) return;
+
         try {
             const resp = await fetch('/api/items/list_items', {
                 credentials: 'include'
