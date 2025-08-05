@@ -1,124 +1,103 @@
+
 import React, { useEffect, useState } from 'react';
 // useLocation gives us access to the current URL (including query string)
-// useNavigate lets us redirect (e.g. to /login or to the item detail page)
-import { useLocation,useNavigate } from 'react-router-dom';
+// useNavigate lets us redirect (e.g. to item detail page)
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ItemList from '../components/ItemList';
+import '../styles/components/SearchResults.css';
 
-/* this not really a "page", its what the search results page will look like 
-this is the user interface when you type in the search bar and click enter and what will show up
+/*
+  This isn’t really a "page"—it’s the interface shown when you type into the
+  search bar and hit Enter (or click a category). It:
+    • Reads the `?category=` query param
+    • Tries the server-side category search endpoint
+    • Falls back to a client-side title filter if needed
+    • Renders either a message or a list of items via <ItemList>
 */
 
-//custom hook to turn the URL query string into a usable object
+// Hook: parse URL query string into a URLSearchParams object
 function useQuery() {
-    return new URLSearchParams(useLocation().search);
+  return new URLSearchParams(useLocation().search);
 }
-
 
 export default function SearchResults() {
-    //VARIABLES
-    const navigate = useNavigate();                        // useNavigate hook to redirect users
-    const query = useQuery();                              // useQuery hook to access URL query parameters
-    const searchTerm    = query.get('category')?.trim()    // Read ?category=… from the URL
-                    || '';
+  const navigate   = useNavigate();                        // for redirects
+  const query      = useQuery();                          // to read `?category=`
+  const searchTerm = query.get('category')?.trim() || ''; // the user’s term
 
-    /*Local state of our list of items, loading state, and any error message
-        -you can think of this as the "state" of the search results page
-        -you can use this to conditionally render spinners, messages, or result list
-    */
-    const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);  
+  // Local component state
+  const [items,   setItems]   = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState('');
 
- 
-    //runs whenever 'searchTerm' changes (e.g. when the user hits the search bar or clicks a category)
-    useEffect(() => {
-        if (!searchTerm) return; //if no search termm inside, do nothing
+  // Fetch & filter logic whenever the searchTerm changes
+  useEffect(() => {
+    if (!searchTerm) {
+      setLoading(false);
+      return;
+    }
 
-        setLoading(true);   //set loading state to true
-        setError('');       //clear any previous error
+    setLoading(true);
+    setError('');
 
-        //1. First try the server-side category search API first
-        fetch( 
-            /*encodeURIComponent() makes sure spaces or special characters in search term don't break URL
-                -example "Holland Lop Tonka" --> Holland%20Lop%20Tonka
-            */
-            '/api/items/search?category=${encodeURIComponent(searchTerm)}',
-            { credentials: 'include' } //send login credentials to backend session manager (Flask-Login)
-        )
-
-            .then(checkAuth) //check for 401 error message or redirect if not logged in
-            .then(responseA => {
-                if (!responseA.ok) throw new Error('Search API error');
-                    return responseA.json();
+    // 1) Try server-side category search
+    fetch(`/api/items/search?category=${encodeURIComponent(searchTerm)}`)
+      .then(res => {
+        if (!res.ok) throw new Error(`Search API error (${res.status})`);
+        return res.json();
+      })
+      .then(data => {
+        if (data.item_count > 0) {
+          // category hits
+          setItems(data.items);
+        } else {
+          // 2) Fallback: fetch all items and filter by title
+          return fetch('/api/items/list_items')
+            .then(res2 => {
+              if (!res2.ok) throw new Error(`List-items API error (${res2.status})`);
+              return res2.json();
             })
-            .then(data => {
-                if (data.item_count > 0){
-                    //found category matches
-                    setItems(data.items); //set items to the list of items returned by the API
-                }
-                else {
-                    //2. FALLBACK: fetch everything and filter by title (for free-text searches)
-                    return fetch('/api/items/list_items')
-                        .then(responseB => {
-                            if (!responseB.ok) throw new Error ('List-items API error');
-                            return responseB.json();
-                        })
-                        .then(allItems => {
-                            const matched = allItems.filter(item =>
-                                item.title.toLowerCase().includes(searchTerm.toLowerCase())
-                            );
-                            setItems(matched); //set items to the filtered list
-                        });
-                }
-            })
-            .catch(err => setError(err.message)) //show any fetch or parsing error
-            .finally(() => setLoading(false));   //stop loading no matter what
-    }, [term]);
+            .then(allItems => {
+              const matched = allItems.filter(item =>
+                item.title.toLowerCase().includes(searchTerm.toLowerCase())
+              );
+              setItems(matched);
+            });
+        }
+      })
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [searchTerm]);
 
-    //RETURNING - SHOWING THE PAGE
-    return(
-        <div className="search-results-page">
-            {/* if nothing typed yet but shouldn't really have this executed */}
-            {!searchTermterm && <p>Please enter something to search.</p>}
+  return (
+    <>
+      <Navbar />
 
-            {/* if we have search term, always show this block */}
-            {searchTermterm && (
-                <>
-                    {/* Header always shows, even if there are zero matches */}
-                    <h1>Search Results for "{searchTerm}"</h1>
+      <div className="search-results-page">
+        {/* Prompt when no term provided */}
+        {!searchTerm && <p>Please enter something to search.</p>}
 
-                    {loading && <p> Loading Results... </p>} {/* show loading message while fetching data */}
-                    {error && <p className = "error">{error}</p>} {/* show error message if any */}
+        {/* Once a term exists, show this block */}
+        {searchTerm && (
+          <>
+            <h1>Search Results for "{searchTerm}"</h1>
 
-                    {/* If no items found, show a message */}
-                    {!loading && !error && items.length === 0 && (
-                        <ul className="item-list">
-                            {items.map(item => (
-                                <li key={item.id} className="item-card">
-                                    {/* clicking the title navigates to the item-detail page */}
-                                    <h2
-                                        className="item-title clickable"
-                                        onClick={() => navigate('/item/${item.id}')}
-                                    >
-                                        {item.title}
-                                    </h2>
-                                    <p>{item.description}</p>
-                                    <p><strong>Price:</strong> ${parseFloat(item.price).toFixed(2)}</p>
-                  <p><strong>Posted by:</strong> {item.posted_by}</p>
-                  <p><strong>Date:</strong> {new Date(item.date_posted).toLocaleDateString()}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
-      )}
-    </div>
+            {loading && <p>Loading results...</p>}
+            {error   && <p className="error">{error}</p>}
+
+            {/* No matches */}
+            {!loading && !error && items.length === 0 && (
+              <p>Search results for "{searchTerm}" not found or doesn’t exist.</p>
+            )}
+
+            {/* Render items */}
+            {!loading && !error && items.length > 0 && (
+              <ItemList items={items} />
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 }
-    
-
-
-
-
-
