@@ -134,8 +134,9 @@ export default function UserProfile() {
             )}
           </form>
           <div className="items-section">
-            <h2>My Items</h2>
+            
             <div className="item-grid-container">
+            <h2>My Items</h2>
               {myItems.length === 0 ? (
                 <p>You haven’t posted any items yet.</p>
               ) : (
