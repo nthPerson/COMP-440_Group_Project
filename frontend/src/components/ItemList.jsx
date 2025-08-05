@@ -54,7 +54,7 @@ export default function ItemList() {
     };
 
     if (isLoading && items.length === 0) {
-        return <div className="laoding-container">Loading items...</div>;
+        return <div className="loading-container">Loading items...</div>;
     }
 
     if (error) {
