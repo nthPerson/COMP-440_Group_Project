@@ -16,7 +16,13 @@ export default function UserProfile() {
   });
   const [status, setStatus] = useState({ msg: "", type: "" });
   const [myItems, setMyItems] = useState([]);
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = myItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(myItems.length / itemsPerPage);
+
 
   useEffect(() => {
     async function fetchUserProfileAndItems() {
@@ -25,7 +31,7 @@ export default function UserProfile() {
           axios.get("/api/users/profile"),
           axios.get("/api/items/my_items")
         ]);
-  
+
         setUserData(profileRes.data);
         setForm({
           firstName: profileRes.data.first_name || "",
@@ -33,17 +39,17 @@ export default function UserProfile() {
           username: profileRes.data.username || "",
           email: profileRes.data.email || ""
         });
-  
-        setMyItems(myItemsRes.data); 
+
+        setMyItems(myItemsRes.data);
       } catch (err) {
         console.error("Failed to fetch profile or items", err);
         setStatus({ msg: "Failed to load profile or items", type: "error" });
       }
     }
-  
+
     fetchUserProfileAndItems();
   }, []);
-  
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -129,18 +135,34 @@ export default function UserProfile() {
           </form>
           <div className="items-section">
             <h2>My Items</h2>
-            <div className="item-grid-container"> {myItems.length === 0 ? (
-              <p>You haven’t posted any items yet.</p>
-            ) : (
-              <div className="item-card-grid">
-                {myItems.map(item => (
-                  <ItemCard key={item.id} item={item} />
-                ))}
-              </div>
-            )}
+            <div className="item-grid-container">
+              {myItems.length === 0 ? (
+                <p>You haven’t posted any items yet.</p>
+              ) : (
+                <>
+                  <div className="item-card-grid">
+                    {currentItems.map(item => (
+                      <ItemCard key={item.id} item={item} />
+                    ))}
+                  </div>
+                  {totalPages > 0 && (
+                    <div className="pagination-controls">
+                      {[...Array(totalPages)].map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentPage(index + 1)}
+                          className={currentPage === index + 1 ? 'active-page' : ''}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-           
           </div>
+
 
         </div>
       </div>
