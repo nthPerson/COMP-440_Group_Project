@@ -15,6 +15,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-lg);
+   background: #ffffff !important;
 }
 
 .dashboard-content {

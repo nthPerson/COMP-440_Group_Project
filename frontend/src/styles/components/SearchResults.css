@@ -1,0 +1,22 @@
+/* src/pages/SearchResults.css */
+
+.search-results-page {
+  padding: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.search-results-page h1 {
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+}
+
+.search-results-page p {
+  margin: 0.75rem 0;
+}
+
+.search-results-page .error {
+  color: #c0392b;
+  font-weight: bold;
+}

@@ -85,12 +85,15 @@ def logout():
     return jsonify({'message': "User has been logged out"}), 200
 
 @auth_bp.route('/status', methods=['GET'])
-@login_required
+# Removed @login_required to allow public access
 def status():
     """Check if user is authenticated and return user info"""
-    return jsonify({
-        'username': current_user.username,
-        'firstName': current_user.firstName,
-        'lastName': current_user.lastName,
-        'email': current_user.email
-    }), 200
+    if current_user.is_authenticated:
+        return jsonify({
+            'username': current_user.username,
+            'firstName': current_user.firstName,
+            'lastName': current_user.lastName,
+            'email': current_user.email
+        }), 200
+    else:
+        return jsonify({'username': None}), 200  # Return success in both cases to allow for unauthenticated user check on app launch
