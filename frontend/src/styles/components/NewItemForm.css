@@ -68,7 +68,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
@@ -100,4 +100,129 @@
   margin-bottom: 8px;
   font-weight: 500;
   color: #333;
+}
+
+/* Category Preview Styles */
+.category-preview {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.preview-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 0.75rem;
+}
+
+.preview-icon-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: white;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.preview-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: #f7fafc;
+  padding: 8px;
+}
+
+.preview-text {
+  flex: 1;
+}
+
+.preview-main {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.preview-sub {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.additional-categories-note {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: #edf2f7;
+  border-radius: 4px;
+  border-left: 3px solid #4299e1;
+}
+
+.additional-categories-note small {
+  color: #4a5568;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* Upload Method Selector */
+.upload-method-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.upload-method-selector label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.upload-method-selector input[type="radio"] {
+  margin: 0;
+}
+
+/* File Input Styling */
+.file-input {
+  border: 2px dashed #d1d5db !important;
+  padding: 1rem !important;
+  border-radius: 8px !important;
+  background: #f9fafb !important;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.file-input:hover {
+  border-color: #6366f1 !important;
+  background: #f0f0ff !important;
+}
+
+/* Image Preview */
+.image-preview {
+  margin-top: 1rem;
+  text-align: center;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.preview-image {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-text {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0;
 }

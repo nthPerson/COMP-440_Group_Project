@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useItemsList } from "../contexts/ItemsListContext";
 import CategoryDropdown from "./CategoryDropdown";
+import CategoryPreview from "./CategoryPreview";
 import '../styles/components/NewItemForm.css';
 
 /**
@@ -24,9 +25,61 @@ export default function NewItemForm() {
         image_url: ''  // Add image_url field
     });
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const [allCategories, setAllCategories] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState('');
+    const [uploadMethod, setUploadMethod] = useState('url'); // 'url' or 'file'
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Load categories for preview
+    useEffect(() => {
+        fetch('/api/items/categories')
+            .then(res => res.json())
+            .then(data => setAllCategories(data.categories))
+            .catch(err => console.error('Failed to load categories:', err));
+    }, []);
+
+    // Cleanup preview URL on unmount
+    useEffect(() => {
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
+
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            // Create preview URL
+            const preview = URL.createObjectURL(file);
+            setPreviewUrl(preview);
+            setError('');
+        }
+    };
+
+    const uploadToImgur = async (file) => {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const response = await fetch('https://api.imgur.com/3/image', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Client-ID 546c25a59c58ad7' // Public Imgur client ID
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to upload image to Imgur');
+        }
+
+        const data = await response.json();
+        return data.data.link;
+    };
 
     /**
      * Handle input changes with enhanced UX
@@ -48,13 +101,27 @@ export default function NewItemForm() {
         setSuccess('');
         
         try {
+            // Handle image upload if file is selected
+            let finalImageUrl = '';
+            if (uploadMethod === 'file' && selectedFile) {
+                try {
+                    finalImageUrl = await uploadToImgur(selectedFile);
+                } catch (uploadError) {
+                    setError('Failed to upload image. Please try again or use a URL instead.');
+                    setIsSubmitting(false);
+                    return;
+                }
+            } else if (uploadMethod === 'url' && form.image_url.trim()) {
+                finalImageUrl = form.image_url.trim();
+            }
+
             // Build form payload with selected categories
             const payload = {
                 title: form.title.trim(),
                 description: form.description.trim(),
                 price: parseFloat(form.price),
                 categories: selectedCategories,  // Use selected categories array
-                image_url: form.image_url.trim()  // Include image URL
+                image_url: finalImageUrl  // Include processed image URL
             };
 
             // Client-side validation with enhanced messages
@@ -93,6 +160,8 @@ export default function NewItemForm() {
                 // Clear form and show success
                 setForm({ title: '', description: '', price: '', image_url: '' });
                 setSelectedCategories([]);
+                setSelectedFile(null);
+                setPreviewUrl('');
                 setSuccess('Item created successfully! It will appear in the list below.');
                 
                 // Create new event to let parent page know that a new item has been created
@@ -154,13 +223,62 @@ export default function NewItemForm() {
                 </div>
                 
                 <div className="form-group">
-                    <input
-                        name="image_url"
-                        type="url"
-                        placeholder="Item Image URL (optional - defaults to category icon)"
-                        value={form.image_url}
-                        onChange={handleChange}
-                        className="form-input"
+                    <label className="form-label">Item Image (optional)</label>
+                    
+                    {/* Upload Method Selector */}
+                    <div className="upload-method-selector">
+                        <label>
+                            <input
+                                type="radio"
+                                value="url"
+                                checked={uploadMethod === 'url'}
+                                onChange={(e) => setUploadMethod(e.target.value)}
+                            />
+                            Image URL
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                value="file"
+                                checked={uploadMethod === 'file'}
+                                onChange={(e) => setUploadMethod(e.target.value)}
+                            />
+                            Upload File
+                        </label>
+                    </div>
+
+                    {uploadMethod === 'url' ? (
+                        <input
+                            name="image_url"
+                            type="url"
+                            placeholder="Item Image URL (defaults to category icon)"
+                            value={form.image_url}
+                            onChange={handleChange}
+                            className="form-input"
+                        />
+                    ) : (
+                        <div>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileSelect}
+                                className="form-input file-input"
+                            />
+                            {previewUrl && (
+                                <div className="image-preview">
+                                    <img src={previewUrl} alt="Preview" className="preview-image" />
+                                    <p className="preview-text">Preview of selected image</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Category Preview */}
+                <div className="form-group">
+                    <CategoryPreview 
+                        selectedCategories={selectedCategories}
+                        allCategories={allCategories}
                     />
                 </div>
                 
@@ -171,7 +289,7 @@ export default function NewItemForm() {
                         onCategoriesChange={setSelectedCategories}
                     />
                 </div>
-                
+                                
                 <button 
                     type="submit" 
                     className="btn-add-item"

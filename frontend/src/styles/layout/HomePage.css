@@ -63,10 +63,7 @@
 /* ================================
    CONTENT SECTIONS - UNIFIED DESIGN
    ================================ */
-.content-section {
-  /* Remove all styling to eliminate double border effect */
-  /* Let child components handle their own styling */
-}
+/* Content sections now handled by child components */
 
 /* ================================
    ERROR MESSAGE STYLING
@@ -255,5 +252,167 @@
     width: 36px;
     height: 36px;
     font-size: 0.9rem;
+  }
+}
+
+/* ================================
+   FRONT PAGE ITEM CARDS - ROW LAYOUT
+   ================================ */
+.front-page-item-card {
+  display: flex;
+  gap: 1rem;
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  transition: all var(--transition-fast);
+  margin-bottom: var(--spacing-md);
+}
+
+.front-page-item-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.front-page-item-image {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+}
+
+.front-page-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-200);
+}
+
+.front-page-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.front-page-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.front-page-title a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.front-page-title a:hover {
+  text-decoration: underline;
+}
+
+.front-page-description {
+  margin: 0;
+  color: var(--gray-600);
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+.front-page-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.front-page-price {
+  color: var(--success-color);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.front-page-posted-by {
+  color: var(--gray-600);
+}
+
+.front-page-posted-by a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.front-page-posted-by a:hover {
+  text-decoration: underline;
+}
+
+.front-page-date {
+  color: var(--gray-500);
+  font-size: 0.8rem;
+}
+
+.front-page-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.front-page-category-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--primary-light);
+  color: var(--primary-color);
+  padding: 0.2rem 0.4rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  border: 1px solid var(--primary-color);
+}
+
+.front-page-category-icon {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+.front-page-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.front-page-rating .rating-stars {
+  color: #fbbf24;
+  font-size: 0.9rem;
+}
+
+.front-page-rating .rating-info {
+  color: var(--gray-600);
+}
+
+/* Override the grid layout for front page */
+.dashboard-container .item-list-section ul {
+  display: block !important;
+  grid-template-columns: none !important;
+}
+
+/* Responsive adjustments for front page */
+@media (max-width: 640px) {
+  .front-page-item-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .front-page-item-image {
+    align-self: center;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .front-page-row {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
   }
 }

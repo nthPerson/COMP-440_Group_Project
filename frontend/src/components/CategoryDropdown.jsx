@@ -106,7 +106,7 @@ export default function CategoryDropdown({ selectedCategories, onCategoriesChang
         
         {isOpen && filteredCategories.length > 0 && (
           <div className="category-dropdown-menu">
-            {filteredCategories.slice(0, 10).map(category => (
+            {filteredCategories.map(category => (
               <button
                 key={category.name}
                 type="button"
