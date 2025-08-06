@@ -40,23 +40,24 @@
 .search-input {
   flex: 1;
   padding: 0.875rem 1rem;
-  border: 2px solid #e5e5e5;
+  border: none;
   border-radius: 8px;
   font-size: 1rem;
   font-family: var(--font-primary);
   transition: all 0.2s ease;
   outline: none;
   min-height: 48px;
-  background: var(--white);
+  color: #fff;
+  background: linear-gradient(135deg, #a855f7, #7e22ce);
 }
 
 .search-input:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.4);
 }
 
 .search-input::placeholder {
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.7);
   font-style: normal;
   font-weight: 400;
 }
