@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ReviewForm from '../components/ReviewForm';
 import '../styles/global.css';
-import '../styles/pages/ItemPagePage.css';
+import '../styles/pages/ItemPage.css';
+import '../styles/components/ItemManagement.css';
 import SuggestedCarousel from '../components/SuggestedCarousel';
 
 
@@ -57,11 +58,11 @@ export default function Item() {
     fetch(`/api/items/search?category=${encodeURIComponent(categoryName)}`) // or use /public_search
       .then(res => res.json())
       .then(data => {
-        const filtered = data.items.filter(i => i.id !== parseInt(id)); // exclude current item
+        const filtered = data.items.filter(i => String(i.id) !== id); // exclude current item
         setSimilarItems(filtered);
       });
   };
-  
+
   return (
     <>
       <Navbar />
@@ -117,6 +118,7 @@ export default function Item() {
                 </div>
               </div>
             </div>
+            {similarItems.length > 0 && <SuggestedCarousel items={similarItems} />}
           </div>
 
           {/* REVIEWS SECTION - BEAUTIFIED */}
