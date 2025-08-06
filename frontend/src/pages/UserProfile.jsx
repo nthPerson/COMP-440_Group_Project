@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import axios from "axios";
 import '../styles/global.css';
 import '../styles/layout/HomePage.css';
+import '../styles/components/NewItemForm.css';
 
 import ItemCard from '../components/ItemCard';
 
@@ -79,60 +80,60 @@ export default function UserProfile() {
   return (
     <>
       <Navbar />
-      <div className="dashboard-container">
-        <div className="dashboard-content">
+      <div className="dashboard-content">
+        <div className="new-item-form">
+          
           <h1>User Profile</h1>
-          <form onSubmit={handleSave} className="profile-form">
-            <label>
-              First Name
-              <input
-                type="text"
-                name="firstName"
-                value={form.firstName}
-                onChange={handleInputChange}
-              />
-            </label>
-            <label>
-              Last Name
-              <input
-                type="text"
-                name="lastName"
-                value={form.lastName}
-                onChange={handleInputChange}
-              />
-            </label>
-            <label>
-              Username
-              <input
-                type="text"
-                name="username"
-                value={form.username}
-                onChange={handleInputChange}
-              />
-            </label>
-            <label>
-              Email
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleInputChange}
-              />
-            </label>
-            <button type="submit">Save Profile</button>
+          <form onSubmit={handleSave}>
+    <div className="form-group">
+      <input
+        name="firstName"
+        placeholder="First Name"
+        value={form.firstName}
+        onChange={handleInputChange}
+        className="form-input"
+        required
+      />
+    </div>
 
-            {status.msg && (
-              <p
-                className={
-                  status.type === "success"
-                    ? "status-success"
-                    : "status-error"
-                }
-              >
-                {status.msg}
-              </p>
-            )}
-          </form>
+    <div className="form-group">
+      <input
+        name="lastName"
+        placeholder="Last Name"
+        value={form.lastName}
+        onChange={handleInputChange}
+        className="form-input"
+        required
+      />
+    </div>
+
+    <div className="form-group">
+      <input
+        name="username"
+        placeholder="Username"
+        value={form.username}
+        onChange={handleInputChange}
+        className="form-input"
+        readOnly
+      />
+    </div>
+
+    <div className="form-group">
+      <input
+        name="email"
+        type="email"
+        placeholder="Email"
+        value={form.email}
+        onChange={handleInputChange}
+        className="form-input"
+        required
+      />
+    </div>
+
+    <button type="submit" className="btn-add-item">
+      Save Profile
+    </button>
+  </form>
           <div className="items-section">
             
             <div className="item-grid-container">
