@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useItemsList } from "../contexts/ItemsListContext";
+import CategoryDropdown from "./CategoryDropdown";
 import '../styles/components/NewItemForm.css';
 
 /**
@@ -20,8 +21,9 @@ export default function NewItemForm() {
         title: '',
         description: '',
         price: '',
-        categories: ''  // Comma-separated list on input
+        image_url: ''  // Add image_url field
     });
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,18 +48,13 @@ export default function NewItemForm() {
         setSuccess('');
         
         try {
-            // Parse comma-separated list of categories into array of strings
-            const cats = form.categories
-                .split(',')
-                .map(s => s.trim().toLowerCase())
-                .filter(s => s);
-
-            // Build form payload
+            // Build form payload with selected categories
             const payload = {
                 title: form.title.trim(),
                 description: form.description.trim(),
                 price: parseFloat(form.price),
-                categories: cats
+                categories: selectedCategories,  // Use selected categories array
+                image_url: form.image_url.trim()  // Include image URL
             };
 
             // Client-side validation with enhanced messages
@@ -73,8 +70,8 @@ export default function NewItemForm() {
                 setError('Price must be a positive number.');
                 return;
             }
-            if (cats.length === 0) {
-                setError('Please enter at least one category (e.g., electronics, books).');
+            if (selectedCategories.length === 0) {
+                setError('Please select at least one category.');
                 return;
             }
 
@@ -94,7 +91,8 @@ export default function NewItemForm() {
                     addItem(data.item);
                 }
                 // Clear form and show success
-                setForm({ title: '', description: '', price: '', categories: '' });
+                setForm({ title: '', description: '', price: '', image_url: '' });
+                setSelectedCategories([]);
                 setSuccess('Item created successfully! It will appear in the list below.');
                 
                 // Create new event to let parent page know that a new item has been created
@@ -136,7 +134,7 @@ export default function NewItemForm() {
                         placeholder="Describe your item in detail... What makes it special?"
                         value={form.description}
                         onChange={handleChange}
-                        className="form-textarea"
+                        className="form-input"
                         required
                     />
                 </div>
@@ -157,12 +155,20 @@ export default function NewItemForm() {
                 
                 <div className="form-group">
                     <input
-                        name="categories"
-                        placeholder="Categories (comma-separated: electronics, gaming, accessories)"
-                        value={form.categories}
+                        name="image_url"
+                        type="url"
+                        placeholder="Item Image URL (optional - defaults to category icon)"
+                        value={form.image_url}
                         onChange={handleChange}
                         className="form-input"
-                        required
+                    />
+                </div>
+                
+                <div className="form-group">
+                    <label className="form-label">Categories</label>
+                    <CategoryDropdown 
+                        selectedCategories={selectedCategories}
+                        onCategoriesChange={setSelectedCategories}
                     />
                 </div>
                 

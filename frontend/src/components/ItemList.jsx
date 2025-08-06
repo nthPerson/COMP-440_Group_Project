@@ -30,25 +30,6 @@ export default function ItemList() {
         return resp;
     };
 
-
-    // TODO: Currently testing ItemsList context manager that implements this behavior
-    // /**
-    //  * Load all items from the backend API
-    //  * Called on component mount and when new items are created
-    //  */
-    // const loadItems = async () => {
-    //     try {
-    //         const resp = await fetch('/api/items/list_items', {
-    //             credentials: 'include'
-    //         });
-    //         checkAuth(resp);
-    //         const data = await resp.json();
-    //         setItems(data);
-    //     } catch (err) {
-    //         console.error('Failed to load items:', err);
-    //     }
-    // };
-
     const handleRefresh = () => {
         loadItemsList();
     };
@@ -72,9 +53,7 @@ export default function ItemList() {
      * Set up event listeners and initial data loading
      * Listens for 'itemCreated' events to refresh the list
      */
-    useEffect(() => {
-        // loadItems();
-        
+    useEffect(() => {       
         // Reload when new items are created
         const onNew = () => loadItemsList();
         window.addEventListener('itemCreated', onNew);
@@ -139,65 +118,86 @@ export default function ItemList() {
                 <ul>
                     {items.map(item => (
                         <li key={item.id} className="item-card">
-                            {/* Item Title */}
-                            <h3>{item.title}</h3>
-                            
-                            {/* Item Description */}
-                            <p>{item.description}</p>
-                            
-                            {/* Item Metadata in Organized Grid */}
-                            <div className="item-meta">
-                                <div className="item-meta-item">
-                                    <span className="meta-label">Price</span>
-                                    <span className="meta-value">${parseFloat(item.price).toFixed(2)}</span>
-                                </div>
-                                <div className="item-meta-item">
-                                    <span className="meta-label">Posted By</span>
-                                    <span className="meta-value">{item.posted_by}</span>
-                                </div>
-                                <div className="item-meta-item">
-                                    <span className="meta-label">Date Posted</span>
-                                    <span className="meta-value">{new Date(item.date_posted).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                            
-                            {/* Categories Display */}
-                            <div className="item-categories">
-                                <span className="meta-label">Categories:</span>
-                                <div className="category-list">
-                                    {item.categories.map(c => (
-                                        <span key={c.name} className="category-item">{c.name}</span>
-                                    ))}
-                                </div>
-                            </div>
-                            
-                            {/* Enhanced Rating Display */}
-                            <div className="item-rating">
-                                <span className="rating-stars">
-                                    {(() => {
-                                        const full = Math.floor(item.star_rating);
-                                        const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
-                                        const empty = 5 - full - (half ? 1 : 0);
-                                        return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
-                                    })()}
-                                </span>
-                                <span className="rating-info">
-                                    {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
-                                </span>
-                            </div>
-                            
-                            {/* Review Form Section */}
-                            <div className="review-section">
-                                <ReviewForm
-                                    itemId={item.id}
-                                    onReviewSubmitted={() => {
-                                        // Reload items to update star ratings after new review
-                                        loadItemsList();
-                                        
-                                        // Dispatch event for other components
-                                        window.dispatchEvent(new Event('reviewCreated'));
-                                    }}                
+                            {/* Item Image */}
+                            <div className="item-image-container">
+                                <img 
+                                    src={item.image_url} 
+                                    alt={item.title}
+                                    className="item-thumbnail"
+                                    onError={(e) => {
+                                        e.target.src = "https://api.iconify.design/mdi:package-variant.svg";
+                                    }}
                                 />
+                            </div>
+                            
+                            <div className="item-content">
+                                {/* Item Title */}
+                                <h3>{item.title}</h3>
+                                
+                                {/* Item Description */}
+                                <p>{item.description}</p>
+                                
+                                {/* Item Metadata in Organized Grid */}
+                                <div className="item-meta">
+                                    <div className="item-meta-item">
+                                        <span className="meta-label">Price</span>
+                                        <span className="meta-value">${parseFloat(item.price).toFixed(2)}</span>
+                                    </div>
+                                    <div className="item-meta-item">
+                                        <span className="meta-label">Posted By</span>
+                                        <span className="meta-value">{item.posted_by}</span>
+                                    </div>
+                                    <div className="item-meta-item">
+                                        <span className="meta-label">Date Posted</span>
+                                        <span className="meta-value">{new Date(item.date_posted).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                                
+                                {/* Categories Display */}
+                                <div className="item-categories">
+                                    <span className="meta-label">Categories:</span>
+                                    <div className="category-list">
+                                        {item.categories.map(c => (
+                                            <span key={c.name} className="category-item">
+                                                <img 
+                                                    src={`https://api.iconify.design/${c.icon_key}.svg`}
+                                                    alt=""
+                                                    className="category-icon-small"
+                                                />
+                                                {c.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                {/* Enhanced Rating Display */}
+                                <div className="item-rating">
+                                    <span className="rating-stars">
+                                        {(() => {
+                                            const full = Math.floor(item.star_rating);
+                                            const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
+                                            const empty = 5 - full - (half ? 1 : 0);
+                                            return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+                                        })()}
+                                    </span>
+                                    <span className="rating-info">
+                                        {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
+                                    </span>
+                                </div>
+                                
+                                {/* Review Form Section */}
+                                <div className="review-section">
+                                    <ReviewForm
+                                        itemId={item.id}
+                                        onReviewSubmitted={() => {
+                                            // Reload items to update star ratings after new review
+                                            loadItemsList();
+                                            
+                                            // Dispatch event for other components
+                                            window.dispatchEvent(new Event('reviewCreated'));
+                                        }}                
+                                    />
+                                </div>
                             </div>
                         </li>
                     ))}

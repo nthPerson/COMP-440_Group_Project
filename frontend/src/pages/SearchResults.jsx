@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 // useNavigate lets us redirect (e.g. to item detail page)
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import ItemList from '../components/ItemList';
+import SearchResultsList from '../components/SearchResultsList';
 import '../styles/components/SearchResults.css';
 
 /*
@@ -93,7 +93,7 @@ export default function SearchResults() {
 
             {/* Render items */}
             {!loading && !error && items.length > 0 && (
-              <ItemList items={items} />
+              <SearchResultsList items={items} />
             )}
           </>
         )}
