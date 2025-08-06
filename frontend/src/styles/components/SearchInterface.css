@@ -411,7 +411,6 @@
 .item-rating-text {
   font-size: 0.9rem;
   color: var(--gray-600);
-}
   font-size: 0.85rem; /* Smaller font */
   margin-bottom: var(--spacing-xs);
   font-weight: 500;
