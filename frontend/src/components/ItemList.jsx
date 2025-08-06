@@ -6,7 +6,7 @@ import ReviewForm from "./ReviewForm";
  * ENHANCED ITEM LIST COMPONENT
  * 
  * Features:
- * - Collapsible item list for better space management
+ * - Collapsible item list for better space management (can be disabled)
  * - Enhanced card design with better organization
  * - Improved item count display
  * - Better responsive design
@@ -14,7 +14,7 @@ import ReviewForm from "./ReviewForm";
  * 
  * Purpose: Display all available items with reviews in an organized, collapsible format
  */
-export default function ItemList({ items: externalItems }) {
+export default function ItemList({ items: externalItems, showCollapseToggle = true }) {
     const { items: contextItems, isLoading, error, loadItemsList } = useItemsList();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -108,7 +108,7 @@ export default function ItemList({ items: externalItems }) {
 
     return (
         <div>
-            {/* Enhanced Header with Item Count and Collapse Toggle */}
+            {/* Enhanced Header with Item Count and Conditional Collapse Toggle */}
             <div className="item-list-header">
                 <div className="item-list-title-group">
                     <h2 className="item-list-title">
@@ -117,19 +117,21 @@ export default function ItemList({ items: externalItems }) {
                     <span className="item-count">{items.length}</span>
                 </div>
                 
-                {/* Collapse Toggle Button for Space Management */}
-                <button 
-                    onClick={toggleCollapse}
-                    className={`items-collapse-toggle ${isCollapsed ? 'collapsed' : ''}`}
-                    title={isCollapsed ? 'Show items' : 'Hide items'}
-                >
-                    <span className="collapse-icon">▼</span>
-                    {isCollapsed ? 'Show Items' : 'Hide Items'}
-                </button>
+                {/* Collapse Toggle Button - Only show if enabled */}
+                {showCollapseToggle && (
+                    <button 
+                        onClick={toggleCollapse}
+                        className={`items-collapse-toggle ${isCollapsed ? 'collapsed' : ''}`}
+                        title={isCollapsed ? 'Show items' : 'Hide items'}
+                    >
+                        <span className="collapse-icon">▼</span>
+                        {isCollapsed ? 'Show Items' : 'Hide Items'}
+                    </button>
+                )}
             </div>
 
-            {/* Collapsible Items Container */}
-            <div className={`items-container ${isCollapsed ? 'collapsed' : 'expanded'}`}>
+            {/* Items Container - Always expanded when collapse toggle is disabled */}
+            <div className={`items-container ${!showCollapseToggle ? 'expanded' : (isCollapsed ? 'collapsed' : 'expanded')}`}>
                 <ul>
                     {items.map(item => (
                         <li key={item.id} className="item-card">
