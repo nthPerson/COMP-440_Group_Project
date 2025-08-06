@@ -1,9 +1,6 @@
 /**
- * HOMEPAGE LAYOUT STYLES
- * Main Page Structure and Header Components
- * 
+ * HOMEPAGE LAYOUT STYLES 
  * Purpose: Clean layout with centered content and bottom navigation
- * Design: Professional dashboard with organized sections
  */
 
 /* ================================
@@ -12,7 +9,7 @@
 .dashboard-container {
   min-height: 100vh;
   /* background: linear-gradient(135deg, var(--primary-light) 0%, #f3f4f6 100%); */
-  background: var(--primary-light);
+  background: #ffffff !important;
   display: flex;
   flex-direction: column;
   font-family: var(--font-primary);

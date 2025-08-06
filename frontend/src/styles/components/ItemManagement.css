@@ -1,10 +1,3 @@
-/**
- * ITEM MANAGEMENT COMPONENT STYLES
- * Vertical Layout Design - Form Above, List Below
- * 
- * Purpose: Clean, organized item management with better space utilization
- * Layout: Vertical stacking instead of side-by-side for better readability
- */
 
 /* ================================
    ITEM MANAGEMENT CONTAINER
@@ -148,36 +141,26 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* Force 2 columns for 2x2 layout */
   gap: var(--spacing-lg);
-  justify-items: stretch; /* Ensure cards fill the space */
+  max-width: 100%;
 }
 
 /* Ensure items fill the grid properly */
 .item-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 12px;
+  border: none; /* Remove border for unified design */
   padding: var(--spacing-lg);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-  border: 1px solid var(--border-color);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  width: 100%; /* Fill available width */
-  min-height: 200px; /* Ensure minimum height for consistency */
+  border-radius: var(--border-radius-lg);
+  background: var(--white);
+  box-shadow: var(--shadow-sm); /* Unified shadow like other components */
+  transition: all var(--transition-fast);
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribute content evenly */
+  height: fit-content;
 }
 
 .item-card:hover {
-  background: var(--white);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
-  transform: translateY(-4px); /* More pronounced lift */
-  border-color: var(--primary-color); /* Highlight border */
-  scale: 1.02; /* Subtle scale effect */
-}
-
-.item-card:hover h3 {
-  color: var(--primary-dark); /* Enhanced title color on hover */
+  background: var(--white); /* Keep white background */
+  box-shadow: var(--shadow-md); /* Enhanced shadow on hover */
+  transform: translateY(-2px);
 }
 
 .item-card h3 {

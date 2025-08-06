@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from datetime import datetime, date
 from sqlalchemy import func
 
-items_bp = Blueprint('item', __name__)
+items_bp = Blueprint('items', __name__)
 
 @items_bp.route('/newitem', methods=['POST'])  
 @login_required
@@ -102,7 +102,7 @@ def get_item(item_id):
   return jsonify(data), 200
 
 @items_bp.route('/search', methods=['GET'])
-@login_required 
+#@login_required remove it so unlogged users can search
 def search_items():
     """
     PHASE 2 REQUIREMENT: Search Interface Implementation
