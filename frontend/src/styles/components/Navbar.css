@@ -3,13 +3,12 @@
    -------------------------------------- */
 .navbar {
   /* overall navbar height */
-  height: 88px;
+  height: 100px;
   /* white background behind everything */
   background: var(--white);
   /* remove any default borders */
-  border: none;
-  /* remove default shadows */
-  box-shadow: none;
+  border: 1px solid var(--gray-200);
+
   /* horizontal padding inside navbar */
   padding: 0 var(--spacing-lg);
   /* use flexbox to lay out children */

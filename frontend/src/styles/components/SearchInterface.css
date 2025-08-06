@@ -11,7 +11,7 @@
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
+  /* border: 1px solid #e5e7eb; */
   margin-bottom: 2rem;
   max-width: 100%;
 }
@@ -59,6 +59,7 @@
   color: #9ca3af;
   font-style: normal;
   font-weight: 400;
+  font-size: 1.2rem;
 }
 
 .search-button {
@@ -67,11 +68,11 @@
   padding: 0.875rem 1.5rem;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 100px;
+  min-width: 120px;
   height: 48px;
   display: flex;
   align-items: center;
