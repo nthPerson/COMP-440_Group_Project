@@ -170,6 +170,35 @@ export default function ItemList() {
                                     ))}
                                 </div>
                             </div>
+
+                            {/* Rating Display */}
+                            <div className="item-rating">
+                                <span className="rating-stars">
+                                    {(() => {
+                                        const full = Math.floor(item.star_rating || 0);
+                                        const half = (item.star_rating || 0) % 1 >= 0.25 && (item.star_rating || 0) % 1 < 0.75;
+                                        const empty = 5 - full - (half ? 1 : 0);
+                                        return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+                                    })()}
+                                </span>
+                                <span className="rating-info">
+                                    {(item.star_rating || 0).toFixed(1)}/5 • <strong>{item.review_count || 0}</strong> {(item.review_count || 0) === 1 ? 'review' : 'reviews'}
+                                </span>
+                            </div>
+                            
+                            {/* Review Form Section */}
+                            <div className="review-section">
+                                <ReviewForm
+                                    itemId={item.id}
+                                    onReviewSubmitted={() => {
+                                        // Reload items to update star ratings after new review
+                                        loadItemsList();
+                                        
+                                        // Dispatch event for other components
+                                        window.dispatchEvent(new Event('reviewCreated'));
+                                    }}                
+                                />
+                            </div>
                             
                             {/* Enhanced Rating Display */}
                             <div className="item-rating">
