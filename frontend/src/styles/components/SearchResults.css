@@ -20,3 +20,17 @@
   color: #c0392b;
   font-weight: bold;
 }
+
+/* Fix for truncated search results */
+/* Ensure the ItemList container can expand fully */
+.search-results-page .items-container {
+  max-height: none !important;
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* Ensure the list itself can expand */
+.search-results-page ul {
+  max-height: none !important;
+  overflow: visible !important;
+}

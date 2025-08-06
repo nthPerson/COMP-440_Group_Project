@@ -6,17 +6,21 @@ import ReviewForm from "./ReviewForm";
  * ENHANCED ITEM LIST COMPONENT
  * 
  * Features:
- * - Collapsible item list for better space management
+ * - Collapsible item list for better space management (can be disabled)
  * - Enhanced card design with better organization
  * - Improved item count display
  * - Better responsive design
+ * - Support for external items prop (for search results)
  * 
  * Purpose: Display all available items with reviews in an organized, collapsible format
  */
-export default function ItemList() {
-    // const [items, setItems] = useState([]);
-    const { items, isLoading, error, loadItemsList } = useItemsList();
-    const [isCollapsed, setIsCollapsed] = useState(false); // Collapse state for space management
+export default function ItemList({ items: externalItems, showCollapseToggle = true }) {
+    const { items: contextItems, isLoading, error, loadItemsList } = useItemsList();
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
+    // Use external items if provided (for search results), otherwise use context items
+    const items = externalItems || contextItems;
+    const isUsingExternalItems = Boolean(externalItems);
 
     /**
      * Authentication helper - redirects to login on 401 errors
@@ -30,58 +34,44 @@ export default function ItemList() {
         return resp;
     };
 
-
-    // TODO: Currently testing ItemsList context manager that implements this behavior
-    // /**
-    //  * Load all items from the backend API
-    //  * Called on component mount and when new items are created
-    //  */
-    // const loadItems = async () => {
-    //     try {
-    //         const resp = await fetch('/api/items/list_items', {
-    //             credentials: 'include'
-    //         });
-    //         checkAuth(resp);
-    //         const data = await resp.json();
-    //         setItems(data);
-    //     } catch (err) {
-    //         console.error('Failed to load items:', err);
-    //     }
-    // };
-
     const handleRefresh = () => {
-        loadItemsList();
+        if (!isUsingExternalItems) {
+            loadItemsList();
+        }
     };
 
-    if (isLoading && items.length === 0) {
-        return <div className="loading-container">Loading items...</div>;
-    }
+    // Only show loading/error states when using context data (not external items)
+    if (!isUsingExternalItems) {
+        if (isLoading && items.length === 0) {
+            return <div className="loading-container">Loading items...</div>;
+        }
 
-    if (error) {
-        return (
-        <div className="error-container">
-            <p className="error-message">{error}</p>
-            <button onClick={handleRefresh} className="retry-button">
-            Try Again
-            </button>
-        </div>
-        );
+        if (error) {
+            return (
+            <div className="error-container">
+                <p className="error-message">{error}</p>
+                <button onClick={handleRefresh} className="retry-button">
+                Try Again
+                </button>
+            </div>
+            );
+        }
     }
 
     /**
      * Set up event listeners and initial data loading
-     * Listens for 'itemCreated' events to refresh the list
+     * Only when using context data, not external items
      */
     useEffect(() => {
-        // loadItems();
-        
-        // Reload when new items are created
-        const onNew = () => loadItemsList();
-        window.addEventListener('itemCreated', onNew);
-        
-        // Cleanup event listener on unmount
-        return () => window.removeEventListener('itemCreated', onNew);
-    }, []);
+        if (!isUsingExternalItems) {
+            // Reload when new items are created
+            const onNew = () => loadItemsList();
+            window.addEventListener('itemCreated', onNew);
+            
+            // Cleanup event listener on unmount
+            return () => window.removeEventListener('itemCreated', onNew);
+        }
+    }, [isUsingExternalItems, loadItemsList]);
 
     /**
      * Toggle collapse state for better space management
@@ -99,43 +89,49 @@ export default function ItemList() {
             <div className="no-items-message">
                 <h3>No Items Available</h3>
                 <p>Be the first to post an item! Use the form above to get started.</p>
-                <button 
-                    className="create-first-item"
-                    onClick={() => {
-                        // Scroll to form section
-                        document.querySelector('.item-form-section')?.scrollIntoView({ 
-                            behavior: 'smooth' 
-                        });
-                    }}
-                >
-                    Create Your First Item
-                </button>
+                {!isUsingExternalItems && (
+                    <button 
+                        className="create-first-item"
+                        onClick={() => {
+                            // Scroll to form section
+                            document.querySelector('.item-form-section')?.scrollIntoView({ 
+                                behavior: 'smooth' 
+                            });
+                        }}
+                    >
+                        Create Your First Item
+                    </button>
+                )}
             </div>
         );
     }
 
     return (
         <div>
-            {/* Enhanced Header with Item Count and Collapse Toggle */}
+            {/* Enhanced Header with Item Count and Conditional Collapse Toggle */}
             <div className="item-list-header">
                 <div className="item-list-title-group">
-                    <h2 className="item-list-title">Available Items</h2>
+                    <h2 className="item-list-title">
+                        {isUsingExternalItems ? 'Search Results' : 'Available Items'}
+                    </h2>
                     <span className="item-count">{items.length}</span>
                 </div>
                 
-                {/* Collapse Toggle Button for Space Management */}
-                <button 
-                    onClick={toggleCollapse}
-                    className={`items-collapse-toggle ${isCollapsed ? 'collapsed' : ''}`}
-                    title={isCollapsed ? 'Show items' : 'Hide items'}
-                >
-                    <span className="collapse-icon">▼</span>
-                    {isCollapsed ? 'Show Items' : 'Hide Items'}
-                </button>
+                {/* Collapse Toggle Button - Only show if enabled */}
+                {showCollapseToggle && (
+                    <button 
+                        onClick={toggleCollapse}
+                        className={`items-collapse-toggle ${isCollapsed ? 'collapsed' : ''}`}
+                        title={isCollapsed ? 'Show items' : 'Hide items'}
+                    >
+                        <span className="collapse-icon">▼</span>
+                        {isCollapsed ? 'Show Items' : 'Hide Items'}
+                    </button>
+                )}
             </div>
 
-            {/* Collapsible Items Container */}
-            <div className={`items-container ${isCollapsed ? 'collapsed' : 'expanded'}`}>
+            {/* Items Container - Always expanded when collapse toggle is disabled */}
+            <div className={`items-container ${!showCollapseToggle ? 'expanded' : (isCollapsed ? 'collapsed' : 'expanded')}`}>
                 <ul>
                     {items.map(item => (
                         <li key={item.id} className="item-card">
@@ -186,19 +182,21 @@ export default function ItemList() {
                                 </span>
                             </div>
                             
-                            {/* Review Form Section */}
-                            <div className="review-section">
-                                <ReviewForm
-                                    itemId={item.id}
-                                    onReviewSubmitted={() => {
-                                        // Reload items to update star ratings after new review
-                                        loadItemsList();
-                                        
-                                        // Dispatch event for other components
-                                        window.dispatchEvent(new Event('reviewCreated'));
-                                    }}                
-                                />
-                            </div>
+                            {/* Review Form Section - Only show for context items, not search results */}
+                            {!isUsingExternalItems && (
+                                <div className="review-section">
+                                    <ReviewForm
+                                        itemId={item.id}
+                                        onReviewSubmitted={() => {
+                                            // Reload items to update star ratings after new review
+                                            loadItemsList();
+                                            
+                                            // Dispatch event for other components
+                                            window.dispatchEvent(new Event('reviewCreated'));
+                                        }}                
+                                    />
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>
