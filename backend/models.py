@@ -65,8 +65,11 @@ class Category(db.Model):
     __tablename__ = 'category'
     name = db.Column(db.String(64), primary_key=True)
 
+    # Generic category icons
+    icon_key = db.Column(db.String(100), nullable=False, default='mdi:help-circle')  # Iconify keys, e.g. 'mdi:headphones', 'mdi:robot', etc.
+
     def __repr__(self):
-        return f'<Category {self.name}>'
+        return f'<Category {self.name} icon={self.icon_key}>'
 
 class Review(db.Model):
     __tablename__ = 'review'
