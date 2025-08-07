@@ -9,6 +9,7 @@
 }
 
    .navbar {
+  position: relative;
   /* overall navbar height */
   height: 100px;
   /* white background behind everything */
@@ -48,6 +49,79 @@
   user-select: none;
   margin-right: 1.5rem;
   margin-left: 1.5rem;
+}
+
+
+/* ================================
+   SPOTLIGHT & LASER ANIMATIONS
+   ================================ */
+/* Spotlight gradient sweeping out */
+.navbar::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 4px;
+  width: 0;
+  background: radial-gradient(
+    circle at center,
+    var(--primary-light) 0%,
+    var(--primary-color) 40%,
+    transparent 100%
+  );
+  opacity: 0;
+  animation: spotlight 2.5s ease-out infinite;
+}
+
+/* Laser pulse from center */
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2px;
+  width: 0;
+  background: var(--primary-dark);
+  box-shadow: 0 0 8px var(--primary-dark), 0 0 16px var(--primary-light);
+  opacity: 0;
+  animation: laserPulse 1.8s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+@keyframes spotlight {
+  0% {
+    width: 0;
+    opacity: 0.3;
+  }
+  50% {
+    width: 100%;
+    opacity: 0.6;
+  }
+  100% {
+    width: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes laserPulse {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  30% {
+    width: 60%;
+    opacity: 1;
+  }
+  60% {
+    width: 0;
+    opacity: 0.2;
+  }
+  100% {
+    width: 0;
+    opacity: 0;
+  }
 }
 
 /* --------------------------------------
@@ -127,15 +201,17 @@
   height: var(--nav-tab-height);                        /* tab height */
   padding: 0 var(--nav-tab-padding-x);                    /* horizontal padding */
   font-size: var(--nav-tab-font-size);                  /* tab font size */
-  font-weight: 700;                    /* bold text */
-  color: var(--primary-color);         /* primary color text */
+  font-weight: 400;                    /* bold text */
+  color: var(--gray-600);         /* primary color text */
   background: transparent;             /* no bg by default */
   border: none;                        /* no border */
   text-decoration: none;               /* no underline */
   cursor: pointer;                     /* pointer cursor on hover */
   transition:
-    background 0.18s,
-    color 0.18s;                       /* smooth hover/active */
+    background 0.18s, color 0.18s, 
+    transform 0.2s ease-out,
+    text-shadow 0.2s ease-out;
+                           /* smooth hover/active */
   border-radius: 28px 28px 0 0;        /* top-rounded corners */
   margin: 0;                           /* reset any margins */
   box-shadow: none;                    /* no extra shadows */
@@ -153,7 +229,7 @@
 /* hover state for both links and button */
 .nav-link:hover,
 .nav-button:hover {
-  color: var(--primary-dark);          /* darker shade on hover */
+   transform: translateY(-3px) scale(1.05);
 }
 
 /* --------------------------------------
@@ -166,10 +242,10 @@
   }
   .nav-link,
   .nav-button {
-    height: 50px;                      /* shorter tabs */
-    padding: 0 18px;                   /* less padding */
+    height: auto;                      /* shorter tabs */
+    padding: 0.5em 1.25em;                   /* less padding */
     font-size: 1rem;                   /* smaller text */
-    border-radius: 20px 20px 4px 4px;  /* adjusted rounding */
+    border-radius: 999px;  /* adjusted rounding */
   }
   .search-interface,
   .search-form,
