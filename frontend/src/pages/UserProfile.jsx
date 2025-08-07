@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from "axios";
 import '../styles/global.css';
 import '../styles/layout/HomePage.css';
+import '../styles/components/FollowTabs.css';
 import ItemCard from '../components/ItemCard';
 
 export default function UserProfile() {
@@ -26,6 +28,7 @@ export default function UserProfile() {
   const [following, setFollowing] = useState([]);
   const [isLoadingFollowers, setIsLoadingFollowers] = useState(true);
   const [isLoadingFollowing, setIsLoadingFollowing] = useState(true);
+  const [activeTab, setActiveTab] = useState('followers');
 
   const handleFollow = async (username) => {
     try {
@@ -36,11 +39,19 @@ export default function UserProfile() {
     }
   };
   const handleUnfollow = async (username) => {
-    try{
+    try {
       await axios.delete(`/api/follow/${username}`);
-      setFollowing((prev) => prev.filter(user => user.username !== username));  
+      setFollowing((prev) => prev.filter(user => user.username !== username));
     } catch (err) {
       console.error("Failed to unfollow user", err);
+    }
+  };
+  const handleRemoveFollower = async (username) => {
+    try {
+      await axios.delete(`/api/follow/remove_follower/${username}`);
+      setFollowers((prev) => prev.filter(user => user.username !== username));
+    } catch (err) {
+      console.error("Failed to remove follower", err);
     }
   };
 
@@ -107,135 +118,171 @@ export default function UserProfile() {
   return (
     <>
       <Navbar />
-      <div className="dashboard-content">
-        <div className="new-item-form">
+      <div className="dashboard-container">
+        <div className="dashboard-content">
+          <div className="item-form-section">
 
-          <h1>User Profile</h1>
-          <form onSubmit={handleSave}>
-            <div className="form-group">
-              <input
-                name="firstName"
-                placeholder="First Name"
-                value={form.firstName}
-                onChange={handleInputChange}
-                className="form-input"
-                required
-              />
+            <div className="page-header">
+              <h1 className="page-title">User Profile</h1>
             </div>
-
-            <div className="form-group">
-              <input
-                name="lastName"
-                placeholder="Last Name"
-                value={form.lastName}
-                onChange={handleInputChange}
-                className="form-input"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <input
-                name="username"
-                placeholder="Username"
-                value={form.username}
-                onChange={handleInputChange}
-                className="form-input"
-                readOnly
-              />
-            </div>
-
-            <div className="form-group">
-              <input
-                name="email"
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleInputChange}
-                className="form-input"
-                required
-              />
-            </div>
-
-            <button type="submit" className="btn-add-item">
-              Save Profile
-            </button>
-          </form>
-
-          <div className="follow-section">
-            <div className="follow-list">
-              <h3>Followers</h3>
-    {isLoadingFollowers ? (
-      <p>Loading...</p>
-    ) : (
-      <ul>
-        {followers.map(user => (
-          <li key={user.username}>
-            {user.username}
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
-
-  <div className="follow-list">
-    <h3>Following</h3>
-    {isLoadingFollowing ? (
-      <p>Loading...</p>
-    ) : (
-      <ul>
-        {following.map(user => (
-          <li key={user.username}>
-            {user.username}
-            <button onClick={() => handleUnfollow(user.username)}>Unfollow</button>
-          </li>
-        ))}
-      </ul>
-    )}
-            </div>
-          </div>
-
-          <div className="item-list-section">
-            <div className="item-list-header">
-              <div className="item-list-title-group">
-                <h2 className="item-list-title">My Items</h2>
-                <span className="item-count">{myItems.length}</span>
+            <form onSubmit={handleSave}>
+              <div className="form-group">
+                <input
+                  name="firstName"
+                  placeholder="First Name"
+                  value={form.firstName}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  required
+                />
               </div>
 
-              <button
-                className="items-collapse-toggle"
-                onClick={() => setShowMyItems(!showMyItems)}
-              >
-                <span className="collapse-icon">{showMyItems ? '▼' : '▶'}</span>
-                {showMyItems ? 'Hide Items' : 'Show Items'}
+              <div className="form-group">
+                <input
+                  name="lastName"
+                  placeholder="Last Name"
+                  value={form.lastName}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <input
+                  name="username"
+                  placeholder="Username"
+                  value={form.username}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  readOnly
+                />
+              </div>
+
+              <div className="form-group">
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="Email"
+                  value={form.email}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  required
+                />
+              </div>
+
+              <button type="submit" className="btn-add-item">
+                Save Profile
               </button>
-            </div>
+            </form>
+            
+            <div className="follow-tabs">
+              
+  <button
+    className={`follow-tab ${activeTab === 'followers' ? 'active' : ''}`}
+    onClick={() => setActiveTab('followers')}
+  >
+    {followers.length} Followers
+  </button>
 
-            <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
-              <div className="item-card-grid">
-                {currentItems.map(item => (
-                  <div key={item.id} className="item-card">
-                    <ItemCard item={item} />
-                  </div>
-                ))}
+  <button
+    className={`follow-tab ${activeTab === 'following' ? 'active' : ''}`}
+    onClick={() => setActiveTab('following')}
+  >
+    {following.length} Following
+  </button>
+</div>
+
+<div className="follow-section">
+{activeTab === 'followers' && (
+  <ul className="follow-list">
+    {isLoadingFollowers ? (
+      <li>Loading...</li>
+    ) : (
+      followers.map(user => (
+        <li key={user.username}>
+          <Link to={`/seller/${user.username}`} className="follow-user-link">
+  {user.username}
+</Link>
+
+          <button
+            className="unfollow-btn"
+            onClick={() => handleRemoveFollower(user.username)}
+          >
+            Remove
+          </button>
+        </li>
+      ))
+    )}
+  </ul>
+)}
+
+{activeTab === 'following' && (
+  <ul className="follow-list">
+    {isLoadingFollowing ? (
+      <li>Loading...</li>
+    ) : (
+      following.map(user => (
+        <li key={user.username}>
+          <a href={`/seller/${user.username}`} className="follow-user-link">
+            {user.username}
+          </a>
+          <button
+            className="unfollow-btn"
+            onClick={() => handleUnfollow(user.username)}
+          >
+            Unfollow
+          </button>
+        </li>
+      ))
+    )}
+  </ul>
+)}
+</div>
+
+
+            <div className="item-list-section">
+              <div className="item-list-header">
+                <div className="item-list-title-group">
+                  <h2 className="item-list-title">My Items</h2>
+                  <span className="item-count">{myItems.length}</span>
+                </div>
+
+                <button
+                  className="items-collapse-toggle"
+                  onClick={() => setShowMyItems(!showMyItems)}
+                >
+                  <span className="collapse-icon">{showMyItems ? '▼' : '▶'}</span>
+                  {showMyItems ? 'Hide Items' : 'Show Items'}
+                </button>
               </div>
 
-              {totalPages > 0 && (
-                <div className="pagination-controls">
-                  {[...Array(totalPages)].map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentPage(index + 1)}
-                      className={currentPage === index + 1 ? 'active-page' : ''}
-                    >
-                      {index + 1}
-                    </button>
+              <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
+                <div className="item-card-grid">
+                  {currentItems.map(item => (
+                    <div key={item.id} className="item-card">
+                      <ItemCard item={item} />
+                    </div>
                   ))}
                 </div>
-              )}
-            </div>
-          </div>
 
+                {totalPages > 0 && (
+                  <div className="pagination-controls">
+                    {[...Array(totalPages)].map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPage(index + 1)}
+                        className={`pagination-button ${currentPage === index + 1 ? 'active-page' : ''}`}
+                      >
+                        {index + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </>
