@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchResults from '../pages/SearchResults';
+import '../styles/components/SearchInterface.css';
+
 
 export default function SearchInterface() {
   const [searchCategory, setSearchCategory] = useState('');

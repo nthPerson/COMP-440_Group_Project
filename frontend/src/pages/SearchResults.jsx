@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ItemList from '../components/ItemList';
 import '../styles/components/SearchResults.css';
+import '../styles/components/LoadingSpinner.css'; //this for the loading spinner
+import Spinner from '../components/LoadingSpinner';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -63,7 +65,7 @@ export default function SearchResults() {
           <>
             <h1>Search Results for "{searchTerm}"</h1>
 
-            {loading && <p>Loading results...</p>}
+            {loading && <Spinner text="Loading results..." />}
             {error   && <p className="error">{error}</p>}
 
             {!loading && !error && items.length === 0 && (
@@ -72,7 +74,9 @@ export default function SearchResults() {
 
             {/* Disable collapse toggle for search results */}
             {!loading && !error && items.length > 0 && (
-              <ItemList items={items} showCollapseToggle={false} />
+              <div className="items-container">
+                <ItemList items={items} showCollapseToggle={false} />
+              </div>
             )}
           </>
         )}
