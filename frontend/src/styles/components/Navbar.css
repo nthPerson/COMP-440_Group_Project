@@ -5,7 +5,7 @@
 :root{
   --nav-tab-height: 68px;
   --nav-tab-padding-x: 40px;
-  --nav-tab-font-size: 1.2rem;
+  --nav-tab-font-size: 1.2rem; /* base font size for nav tabs */
 }
 
    .navbar {
