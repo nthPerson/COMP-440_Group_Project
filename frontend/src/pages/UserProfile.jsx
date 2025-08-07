@@ -29,6 +29,8 @@ export default function UserProfile() {
   const [isLoadingFollowers, setIsLoadingFollowers] = useState(true);
   const [isLoadingFollowing, setIsLoadingFollowing] = useState(true);
   const [activeTab, setActiveTab] = useState('followers');
+  const [showConnections, setShowConnections] = useState(true);
+
 
   const handleFollow = async (username) => {
     try {
@@ -175,70 +177,85 @@ export default function UserProfile() {
                 Save Profile
               </button>
             </form>
-            
-            <div className="follow-tabs">
-              
-  <button
-    className={`follow-tab ${activeTab === 'followers' ? 'active' : ''}`}
-    onClick={() => setActiveTab('followers')}
-  >
-    {followers.length} Followers
-  </button>
 
-  <button
-    className={`follow-tab ${activeTab === 'following' ? 'active' : ''}`}
-    onClick={() => setActiveTab('following')}
-  >
-    {following.length} Following
-  </button>
-</div>
+            <div className="item-list-section">
+              <div className="item-list-header">
+                <div className="item-list-title-group">
+                  <h2 className="item-list-title">Connections</h2>
+                </div>
 
-<div className="follow-section">
-{activeTab === 'followers' && (
-  <ul className="follow-list">
-    {isLoadingFollowers ? (
-      <li>Loading...</li>
-    ) : (
-      followers.map(user => (
-        <li key={user.username}>
-          <Link to={`/seller/${user.username}`} className="follow-user-link">
-  {user.username}
-</Link>
+                <button
+                  className="items-collapse-toggle"
+                  onClick={() => setShowConnections(!showConnections)}
+                >
+                  <span className="collapse-icon">{showConnections ? '▼' : '▶'}</span>
+                  {showConnections ? 'Hide' : 'Show Connections'}
+                </button>
+              </div>
 
-          <button
-            className="unfollow-btn"
-            onClick={() => handleRemoveFollower(user.username)}
-          >
-            Remove
-          </button>
-        </li>
-      ))
-    )}
-  </ul>
-)}
+              <div className={`items-container ${showConnections ? 'expanded' : 'collapsed'}`}>
+                <div className="follow-tabs">
+                  <button
+                    className={`follow-tab ${activeTab === 'followers' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('followers')}
+                  >
+                    {followers.length} Followers
+                  </button>
 
-{activeTab === 'following' && (
-  <ul className="follow-list">
-    {isLoadingFollowing ? (
-      <li>Loading...</li>
-    ) : (
-      following.map(user => (
-        <li key={user.username}>
-          <a href={`/seller/${user.username}`} className="follow-user-link">
-            {user.username}
-          </a>
-          <button
-            className="unfollow-btn"
-            onClick={() => handleUnfollow(user.username)}
-          >
-            Unfollow
-          </button>
-        </li>
-      ))
-    )}
-  </ul>
-)}
-</div>
+                  <button
+                    className={`follow-tab ${activeTab === 'following' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('following')}
+                  >
+                    {following.length} Following
+                  </button>
+                </div>
+
+                {activeTab === 'followers' && (
+                  <ul className="follow-list">
+                    {isLoadingFollowers ? (
+                      <li>Loading...</li>
+                    ) : (
+                      followers.map(user => (
+                        <li key={user.username}>
+                          <Link to={`/seller/${user.username}`} className="follow-user-link">
+                            {user.username}
+                          </Link>
+                          <button
+                            className="unfollow-btn"
+                            onClick={() => handleRemoveFollower(user.username)}
+                          >
+                            Remove
+                          </button>
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                )}
+
+                {activeTab === 'following' && (
+                  <ul className="follow-list">
+                    {isLoadingFollowing ? (
+                      <li>Loading...</li>
+                    ) : (
+                      following.map(user => (
+                        <li key={user.username}>
+                          <Link to={`/seller/${user.username}`} className="follow-user-link">
+                            {user.username}
+                          </Link>
+                          <button
+                            className="unfollow-btn"
+                            onClick={() => handleUnfollow(user.username)}
+                          >
+                            Unfollow
+                          </button>
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                )}
+              </div>
+            </div>
+
 
 
             <div className="item-list-section">
