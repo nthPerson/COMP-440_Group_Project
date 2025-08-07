@@ -122,11 +122,11 @@ export default function UserProfile() {
       <Navbar />
       <div className="dashboard-container">
         <div className="dashboard-content">
-          <div className="item-form-section">
 
-            <div className="page-header">
-              <h1 className="page-title">User Profile</h1>
-            </div>
+          <div className="page-header">
+            <h1 className="page-title">User Profile</h1>
+          </div>
+          <div className="item-form-section">
             <form onSubmit={handleSave}>
               <div className="form-group">
                 <input
@@ -177,131 +177,134 @@ export default function UserProfile() {
                 Save Profile
               </button>
             </form>
+          </div>
 
-            <div className="item-list-section">
-              <div className="item-list-header">
-                <div className="item-list-title-group">
-                  <h2 className="item-list-title">Connections</h2>
-                </div>
-
-                <button
-                  className="items-collapse-toggle"
-                  onClick={() => setShowConnections(!showConnections)}
-                >
-                  <span className="collapse-icon">{showConnections ? '▼' : '▶'}</span>
-                  {showConnections ? 'Hide' : 'Show Connections'}
-                </button>
-              </div>
-
-              <div className={`items-container ${showConnections ? 'expanded' : 'collapsed'}`}>
-                <div className="follow-tabs">
-                  <button
-                    className={`follow-tab ${activeTab === 'followers' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('followers')}
-                  >
-                    {followers.length} Followers
-                  </button>
+          <div className="item-management">
+            <div className="item-management-layout">
+              <div className="item-list-section">
+                <div className="item-list-header">
+                  <div className="item-list-title-group">
+                    <h2 className="item-list-title">My Connections</h2>
+                  </div>
 
                   <button
-                    className={`follow-tab ${activeTab === 'following' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('following')}
+                    className="items-collapse-toggle"
+                    onClick={() => setShowConnections(!showConnections)}
                   >
-                    {following.length} Following
+                    <span className="collapse-icon">{showConnections ? '▼' : '▶'}</span>
+                    {showConnections ? 'Hide' : 'Show Connections'}
                   </button>
                 </div>
 
-                {activeTab === 'followers' && (
-                  <ul className="follow-list">
-                    {isLoadingFollowers ? (
-                      <li>Loading...</li>
-                    ) : (
-                      followers.map(user => (
-                        <li key={user.username}>
-                          <Link to={`/seller/${user.username}`} className="follow-user-link">
-                            {user.username}
-                          </Link>
-                          <button
-                            className="unfollow-btn"
-                            onClick={() => handleRemoveFollower(user.username)}
-                          >
-                            Remove
-                          </button>
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                )}
+                <div className={`items-container ${showConnections ? 'expanded' : 'collapsed'}`}>
+                  <div className="follow-tabs">
+                    <button
+                      className={`follow-tab ${activeTab === 'followers' ? 'active' : ''}`}
+                      onClick={() => setActiveTab('followers')}
+                    >
+                      {followers.length} Followers
+                    </button>
 
-                {activeTab === 'following' && (
-                  <ul className="follow-list">
-                    {isLoadingFollowing ? (
-                      <li>Loading...</li>
-                    ) : (
-                      following.map(user => (
-                        <li key={user.username}>
-                          <Link to={`/seller/${user.username}`} className="follow-user-link">
-                            {user.username}
-                          </Link>
-                          <button
-                            className="unfollow-btn"
-                            onClick={() => handleUnfollow(user.username)}
-                          >
-                            Unfollow
-                          </button>
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                )}
+                    <button
+                      className={`follow-tab ${activeTab === 'following' ? 'active' : ''}`}
+                      onClick={() => setActiveTab('following')}
+                    >
+                      {following.length} Following
+                    </button>
+                  </div>
+
+                  {activeTab === 'followers' && (
+                    <ul className="follow-list">
+                      {isLoadingFollowers ? (
+                        <li>Loading...</li>
+                      ) : (
+                        followers.map(user => (
+                          <li key={user.username}>
+                            <Link to={`/seller/${user.username}`} className="follow-user-link">
+                              {user.username}
+                            </Link>
+                            <button
+                              className="unfollow-btn"
+                              onClick={() => handleRemoveFollower(user.username)}
+                            >
+                              Remove
+                            </button>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  )}
+
+                  {activeTab === 'following' && (
+                    <ul className="follow-list">
+                      {isLoadingFollowing ? (
+                        <li>Loading...</li>
+                      ) : (
+                        following.map(user => (
+                          <li key={user.username}>
+                            <Link to={`/seller/${user.username}`} className="follow-user-link">
+                              {user.username}
+                            </Link>
+                            <button
+                              className="unfollow-btn"
+                              onClick={() => handleUnfollow(user.username)}
+                            >
+                              Unfollow
+                            </button>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  )}
+                </div>
               </div>
-            </div>
 
+              <div className="item-list-section">
+                <div className="item-list-header">
+                  <div className="item-list-title-group">
+                    <h2 className="item-list-title">My Items</h2>
+                    <span className="item-count">{myItems.length}</span>
+                  </div>
 
-
-            <div className="item-list-section">
-              <div className="item-list-header">
-                <div className="item-list-title-group">
-                  <h2 className="item-list-title">My Items</h2>
-                  <span className="item-count">{myItems.length}</span>
+                  <button
+                    className="items-collapse-toggle"
+                    onClick={() => setShowMyItems(!showMyItems)}
+                  >
+                    <span className="collapse-icon">{showMyItems ? '▼' : '▶'}</span>
+                    {showMyItems ? 'Hide Items' : 'Show Items'}
+                  </button>
                 </div>
 
-                <button
-                  className="items-collapse-toggle"
-                  onClick={() => setShowMyItems(!showMyItems)}
-                >
-                  <span className="collapse-icon">{showMyItems ? '▼' : '▶'}</span>
-                  {showMyItems ? 'Hide Items' : 'Show Items'}
-                </button>
-              </div>
-
-              <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
-                <div className="item-card-grid">
-                  {currentItems.map(item => (
-                    <div key={item.id} className="item-card">
-                      <ItemCard item={item} />
-                    </div>
-                  ))}
-                </div>
-
-                {totalPages > 0 && (
-                  <div className="pagination-controls">
-                    {[...Array(totalPages)].map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentPage(index + 1)}
-                        className={`pagination-button ${currentPage === index + 1 ? 'active-page' : ''}`}
-                      >
-                        {index + 1}
-                      </button>
+                <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
+                  <div className="item-card-grid">
+                    {currentItems.map(item => (
+                      <div key={item.id} className="item-card">
+                        <ItemCard item={item} />
+                      </div>
                     ))}
                   </div>
-                )}
+
+                  {totalPages > 0 && (
+                    <div className="pagination-controls">
+                      {[...Array(totalPages)].map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentPage(index + 1)}
+                          className={`pagination-button ${currentPage === index + 1 ? 'active-page' : ''}`}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-
           </div>
         </div>
+
       </div>
+
     </>
   );
 }
