@@ -3,8 +3,6 @@ import Navbar from '../components/Navbar';
 import axios from "axios";
 import '../styles/global.css';
 import '../styles/layout/HomePage.css';
-import '../styles/components/NewItemForm.css';
-
 import ItemCard from '../components/ItemCard';
 
 export default function UserProfile() {
@@ -23,14 +21,37 @@ export default function UserProfile() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = myItems.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(myItems.length / itemsPerPage);
+  const [showMyItems, setShowMyItems] = useState(true);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [isLoadingFollowers, setIsLoadingFollowers] = useState(true);
+  const [isLoadingFollowing, setIsLoadingFollowing] = useState(true);
 
+  const handleFollow = async (username) => {
+    try {
+      await axios.post(`/api/follow/${username}`);
+      setFollowing((prev) => [...prev, { username }]);
+    } catch (err) {
+      console.error("Failed to follow user", err);
+    }
+  };
+  const handleUnfollow = async (username) => {
+    try{
+      await axios.delete(`/api/follow/${username}`);
+      setFollowing((prev) => prev.filter(user => user.username !== username));  
+    } catch (err) {
+      console.error("Failed to unfollow user", err);
+    }
+  };
 
   useEffect(() => {
     async function fetchUserProfileAndItems() {
       try {
-        const [profileRes, myItemsRes] = await Promise.all([
+        const [profileRes, myItemsRes, followersRes, followingRes] = await Promise.all([
           axios.get("/api/users/profile"),
-          axios.get("/api/items/my_items")
+          axios.get("/api/items/my_items"),
+          axios.get("/api/follow/followers"),
+          axios.get("/api/follow/following")
         ]);
 
         setUserData(profileRes.data);
@@ -42,9 +63,15 @@ export default function UserProfile() {
         });
 
         setMyItems(myItemsRes.data);
+
+        setFollowers(followersRes.data);
+        setFollowing(followingRes.data);
       } catch (err) {
         console.error("Failed to fetch profile or items", err);
         setStatus({ msg: "Failed to load profile or items", type: "error" });
+      } finally {
+        setIsLoadingFollowers(false);
+        setIsLoadingFollowing(false);
       }
     }
 
@@ -82,89 +109,132 @@ export default function UserProfile() {
       <Navbar />
       <div className="dashboard-content">
         <div className="new-item-form">
-          
+
           <h1>User Profile</h1>
           <form onSubmit={handleSave}>
-    <div className="form-group">
-      <input
-        name="firstName"
-        placeholder="First Name"
-        value={form.firstName}
-        onChange={handleInputChange}
-        className="form-input"
-        required
-      />
-    </div>
+            <div className="form-group">
+              <input
+                name="firstName"
+                placeholder="First Name"
+                value={form.firstName}
+                onChange={handleInputChange}
+                className="form-input"
+                required
+              />
+            </div>
 
-    <div className="form-group">
-      <input
-        name="lastName"
-        placeholder="Last Name"
-        value={form.lastName}
-        onChange={handleInputChange}
-        className="form-input"
-        required
-      />
-    </div>
+            <div className="form-group">
+              <input
+                name="lastName"
+                placeholder="Last Name"
+                value={form.lastName}
+                onChange={handleInputChange}
+                className="form-input"
+                required
+              />
+            </div>
 
-    <div className="form-group">
-      <input
-        name="username"
-        placeholder="Username"
-        value={form.username}
-        onChange={handleInputChange}
-        className="form-input"
-        readOnly
-      />
-    </div>
+            <div className="form-group">
+              <input
+                name="username"
+                placeholder="Username"
+                value={form.username}
+                onChange={handleInputChange}
+                className="form-input"
+                readOnly
+              />
+            </div>
 
-    <div className="form-group">
-      <input
-        name="email"
-        type="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={handleInputChange}
-        className="form-input"
-        required
-      />
-    </div>
+            <div className="form-group">
+              <input
+                name="email"
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={handleInputChange}
+                className="form-input"
+                required
+              />
+            </div>
 
-    <button type="submit" className="btn-add-item">
-      Save Profile
-    </button>
-  </form>
-          <div className="items-section">
-            
-            <div className="item-grid-container">
-            <h2>My Items</h2>
-              {myItems.length === 0 ? (
-                <p>You haven’t posted any items yet.</p>
-              ) : (
-                <>
-                  <div className="item-card-grid">
-                    {currentItems.map(item => (
-                      <ItemCard key={item.id} item={item} />
-                    ))}
-                  </div>
-                  {totalPages > 0 && (
-                    <div className="pagination-controls">
-                      {[...Array(totalPages)].map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentPage(index + 1)}
-                          className={currentPage === index + 1 ? 'active-page' : ''}
-                        >
-                          {index + 1}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
+            <button type="submit" className="btn-add-item">
+              Save Profile
+            </button>
+          </form>
+
+          <div className="follow-section">
+            <div className="follow-list">
+              <h3>Followers</h3>
+    {isLoadingFollowers ? (
+      <p>Loading...</p>
+    ) : (
+      <ul>
+        {followers.map(user => (
+          <li key={user.username}>
+            {user.username}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+
+  <div className="follow-list">
+    <h3>Following</h3>
+    {isLoadingFollowing ? (
+      <p>Loading...</p>
+    ) : (
+      <ul>
+        {following.map(user => (
+          <li key={user.username}>
+            {user.username}
+            <button onClick={() => handleUnfollow(user.username)}>Unfollow</button>
+          </li>
+        ))}
+      </ul>
+    )}
             </div>
           </div>
 
+          <div className="item-list-section">
+            <div className="item-list-header">
+              <div className="item-list-title-group">
+                <h2 className="item-list-title">My Items</h2>
+                <span className="item-count">{myItems.length}</span>
+              </div>
+
+              <button
+                className="items-collapse-toggle"
+                onClick={() => setShowMyItems(!showMyItems)}
+              >
+                <span className="collapse-icon">{showMyItems ? '▼' : '▶'}</span>
+                {showMyItems ? 'Hide Items' : 'Show Items'}
+              </button>
+            </div>
+
+            <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
+              <div className="item-card-grid">
+                {currentItems.map(item => (
+                  <div key={item.id} className="item-card">
+                    <ItemCard item={item} />
+                  </div>
+                ))}
+              </div>
+
+              {totalPages > 0 && (
+                <div className="pagination-controls">
+                  {[...Array(totalPages)].map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentPage(index + 1)}
+                      className={currentPage === index + 1 ? 'active-page' : ''}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
         </div>
       </div>
