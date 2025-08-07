@@ -1,4 +1,3 @@
-
 /* ================================
    ITEM MANAGEMENT CONTAINER
    ================================ */
@@ -297,6 +296,53 @@
 .create-first-item:hover {
   background: var(--primary-dark);
   transform: translateY(-1px);
+}
+
+/* ================================
+   NEW ITEM FORM ENHANCEMENTS
+   ================================ */
+.item-form-section button[type="submit"] {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.item-form-section button[type="submit"]:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.item-form-section textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--spacing-md);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--gray-800);
+  transition: all var(--transition-fast);
+  resize: vertical;
+  background: var(--white);
+}
+
+.item-form-section textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  outline: none;
+}
+
+.item-form-section textarea::placeholder {
+  color: var(--gray-400);
 }
 
 /* ================================

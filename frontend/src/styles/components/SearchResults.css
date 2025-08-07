@@ -8,7 +8,7 @@
 }
 
 .search-results-page h1 {
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
   font-size: 1.75rem;
 }
 
@@ -19,4 +19,24 @@
 .search-results-page .error {
   color: #c0392b;
   font-weight: bold;
+}
+
+/* Fix for truncated search results */
+/* Ensure the ItemList container can expand fully */
+.search-results-page .items-container {
+  margin-top: 2rem;
+  max-height: none !important;
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* space between each individual item card */
+.search-results-page .items-container ul li {
+  margin-bottom: 1.5rem;  /* ↑ space under each card */
+}
+
+/* Ensure the list itself can expand */
+.search-results-page ul {
+  max-height: none !important;
+  overflow: visible !important;
 }
