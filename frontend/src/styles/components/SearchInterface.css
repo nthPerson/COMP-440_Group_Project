@@ -52,7 +52,8 @@
 
 .search-input:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  /* box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); */
+  box-shadow: none;
 }
 
 .search-input::placeholder {
