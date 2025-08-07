@@ -32,7 +32,7 @@ function App() {
             <Route path="/item-management"   element={<ItemManagement />} />
             <Route path="/register"          element={<Register />} />
             <Route path="/search"            element={<SearchResults />} />
-        </Routes>
+          </Routes>
         </BrowserRouter>
       </ItemsListProvider>
     </div>

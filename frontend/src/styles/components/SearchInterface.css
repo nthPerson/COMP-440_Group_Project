@@ -11,7 +11,7 @@
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
+  /* border: 1px solid #e5e7eb; */
   margin-bottom: 2rem;
   max-width: 100%;
 }
@@ -52,7 +52,8 @@
 
 .search-input:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  /* box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); */
+  box-shadow: none;
 }
 
 .search-input::placeholder {
@@ -71,7 +72,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 100px;
+  min-width: 120px;
   height: 48px;
   display: flex;
   align-items: center;
@@ -411,7 +412,6 @@
 .item-rating-text {
   font-size: 0.9rem;
   color: var(--gray-600);
-}
   font-size: 0.85rem; /* Smaller font */
   margin-bottom: var(--spacing-xs);
   font-weight: 500;

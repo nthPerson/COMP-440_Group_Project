@@ -1,0 +1,31 @@
+/* src/components/Spinner.css */
+
+/* keyframes for the rotating circle */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* wrapper that lines up spinner + text */
+.spinner-container {
+  display: inline-flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  font-size: 1.5rem;
+  color: #555;
+}
+
+/* the spinning circle */
+.spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid #ccc;
+  border-top-color: #6b63ff;  /* your accent color */
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 0.5em;
+}
+
+/* optional text styling */
+.spinner-text {
+  white-space: nowrap;
+}
