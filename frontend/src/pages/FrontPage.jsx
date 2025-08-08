@@ -39,6 +39,7 @@ export default function FrontPage() {
               ) : (
                 <ul>
                   {items.map(item => (
+                    // <li key={item.id} className="item-card">
                     <li key={item.id} className="front-page-item-card">
                       {/* Item Image in upper-left corner */}
                       <div className="front-page-item-image">
