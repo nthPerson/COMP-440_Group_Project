@@ -51,6 +51,7 @@ export default function Navbar() {
         )}
         {user && (
           <>
+            <NavLink to="/" className="nav-link">Items</NavLink>
             <NavLink to="/item-management" className="nav-link">Item Management</NavLink>
             <NavLink to="/reports" className="nav-link">Reports</NavLink>
             <NavLink to="/profile" className="nav-link">Profile</NavLink>
