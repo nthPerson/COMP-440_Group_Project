@@ -2,13 +2,6 @@ import datetime
 from flask_sqlalchemy import SQLAlchemy  # Database management
 from flask_login import UserMixin  # Session management (avoids the need to write is_authenticated, is_active, etc. to handle user sessions)
 
-# Score-to-star mapping
-REVIEW_SCORE_MAP = {
-    'Excellent': 5.0,
-    'Good': 3.75,
-    'Fair': 2.5,
-    'Poor': 1.25
-}
 db = SQLAlchemy()  # This is the tool our app uses to interact with the database (automates queries, etc.)
 
 # User table schema: user(username*, password, firstName, lastName, email)  -- note that the * indicates the primary key
@@ -33,6 +26,13 @@ item_category = db.Table('item_category',
                          db.Column('category_name', db.String(64), db.ForeignKey('category.name'), primary_key=True)
                          )
 
+# Score-to-star mapping
+REVIEW_SCORE_MAP = {
+    'Excellent': 5.0,
+    'Good': 3.75,
+    'Fair': 2.5,
+    'Poor': 1.25
+}
 class Item(db.Model):
     __tablename__ = 'item'
     

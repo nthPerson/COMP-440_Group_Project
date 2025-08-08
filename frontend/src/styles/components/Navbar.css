@@ -1,23 +1,28 @@
 /* --------------------------------------
    MAIN NAVBAR LAYOUT & BRAND
    -------------------------------------- */
-.navbar {
+
+:root{
+  --nav-tab-height: 68px;
+  --nav-tab-padding-x: 40px;
+  --nav-tab-font-size: 1.2rem;
+}
+
+   .navbar {
   /* overall navbar height */
-  height: 88px;
+  height: 100px;
   /* white background behind everything */
   background: var(--white);
   /* remove any default borders */
-  border: none;
-  /* remove default shadows */
-  box-shadow: none;
+  border: 1px solid var(--gray-200);
+
   /* horizontal padding inside navbar */
   padding: 0 var(--spacing-lg);
   /* use flexbox to lay out children */
   display: flex;
   /* spread children left/right */
   justify-content: space-between;
-  /* stretch children to fill navbar height */
-  align-items: stretch;
+  align-items: center;
   /* ensure dropdowns or rounding aren’t clipped */
   overflow: visible;
   /* above other page content */
@@ -41,6 +46,8 @@
   text-decoration: none;
   /* prevent user-select */
   user-select: none;
+  margin-right: 1.5rem;
+  margin-left: 1.5rem;
 }
 
 /* --------------------------------------
@@ -91,8 +98,8 @@
   max-width: 1200px;                   /* cap width */
   padding: 0.7em 1.2em;                /* inner spacing */
   font-size: 1.1rem;                   /* slightly larger text */
-  border: 1px solid var(--gray-200);   /* light border */
-  border-radius: 8px;                  /* rounded corners */
+ /* border: 1px solid var(--gray-200);   /* light border */
+ /* border-radius: 8px;                  /* rounded corners */
   box-sizing: border-box;              /* include padding in width */
 }
 
@@ -106,8 +113,9 @@
    -------------------------------------- */
 .nav-right {
   display: flex;             /* row layout for tabs */
-  align-items: flex-end;     /* make tabs hug bottom of navbar */
+  align-items: center;     /* make tabs hug bottom of navbar */
   height: 100%;              /* match navbar height */
+  gap: var(--spacing-sm); /* space between tabs */
 }
 
 /* base styles for both links and logout button */
@@ -116,9 +124,9 @@
   display: flex;                       /* flex to center text */
   align-items: center;                 /* vertical centering */
   justify-content: center;             /* horizontal centering */
-  height: 68px;                        /* tab height */
-  padding: 0 40px;                     /* horizontal padding */
-  font-size: 1.18rem;                  /* tab font size */
+  height: var(--nav-tab-height);                        /* tab height */
+  padding: 0 var(--nav-tab-padding-x);                    /* horizontal padding */
+  font-size: var(--nav-tab-font-size);                  /* tab font size */
   font-weight: 700;                    /* bold text */
   color: var(--primary-color);         /* primary color text */
   background: transparent;             /* no bg by default */
