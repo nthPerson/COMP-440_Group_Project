@@ -202,20 +202,7 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                                 </span>
                             </div> */}
                             
-                            {/* Review Form Section */}
-                            <div className="review-section">
-                                <ReviewForm
-                                    itemId={item.id}
-                                    onReviewSubmitted={() => {
-                                        // Reload items to update star ratings after new review
-                                        loadItemsList();
-                                        
-                                        // Dispatch event for other components
-                                        window.dispatchEvent(new Event('reviewCreated'));
-                                    }}                
-                                />
-                            </div>
-                            
+                           
                                 {/* Enhanced Rating Display */}
                                 <div className="item-rating">
                                     <span className="rating-stars">
@@ -245,7 +232,7 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                                             }}                
                                         />
                                 </div>
-                                /div>
+                                </div>
                             )}
                         </li>
                     ))}
