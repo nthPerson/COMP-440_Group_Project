@@ -285,3 +285,98 @@
     min-width: 100%;                   /* full width input */
   }
 }
+
+/* this gets rid of the underlines on the links in the navbar */
+.navbar a,
+.navbar .nav-link,
+.navbar .nav-button { text-decoration: none; }
+
+.navbar a:hover,
+.navbar .nav-link:hover,
+.navbar .nav-button:hover { text-decoration: none; }
+
+/* 1) Remove the filled pill for the current page */
+.nav-right .nav-link.active,
+.nav-right .nav-link[aria-current="page"],
+.nav-right .nav-button.active {
+  background: transparent !important;
+  color: var(--gray-700);
+  box-shadow: none;
+  border: none;
+}
+
+/* 2) Prep links to host an indicator */
+.nav-right .nav-link,
+.nav-right .nav-button {
+  position: relative;          /* anchor the ::after line */
+  padding-bottom: 0.9rem;      /* creates a little gap under the text */
+}
+
+/* 3) Hidden gradient bar (shows on hover/active) */
+.nav-right .nav-link::after,
+.nav-right .nav-button::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2px;                /* space between text and line */
+  transform: translateX(-50%);
+  width: 0;                    /* animate in */
+  height: 4px;
+  border-radius: 999px;
+  opacity: 0;
+  background: linear-gradient(
+    135deg,
+    transparent,
+    var(--primary-light) 20%,
+    var(--primary-color) 50%,
+    var(--primary-light) 80%,
+    transparent
+  );
+  box-shadow: 0 6px 16px -6px var(--primary-color);
+  transition: width 220ms ease, opacity 220ms ease;
+}
+
+/* 4) Show it on hover */
+.nav-right .nav-link:hover::after,
+.nav-right .nav-button:hover::after {
+  width: 70%;
+  opacity: 0.9;
+}
+
+/* 5) Keep it visible on the current page */
+.nav-right .nav-link.active::after,
+.nav-right .nav-link[aria-current="page"]::after,
+.nav-right .nav-button.active::after {
+  width: 70%;
+  opacity: 1;
+}
+
+/* Turn off the laser/spotlight bars */
+.navbar::before,
+.navbar::after {
+  content: none !important;   /* don't even render the pseudo-elements */
+  animation: none !important;
+}
+
+/* Remove hover/focus transitions/pop */
+.navbar .nav-link,
+.navbar .nav-button {
+  transition: none !important;
+  transform: none !important;
+  text-shadow: none !important; /* if you added aura */
+}
+
+/* Make the gradient line appear instantly (no slide/opacity fade) */
+.navbar .nav-link::after,
+.navbar .nav-button::after {
+  transition: none !important;
+}
+
+/* Keep the line visible on hover/active, but snap (no animation) */
+.navbar .nav-link:hover::after,
+.navbar .nav-button:hover::after,
+.navbar .nav-link.active::after,
+.navbar .nav-link[aria-current="page"]::after {
+  width: 70%;
+  opacity: 1;
+}
