@@ -192,7 +192,7 @@ export default function UserProfile() {
                     onClick={() => setShowConnections(!showConnections)}
                   >
                     <span className="collapse-icon">{showConnections ? '▼' : '▶'}</span>
-                    {showConnections ? 'Hide' : 'Show Connections'}
+                    {showConnections ? 'Hide Connections' : 'Show Connections'}
                   </button>
                 </div>
 
