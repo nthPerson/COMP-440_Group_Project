@@ -196,3 +196,25 @@ def get_my_items():
         })
     
     return jsonify(result), 200
+
+@items_bp.route('/user/<username>', methods=['GET'])
+def get_items_by_user(username):
+    items = Item.query\
+        .filter_by(posted_by=username)\
+        .order_by(Item.date_posted.desc())\
+        .all()
+
+    return jsonify([
+      {
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'price': str(item.price),
+        'posted_by': item.posted_by,
+        'date_posted': item.date_posted.isoformat(),
+        'categories': [{'name': c.name} for c in item.categories],
+        'star_rating': item.star_rating,
+        'review_count': item.reviews.count()
+      }
+      for item in items
+    ]), 200
