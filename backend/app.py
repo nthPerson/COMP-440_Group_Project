@@ -57,5 +57,8 @@ app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
 from routes.reports import reports_bp
 app.register_blueprint(reports_bp, url_prefix='/api/reports')
 
+from routes.follow import follow_bp
+app.register_blueprint(follow_bp, url_prefix='/api/follow')
+
 if __name__ == '__main__':
     app.run(host='::', port=5000, debug=True)
