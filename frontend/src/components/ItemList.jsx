@@ -187,21 +187,21 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                                     </div>
                                 </div>
     
-                            {/* Rating Display
-                            <div className="item-rating">
-                                <span className="rating-stars">
-                                    {(() => {
-                                        const full = Math.floor(item.star_rating || 0);
-                                        const half = (item.star_rating || 0) % 1 >= 0.25 && (item.star_rating || 0) % 1 < 0.75;
-                                        const empty = 5 - full - (half ? 1 : 0);
-                                        return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
-                                    })()}
-                                </span>
-                                <span className="rating-info">
-                                    {(item.star_rating || 0).toFixed(1)}/5 • <strong>{item.review_count || 0}</strong> {(item.review_count || 0) === 1 ? 'review' : 'reviews'}
-                                </span>
-                            </div> */}
-                            
+                                {/* Rating Display
+                                <div className="item-rating">
+                                    <span className="rating-stars">
+                                        {(() => {
+                                            const full = Math.floor(item.star_rating || 0);
+                                            const half = (item.star_rating || 0) % 1 >= 0.25 && (item.star_rating || 0) % 1 < 0.75;
+                                            const empty = 5 - full - (half ? 1 : 0);
+                                            return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+                                        })()}
+                                    </span>
+                                    <span className="rating-info">
+                                        {(item.star_rating || 0).toFixed(1)}/5 • <strong>{item.review_count || 0}</strong> {(item.review_count || 0) === 1 ? 'review' : 'reviews'}
+                                    </span>
+                                </div> */}
+                                
                            
                                 {/* Enhanced Rating Display */}
                                 <div className="item-rating">
@@ -232,8 +232,9 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                                             }}                
                                         />
                                 </div>
-                                </div>
+
                             )}
+                            </div>
                         </li>
                     ))}
                 </ul>
