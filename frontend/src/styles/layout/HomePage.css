@@ -63,10 +63,7 @@
 /* ================================
    CONTENT SECTIONS - UNIFIED DESIGN
    ================================ */
-.content-section {
-  /* Remove all styling to eliminate double border effect */
-  /* Let child components handle their own styling */
-}
+/* Content sections now handled by child components */
 
 /* ================================
    ERROR MESSAGE STYLING
@@ -294,3 +291,5 @@
   align-items: center;
   margin-top: 1.5rem;
 }
+
+/* FrontPage-specific styles moved to styles/pages/FrontPage.css to avoid global overrides */

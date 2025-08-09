@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ReviewForm from '../components/ReviewForm';
+import ImageUpload from '../components/ImageUpload';
 import '../styles/global.css';
 import '../styles/pages/ItemPage.css';
 
@@ -9,6 +10,7 @@ export default function Item() {
   const { id } = useParams();
   const [item, setItem] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const loadItem = () => {
     fetch(`/api/items/${id}`)
@@ -22,15 +24,33 @@ export default function Item() {
       .then(data => setReviews(data));
   };
 
+  const loadCurrentUser = () => {
+    fetch('/api/auth/status', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.authenticated) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => setCurrentUser(null));
+  };
+
   useEffect(() => {
     loadItem();
     loadReviews();
+    loadCurrentUser();
   }, [id]);
 
   const handleReviewSubmitted = () => {
     loadItem();
     loadReviews();
   };
+
+  const handleImageUpdated = (newImageUrl) => {
+    setItem(prev => ({ ...prev, image_url: newImageUrl }));
+  };
+
+  const isOwner = currentUser && item && currentUser.username === item.posted_by;
 
   if (!item) {
     return (
@@ -53,6 +73,24 @@ export default function Item() {
         <div className="item-container">
           {/* ITEM HEADER SECTION */}
           <div className="item-header">
+            <div className="item-image-section">
+              <img 
+                src={item.image_url} 
+                alt={item.title}
+                className="item-image"
+                onError={(e) => {
+                  e.target.src = "https://api.iconify.design/mdi:package-variant.svg";
+                }}
+              />
+              {isOwner && (
+                <ImageUpload 
+                  itemId={item.id}
+                  currentImageUrl={item.image_url}
+                  onImageUpdated={handleImageUpdated}
+                />
+              )}
+            </div>
+            
             <div className="item-title-section">
               <h1 className="item-title">{item.title}</h1>
               <div className="item-rating-summary">
@@ -69,6 +107,7 @@ export default function Item() {
                 </span>
               </div>
             </div>
+            
             <div className="item-price-section">
               <span className="price">${parseFloat(item.price).toFixed(2)}</span>
             </div>
@@ -96,7 +135,14 @@ export default function Item() {
                 <span className="meta-label">Categories</span>
                 <div className="categories-container">
                   {item.categories.map(c => (
-                    <span key={c.name} className="category-tag">{c.name}</span>
+                    <span key={c.name} className="category-tag">
+                      <img 
+                        src={`https://api.iconify.design/${c.icon_key}.svg`}
+                        alt=""
+                        className="category-icon"
+                      />
+                      {c.name}
+                    </span>
                   ))}
                 </div>
               </div>

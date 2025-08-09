@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import ItemList from '../components/ItemList';
+import SearchResultsList from '../components/SearchResultsList';
 import '../styles/components/SearchResults.css';
 import '../styles/components/LoadingSpinner.css'; //this for the loading spinner
 import Spinner from '../components/LoadingSpinner';
