@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import '../styles/global.css';
 import '../styles/layout/HomePage.css';
 import '../styles/components/ItemManagement.css';
+import '../styles/pages/FrontPage.css';
 
 export default function FrontPage() {
   // const [items, setItems] = useState([]);
@@ -21,7 +22,7 @@ export default function FrontPage() {
   return (
     <>
       <Navbar />
-      <div className="dashboard-container">
+      <div className="dashboard-container front-page">
         <div className="dashboard-content">
           <div className="page-header">
             <h1 className="page-title">Items</h1>
@@ -40,50 +41,58 @@ export default function FrontPage() {
                 <ul>
                   {items.map(item => (
                     <li key={item.id} className="item-card">
-                      <h3>
-                        {/* Small per-item icon (custom image if provided, otherwise default category icon) */}
+                      {/* Row 1: Image (64x64) + Title */}
+                      <div className="fp-item-header-row">
                         <img
+                          className="fp-item-thumb"
                           src={
                             item.image_url ||
                             (item.categories?.[0]?.icon_key
                               ? `https://api.iconify.design/${item.categories[0].icon_key}.svg`
                               : 'https://api.iconify.design/mdi:package-variant.svg')
                           }
-                          alt=""
+                          alt={item.title}
                           onError={(e) => {
                             e.currentTarget.src = 'https://api.iconify.design/mdi:package-variant.svg';
                           }}
-                          style={{ width: 24, height: 24, objectFit: 'contain', marginRight: 8, verticalAlign: 'middle' }}
                         />
-                        <Link to={`/item/${item.id}`}>{item.title}</Link>
-                      </h3>
+                        <h3 className="fp-item-title">
+                          <Link to={`/item/${item.id}`}>{item.title}</Link>
+                        </h3>
+                      </div>
 
-                      <p>{item.description}</p>
+                      {/* Row 2: Description */}
+                      <p className="fp-item-description">{item.description}</p>
 
-                      <div className="item-meta">
-                        <div className="item-meta-item">
-                          <span className="meta-label">Price</span>
-                          <span className="meta-value">${parseFloat(item.price).toFixed(2)}</span>
-                        </div>
-                        <div className="item-meta-item">
-                          <span className="meta-label">Posted By</span>
-                          <Link to={`/seller/${item.posted_by}`} className="meta-value">{item.posted_by}</Link>
-                        </div>
-                        <div className="item-meta-item">
-                          <span className="meta-label">Date Posted</span>
-                          <span className="meta-value">{new Date(item.date_posted).toLocaleDateString()}</span>
+                      {/* Row 3: Price, Posted By */}
+                      <div className="fp-row fp-price-seller">
+                        <div className="fp-price">${parseFloat(item.price).toFixed(2)}</div>
+                        <div className="fp-posted-by">
+                          posted by <Link to={`/seller/${item.posted_by}`}>{item.posted_by}</Link>
                         </div>
                       </div>
 
+                      {/* Row 4: Date Posted */}
+                      <div className="fp-date">{new Date(item.date_posted).toLocaleDateString()}</div>
+
+                      {/* Row 5: Categories (pill with icon + name) */}
                       <div className="item-categories">
                         <span className="meta-label">Categories:</span>
                         <div className="category-list">
                           {item.categories.map(c => (
-                            <span key={c.name} className="category-item">{c.name}</span>
+                            <span key={c.name} className="category-item">
+                              <img 
+                                src={`https://api.iconify.design/${c.icon_key}.svg`}
+                                alt=""
+                                className="category-icon-small"
+                              />
+                              {c.name}
+                            </span>
                           ))}
                         </div>
                       </div>
 
+                      {/* Row 6: Rating */}
                       <div className="item-rating">
                         <span className="rating-stars">
                           {(() => {
