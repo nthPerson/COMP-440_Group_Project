@@ -39,70 +39,63 @@ export default function FrontPage() {
               ) : (
                 <ul>
                   {items.map(item => (
-                    <li key={item.id} className="front-page-item-card">
-                      {/* Item Image in upper-left corner */}
-                      <div className="front-page-item-image">
-                        <img 
-                          src={item.image_url} 
-                          alt={item.title}
-                          className="front-page-thumbnail"
+                    <li key={item.id} className="item-card">
+                      <h3>
+                        {/* Small per-item icon (custom image if provided, otherwise default category icon) */}
+                        <img
+                          src={
+                            item.image_url ||
+                            (item.categories?.[0]?.icon_key
+                              ? `https://api.iconify.design/${item.categories[0].icon_key}.svg`
+                              : 'https://api.iconify.design/mdi:package-variant.svg')
+                          }
+                          alt=""
                           onError={(e) => {
-                            e.target.src = "https://api.iconify.design/mdi:package-variant.svg";
+                            e.currentTarget.src = 'https://api.iconify.design/mdi:package-variant.svg';
                           }}
+                          style={{ width: 24, height: 24, objectFit: 'contain', marginRight: 8, verticalAlign: 'middle' }}
                         />
+                        <Link to={`/item/${item.id}`}>{item.title}</Link>
+                      </h3>
+
+                      <p>{item.description}</p>
+
+                      <div className="item-meta">
+                        <div className="item-meta-item">
+                          <span className="meta-label">Price</span>
+                          <span className="meta-value">${parseFloat(item.price).toFixed(2)}</span>
+                        </div>
+                        <div className="item-meta-item">
+                          <span className="meta-label">Posted By</span>
+                          <Link to={`/seller/${item.posted_by}`} className="meta-value">{item.posted_by}</Link>
+                        </div>
+                        <div className="item-meta-item">
+                          <span className="meta-label">Date Posted</span>
+                          <span className="meta-value">{new Date(item.date_posted).toLocaleDateString()}</span>
+                        </div>
                       </div>
-                      
-                      {/* Item content in row-based layout */}
-                      <div className="front-page-item-content">
-                        {/* Title */}
-                        <h3 className="front-page-title">
-                          <Link to={`/item/${item.id}`}>{item.title}</Link>
-                        </h3>
-                        
-                        {/* Description */}
-                        <p className="front-page-description">{item.description}</p>
-                        
-                        {/* Price and Posted By (same row) */}
-                        <div className="front-page-row">
-                          <span className="front-page-price">${parseFloat(item.price).toFixed(2)}</span>
-                          <span className="front-page-posted-by">
-                            posted by <Link to={`/seller/${item.posted_by}`}>{item.posted_by}</Link>
-                          </span>
-                        </div>
-                        
-                        {/* Date Posted */}
-                        <div className="front-page-date">
-                          {new Date(item.date_posted).toLocaleDateString()}
-                        </div>
-                        
-                        {/* Categories */}
-                        <div className="front-page-categories">
+
+                      <div className="item-categories">
+                        <span className="meta-label">Categories:</span>
+                        <div className="category-list">
                           {item.categories.map(c => (
-                            <span key={c.name} className="front-page-category-tag">
-                              <img 
-                                src={`https://api.iconify.design/${c.icon_key}.svg`}
-                                alt=""
-                                className="front-page-category-icon"
-                              />
-                              {c.name}
-                            </span>
+                            <span key={c.name} className="category-item">{c.name}</span>
                           ))}
                         </div>
-                        
-                        {/* Star Rating */}
-                        <div className="front-page-rating">
-                          <span className="rating-stars">
-                            {(() => {
-                              const full = Math.floor(item.star_rating);
-                              const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
-                              const empty = 5 - full - (half ? 1 : 0);
-                              return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
-                            })()}
-                          </span>
-                          <span className="rating-info">
-                            {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
-                          </span>
-                        </div>
+                      </div>
+
+                      <div className="item-rating">
+                        <span className="rating-stars">
+                          {(() => {
+                            const full = Math.floor(item.star_rating);
+                            const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
+                            const empty = 5 - full - (half ? 1 : 0);
+                            return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+                          })()}
+                        </span>
+                        <span className="rating-info">
+                          {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
+                        </span>
                       </div>
                     </li>
                   ))}
