@@ -5,10 +5,11 @@
 :root{
   --nav-tab-height: 68px;
   --nav-tab-padding-x: 40px;
-  --nav-tab-font-size: 1.2rem;
+  --nav-tab-font-size: 1.2rem; /* base font size for nav tabs */
 }
 
    .navbar {
+  position: relative;
   /* overall navbar height */
   height: 100px;
   /* white background behind everything */
@@ -48,6 +49,79 @@
   user-select: none;
   margin-right: 1.5rem;
   margin-left: 1.5rem;
+}
+
+
+/* ================================
+   SPOTLIGHT & LASER ANIMATIONS
+   ================================ */
+/* Spotlight gradient sweeping out */
+.navbar::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 4px;
+  width: 0;
+  background: radial-gradient(
+    circle at center,
+    var(--primary-light) 0%,
+    var(--primary-color) 40%,
+    transparent 100%
+  );
+  opacity: 0;
+  animation: spotlight 2.5s ease-out infinite;
+}
+
+/* Laser pulse from center */
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2px;
+  width: 0;
+  background: var(--primary-dark);
+  box-shadow: 0 0 8px var(--primary-dark), 0 0 16px var(--primary-light);
+  opacity: 0;
+  animation: laserPulse 1.8s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+@keyframes spotlight {
+  0% {
+    width: 0;
+    opacity: 0.3;
+  }
+  50% {
+    width: 100%;
+    opacity: 0.6;
+  }
+  100% {
+    width: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes laserPulse {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  30% {
+    width: 60%;
+    opacity: 1;
+  }
+  60% {
+    width: 0;
+    opacity: 0.2;
+  }
+  100% {
+    width: 0;
+    opacity: 0;
+  }
 }
 
 /* --------------------------------------
@@ -127,15 +201,17 @@
   height: var(--nav-tab-height);                        /* tab height */
   padding: 0 var(--nav-tab-padding-x);                    /* horizontal padding */
   font-size: var(--nav-tab-font-size);                  /* tab font size */
-  font-weight: 700;                    /* bold text */
-  color: var(--primary-color);         /* primary color text */
+  font-weight: 400;                    /* bold text */
+  color: var(--gray-600);         /* primary color text */
   background: transparent;             /* no bg by default */
   border: none;                        /* no border */
   text-decoration: none;               /* no underline */
   cursor: pointer;                     /* pointer cursor on hover */
   transition:
-    background 0.18s,
-    color 0.18s;                       /* smooth hover/active */
+    background 0.18s, color 0.18s, 
+    transform 0.2s ease-out,
+    text-shadow 0.2s ease-out;
+                           /* smooth hover/active */
   border-radius: 28px 28px 0 0;        /* top-rounded corners */
   margin: 0;                           /* reset any margins */
   box-shadow: none;                    /* no extra shadows */
@@ -153,7 +229,7 @@
 /* hover state for both links and button */
 .nav-link:hover,
 .nav-button:hover {
-  color: var(--primary-dark);          /* darker shade on hover */
+   transform: translateY(-3px) scale(1.05);
 }
 
 /* --------------------------------------
@@ -166,10 +242,10 @@
   }
   .nav-link,
   .nav-button {
-    height: 50px;                      /* shorter tabs */
-    padding: 0 18px;                   /* less padding */
+    height: auto;                      /* shorter tabs */
+    padding: 0.5em 1.25em;                   /* less padding */
     font-size: 1rem;                   /* smaller text */
-    border-radius: 20px 20px 4px 4px;  /* adjusted rounding */
+    border-radius: 999px;  /* adjusted rounding */
   }
   .search-interface,
   .search-form,
@@ -208,4 +284,99 @@
   .search-input {
     min-width: 100%;                   /* full width input */
   }
+}
+
+/* this gets rid of the underlines on the links in the navbar */
+.navbar a,
+.navbar .nav-link,
+.navbar .nav-button { text-decoration: none; }
+
+.navbar a:hover,
+.navbar .nav-link:hover,
+.navbar .nav-button:hover { text-decoration: none; }
+
+/* 1) Remove the filled pill for the current page */
+.nav-right .nav-link.active,
+.nav-right .nav-link[aria-current="page"],
+.nav-right .nav-button.active {
+  background: transparent !important;
+  color: var(--gray-700);
+  box-shadow: none;
+  border: none;
+}
+
+/* 2) Prep links to host an indicator */
+.nav-right .nav-link,
+.nav-right .nav-button {
+  position: relative;          /* anchor the ::after line */
+  padding-bottom: 0.9rem;      /* creates a little gap under the text */
+}
+
+/* 3) Hidden gradient bar (shows on hover/active) */
+.nav-right .nav-link::after,
+.nav-right .nav-button::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2px;                /* space between text and line */
+  transform: translateX(-50%);
+  width: 0;                    /* animate in */
+  height: 4px;
+  border-radius: 999px;
+  opacity: 0;
+  background: linear-gradient(
+    135deg,
+    transparent,
+    var(--primary-light) 20%,
+    var(--primary-color) 50%,
+    var(--primary-light) 80%,
+    transparent
+  );
+  box-shadow: 0 6px 16px -6px var(--primary-color);
+  transition: width 220ms ease, opacity 220ms ease;
+}
+
+/* 4) Show it on hover */
+.nav-right .nav-link:hover::after,
+.nav-right .nav-button:hover::after {
+  width: 70%;
+  opacity: 0.9;
+}
+
+/* 5) Keep it visible on the current page */
+.nav-right .nav-link.active::after,
+.nav-right .nav-link[aria-current="page"]::after,
+.nav-right .nav-button.active::after {
+  width: 70%;
+  opacity: 1;
+}
+
+/* Turn off the laser/spotlight bars */
+.navbar::before,
+.navbar::after {
+  content: none !important;   /* don't even render the pseudo-elements */
+  animation: none !important;
+}
+
+/* Remove hover/focus transitions/pop */
+.navbar .nav-link,
+.navbar .nav-button {
+  transition: none !important;
+  transform: none !important;
+  text-shadow: none !important; /* if you added aura */
+}
+
+/* Make the gradient line appear instantly (no slide/opacity fade) */
+.navbar .nav-link::after,
+.navbar .nav-button::after {
+  transition: none !important;
+}
+
+/* Keep the line visible on hover/active, but snap (no animation) */
+.navbar .nav-link:hover::after,
+.navbar .nav-button:hover::after,
+.navbar .nav-link.active::after,
+.navbar .nav-link[aria-current="page"]::after {
+  width: 70%;
+  opacity: 1;
 }
