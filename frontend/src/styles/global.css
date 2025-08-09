@@ -497,3 +497,6 @@ a:hover {
 .form-group:nth-child(5) { animation-delay: 0.5s; }
 .form-group:nth-child(6) { animation-delay: 0.6s; }
 
+input[readonly] {
+  cursor: not-allowed;
+}

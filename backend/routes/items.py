@@ -195,6 +195,26 @@ def get_categories():
         'category_count': len(result),
         'categories': result
     }), 200
+@items_bp.route('/my_items', methods=['GET'])
+@login_required
+def get_my_items():
+    my_items = Item.query.filter_by(posted_by=current_user.username).order_by(Item.date_posted.desc()).all()
+
+    result = []
+    for item in my_items:
+        result.append({
+            'id': item.id,
+            'title': item.title,
+            'description': item.description,
+            'price': str(item.price),
+            'date_posted': item.date_posted.isoformat(),
+            'posted_by': item.posted_by,
+            'categories': [{'name': c.name} for c in item.categories],
+            'star_rating': item.star_rating,
+            'review_count': item.reviews.count()
+        })
+    
+    return jsonify(result), 200
 
 
 @items_bp.route('/<int:item_id>/image', methods=['PUT'])

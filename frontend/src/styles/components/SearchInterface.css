@@ -51,7 +51,7 @@
 }
 
 .search-input:focus {
-  border-color: var(--primary-color);
+  /* border-color: var(--primary-color); */
   /* box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); */
   box-shadow: none;
 }
@@ -73,7 +73,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 120px;
-  height: 48px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
