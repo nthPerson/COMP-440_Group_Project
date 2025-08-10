@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useParams }        from 'react-router-dom';
-import Navbar               from '../components/Navbar';
-import ItemCard             from '../components/ItemCard';
-import ReviewCard           from '../components/ReviewCard';
+import { useParams } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import ItemCard from '../components/ItemCard';
+import ReviewCard from '../components/ReviewCard';
 import '../styles/global.css';
-import axios                from 'axios';
+import axios from 'axios';
+
 
 export default function Seller() {
   const { username } = useParams();
-  const [seller, setSeller]         = useState(null);
-  const [items, setItems]           = useState([]);
-  const [reviews, setReviews]       = useState([]);
-  const [followers, setFollowers]   = useState([]);         // ← added
+  const [seller, setSeller] = useState(null);
+  const [items, setItems] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [followers, setFollowers] = useState([]);         // ← added
   const [followingList, setFollowingList] = useState([]);
-  const [isFollowing, setIsFollowing]     = useState(false);
-  const [activeTab, setActiveTab]         = useState('items');
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [activeTab, setActiveTab] = useState('items');
 
 
   useEffect(() => {
@@ -118,13 +119,13 @@ export default function Seller() {
           {/* Tabs */}
           <div className="follow-tabs">
             <button
-              className={`follow-tab ${activeTab==='items' ? 'active' : ''}`}
+              className={`follow-tab ${activeTab === 'items' ? 'active' : ''}`}
               onClick={() => setActiveTab('items')}
             >
               Items
             </button>
             <button
-              className={`follow-tab ${activeTab==='reviews'?'active':''}`}
+              className={`follow-tab ${activeTab === 'reviews' ? 'active' : ''}`}
               onClick={() => setActiveTab('reviews')}
             >
               Reviews
@@ -137,23 +138,70 @@ export default function Seller() {
               {items.length === 0
                 ? <p>No items for sale.</p>
                 : items.map(it => (
-                    <div key={it.id} className="item-card">
-                      <ItemCard item={it} />
-                    </div>
-                  ))
+                  <div key={it.id} className="item-card">
+                    <ItemCard item={it} />
+                  </div>
+                ))
               }
             </div>
           )}
           {activeTab === 'reviews' && (
-            <div className="review-list">
-              {reviews.length === 0
-                ? <p>No reviews yet.</p>
-                : reviews.map(r => (
-                    <ReviewCard key={r.id} review={r} />
-                  ))
-              }
+  <div className="reviews-section">
+    <div className="reviews-header">
+      <h3 className="section-title">Customer Reviews</h3>
+      <span className="reviews-count">
+        {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
+      </span>
+    </div>
+
+    {reviews.length > 0 ? (
+      <div className="reviews-list">
+        {reviews.map(review => (
+          <div key={review.id} className="review-card">
+            <div className="review-header">
+              <div className="reviewer-info">
+                <div className="reviewer-avatar">
+                  {review.user.charAt(0).toUpperCase()}
+                </div>
+                <div className="reviewer-details">
+                  <span className="reviewer-name">{review.user}</span>
+                  <div className="review-rating">
+                    <span
+                      className={`rating-badge rating-${review.score.toLowerCase()}`}
+                    >
+                      {review.score}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <span className="review-date">
+                {review.date
+                  ? new Date(review.date).toLocaleDateString()
+                  : 'Recently'}
+              </span>
             </div>
-          )}
+
+            {review.remark && (
+              <div className="review-content">
+                <p className="review-text">{review.remark}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="no-reviews">
+        <div className="no-reviews-icon">💭</div>
+        <h4 className="no-reviews-title">No reviews yet</h4>
+        <p className="no-reviews-text">
+          Be the first to share your experience with this seller!
+        </p>
+      </div>
+    )}
+  </div>
+)}
+
+
         </div>
       </div>
     </>
