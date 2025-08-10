@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from "axios";
 import '../styles/global.css';
-import '../styles/layout/HomePage.css';
-import '../styles/components/FollowTabs.css';
+import '../styles/pages/UserProfile.css';
+import '../styles/components/ItemList.css';
+import '../styles/components/ItemCard.css';
 import ItemCard from '../components/ItemCard';
 
 export default function UserProfile() {
@@ -278,11 +279,17 @@ export default function UserProfile() {
                 <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
                   <div className="item-card-grid">
                     {currentItems.map(item => (
+                        <ItemCard item={item} />
+                    ))}
+                  </div>
+                {/* <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
+                  <div className="item-card-grid">
+                    {currentItems.map(item => (
                       <div key={item.id} className="item-card">
                         <ItemCard item={item} />
                       </div>
                     ))}
-                  </div>
+                  </div> */}
 
                   {totalPages > 0 && (
                     <div className="pagination-controls">

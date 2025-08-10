@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import SearchResultsList from '../components/SearchResultsList';
 import ItemList from '../components/ItemList';
-import '../styles/components/SearchResults.css';
-import '../styles/components/LoadingSpinner.css'; //this for the loading spinner
+import '../styles/pages/SearchResults.css';
+// Spinner styles are imported within the component
+import '../styles/components/ItemList.css';
+import '../styles/components/ItemCard.css';
 import Spinner from '../components/LoadingSpinner';
 
 function useQuery() {

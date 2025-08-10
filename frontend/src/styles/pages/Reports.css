@@ -1,4 +1,4 @@
-/* Seller page layout reuse so it doesn’t depend on layout/HomePage.css */
+/* Reports page layout reuse so it doesn’t depend on layout/HomePage.css */
 
 .dashboard-container { min-height: 100vh; background: var(--gray-100) !important; display: flex; flex-direction: column; font-family: var(--font-primary); }
 .dashboard-content { flex: 1; max-width: 1400px; width: 100%; margin: 0 auto; padding: var(--spacing-lg); display: flex; flex-direction: column; gap: var(--spacing-lg); }

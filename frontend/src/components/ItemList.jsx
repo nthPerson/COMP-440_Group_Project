@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useItemsList } from "../contexts/ItemsListContext";
 import ReviewForm from "./ReviewForm";
+import { Link } from 'react-router-dom';
+import '../styles/components/ItemList.css';
 
 /**
  * ENHANCED ITEM LIST COMPONENT
@@ -135,97 +137,111 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                 <ul>
                     {items.map(item => (
                         <li key={item.id} className="item-card">
-                            {/* Item Title */}
-                            <h3>{item.title}</h3>
-                            
-                            {/* Item Description */}
-                            <p>{item.description}</p>
-                            
-                            {/* Item Metadata in Organized Grid */}
-                            <div className="item-meta">
-                                <div className="item-meta-item">
-                                    <span className="meta-label">Price</span>
-                                    <span className="meta-value">${parseFloat(item.price).toFixed(2)}</span>
-                                </div>
-                                <div className="item-meta-item">
-                                    <span className="meta-label">Posted By</span>
-                                    <span className="meta-value">{item.posted_by}</span>
-                                </div>
-                                <div className="item-meta-item">
-                                    <span className="meta-label">Date Posted</span>
-                                    <span className="meta-value">{new Date(item.date_posted).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                            
-                            {/* Categories Display */}
-                            <div className="item-categories">
-                                <span className="meta-label">Categories:</span>
-                                <div className="category-list">
-                                    {item.categories.map(c => (
-                                        <span key={c.name} className="category-item">{c.name}</span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Rating Display */}
-                            <div className="item-rating">
-                                <span className="rating-stars">
-                                    {(() => {
-                                        const full = Math.floor(item.star_rating || 0);
-                                        const half = (item.star_rating || 0) % 1 >= 0.25 && (item.star_rating || 0) % 1 < 0.75;
-                                        const empty = 5 - full - (half ? 1 : 0);
-                                        return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
-                                    })()}
-                                </span>
-                                <span className="rating-info">
-                                    {(item.star_rating || 0).toFixed(1)}/5 • <strong>{item.review_count || 0}</strong> {(item.review_count || 0) === 1 ? 'review' : 'reviews'}
-                                </span>
-                            </div>
-                            
-                            {/* Review Form Section */}
-                            <div className="review-section">
-                                <ReviewForm
-                                    itemId={item.id}
-                                    onReviewSubmitted={() => {
-                                        // Reload items to update star ratings after new review
-                                        loadItemsList();
-                                        
-                                        // Dispatch event for other components
-                                        window.dispatchEvent(new Event('reviewCreated'));
-                                    }}                
+                            {/* Item Image */}
+                            <div className="item-image-container">
+                                <img 
+                                    src={item.image_url} 
+                                    alt={item.title}
+                                    className="item-thumbnail"
+                                    onError={(e) => {
+                                        e.target.src = "https://api.iconify.design/mdi:package-variant.svg";
+                                    }}
                                 />
                             </div>
                             
-                            {/* Enhanced Rating Display */}
-                            <div className="item-rating">
-                                <span className="rating-stars">
-                                    {(() => {
-                                        const full = Math.floor(item.star_rating);
-                                        const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
-                                        const empty = 5 - full - (half ? 1 : 0);
-                                        return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
-                                    })()}
-                                </span>
-                                <span className="rating-info">
-                                    {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
-                                </span>
-                            </div>
-                            
-                            {/* Review Form Section - Only show for context items, not search results */}
-                            {!isUsingExternalItems && (
-                                <div className="review-section">
-                                    <ReviewForm
-                                        itemId={item.id}
-                                        onReviewSubmitted={() => {
-                                            // Reload items to update star ratings after new review
-                                            loadItemsList();
-                                            
-                                            // Dispatch event for other components
-                                            window.dispatchEvent(new Event('reviewCreated'));
-                                        }}                
-                                    />
+                            <div className="item-content">
+                                {/* Item Title */}
+                                <h3>{item.title}</h3>
+                                
+                                {/* Item Description */}
+                                <p>{item.description}</p>
+                                
+                                {/* Item Metadata in Organized Grid */}
+                                <div className="item-meta">
+                                    <div className="item-meta-item">
+                                        <span className="meta-label">Price</span>
+                                        <span className="meta-value">${parseFloat(item.price).toFixed(2)}</span>
+                                    </div>
+                                    <div className="item-meta-item">
+                                        <span className="meta-label">Posted By</span>
+                                        <span className="meta-value">{item.posted_by}</span>
+                                    </div>
+                                    <div className="item-meta-item">
+                                        <span className="meta-label">Date Posted</span>
+                                        <span className="meta-value">{new Date(item.date_posted).toLocaleDateString()}</span>
+                                    </div>
                                 </div>
+                                
+                                {/* Categories Display */}
+                                <div className="item-categories">
+                                    <span className="meta-label">Categories:</span>
+                                    <div className="category-list">
+                                        {item.categories.map(c => (
+                                            <Link
+                                                key={c.name}
+                                                to={`/search?category=${encodeURIComponent(c.name)}`}
+                                                className="category-item"
+                                                title={`See all in ${c.name}`}
+                                            >
+                                                <img 
+                                                    src={`https://api.iconify.design/${c.icon_key}.svg`}
+                                                    alt=""
+                                                    className="category-icon-small"
+                                                />
+                                                {c.name}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+    
+                                {/* Rating Display
+                                <div className="item-rating">
+                                    <span className="rating-stars">
+                                        {(() => {
+                                            const full = Math.floor(item.star_rating || 0);
+                                            const half = (item.star_rating || 0) % 1 >= 0.25 && (item.star_rating || 0) % 1 < 0.75;
+                                            const empty = 5 - full - (half ? 1 : 0);
+                                            return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+                                        })()}
+                                    </span>
+                                    <span className="rating-info">
+                                        {(item.star_rating || 0).toFixed(1)}/5 • <strong>{item.review_count || 0}</strong> {(item.review_count || 0) === 1 ? 'review' : 'reviews'}
+                                    </span>
+                                </div> */}
+                                
+                           
+                                {/* Enhanced Rating Display */}
+                                <div className="item-rating">
+                                    <span className="rating-stars">
+                                        {(() => {
+                                            const full = Math.floor(item.star_rating);
+                                            const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
+                                            const empty = 5 - full - (half ? 1 : 0);
+                                            return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+                                        })()}
+                                    </span>
+                                    <span className="rating-info">
+                                        {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
+                                    </span>
+                                </div>
+                                
+                                {/* Review Form Section - Only show for context items, not search results */}
+                                {!isUsingExternalItems && (
+                                <div className="review-section">
+                                        <ReviewForm
+                                            itemId={item.id}
+                                            onReviewSubmitted={() => {
+                                                // Reload items to update star ratings after new review
+                                                loadItemsList();
+                                                
+                                                // Dispatch event for other components
+                                                window.dispatchEvent(new Event('reviewCreated'));
+                                            }}                
+                                        />
+                                </div>
+
                             )}
+                            </div>
                         </li>
                     ))}
                 </ul>
