@@ -59,6 +59,16 @@ body {
   margin: 1rem 0;
 }
 
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  color: #4f46e5;
+  background: #f0f4ff;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-style: italic;
+}
+
 /* Loading states */
 .search-button:disabled {
   background: #e5e7eb;
@@ -216,6 +226,11 @@ body {
   gap: 1rem;
   padding: 0.75rem;
   border-bottom: 1px solid #eee;
+  font-weight: 600;
+  color: #4f46e5;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
 .category-item:last-child {
@@ -331,11 +346,59 @@ body {
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .review-card:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #1f2937;
+}
+
+.review-card h4 a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.review-card h4 a:hover {
+  text-decoration: underline;
+}
+
+.review-card .price {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.review-card .description {
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.review-card .category {
+  color: #8b5cf6;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+.review-card .date {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0 0;
 }
 
 /* Responsive Design */
@@ -352,5 +415,13 @@ body {
   .search-form select,
   .search-button {
     width: 100%;
+  }
+  
+  .user-reviews {
+    grid-template-columns: 1fr;
+  }
+  
+  .expensive-items-grid {
+    grid-template-columns: 1fr;
   }
 }

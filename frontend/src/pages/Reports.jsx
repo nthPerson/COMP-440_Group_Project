@@ -14,7 +14,7 @@ export default function Reports() {
 
   // Loading states
   const [isLoading, setIsLoading] = useState({
-    mostExpensive: true,  // Add loading state for most expensive items
+    mostExpensive: true,
     twoCat: false,
     goodItems: false,
     topPosters: false,
@@ -51,49 +51,125 @@ export default function Reports() {
       try {
         // Fetch most expensive items
         setIsLoading(prev => ({ ...prev, mostExpensive: true }));
-        const expensiveRes = await fetch('/api/reports/most_expensive_by_category', { credentials: 'include' });
-        if (expensiveRes.ok) {
-          const data = await expensiveRes.json();
-          setMostExpensive(data);
+        try {
+          const expensiveRes = await fetch('/api/reports/most_expensive_by_category', { 
+            credentials: 'include',
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (expensiveRes.ok) {
+            const data = await expensiveRes.json();
+            setMostExpensive(data);
+          } else {
+            console.error('Failed to fetch most expensive items:', expensiveRes.status);
+          }
+        } catch (error) {
+          console.error('Error fetching most expensive items:', error);
         }
         setIsLoading(prev => ({ ...prev, mostExpensive: false }));
 
-        // Fetch categories
-        const categoriesRes = await fetch('/api/items/categories', { credentials: 'include' });
-        if (categoriesRes.ok) {
-          const data = await categoriesRes.json();
-          setCategories(data.categories || []);
+        // Fetch categories with better error handling
+        try {
+          const categoriesRes = await fetch('/api/items/categories', { 
+            credentials: 'include',
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (categoriesRes.ok) {
+            const data = await categoriesRes.json();
+            setCategories(data.categories || []);
+          } else {
+            console.error('Failed to fetch categories:', categoriesRes.status);
+          }
+        } catch (error) {
+          console.error('Error fetching categories:', error);
         }
 
         // Fetch users with all poor reviews
-        const poorRes = await fetch('/api/reports/users_all_poor', { credentials: 'include' });
-        if (poorRes.ok) {
-          const data = await poorRes.json();
-          setAllPoorUsers(data.users || []);
+        try {
+          const poorRes = await fetch('/api/reports/users_all_poor', { 
+            credentials: 'include',
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (poorRes.ok) {
+            const data = await poorRes.json();
+            setAllPoorUsers(data.users || []);
+          }
+        } catch (error) {
+          console.error('Error fetching poor users:', error);
         }
 
         // Fetch users with no poor reviews
-        const noPoorRes = await fetch('/api/reports/users_no_poor_reviews_on_items', { credentials: 'include' });
-        if (noPoorRes.ok) {
-          const data = await noPoorRes.json();
-          setNoPoorUsers(data.users || []);
+        try {
+          const noPoorRes = await fetch('/api/reports/users_no_poor_reviews_on_items', { 
+            credentials: 'include',
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (noPoorRes.ok) {
+            const data = await noPoorRes.json();
+            setNoPoorUsers(data.users || []);
+          }
+        } catch (error) {
+          console.error('Error fetching no poor users:', error);
         }
 
         // Fetch users who never posted
-        const neverPostedRes = await fetch('/api/reports/users_never_posted', { credentials: 'include' });
-        if (neverPostedRes.ok) {
-          const data = await neverPostedRes.json();
-          setNeverPosted(data.users || []);
+        try {
+          const neverPostedRes = await fetch('/api/reports/users_never_posted', { 
+            credentials: 'include',
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (neverPostedRes.ok) {
+            const data = await neverPostedRes.json();
+            setNeverPosted(data.users || []);
+          }
+        } catch (error) {
+          console.error('Error fetching never posted users:', error);
         }
 
         // Fetch all users
-        const usersRes = await fetch('/api/users/', { credentials: 'include' });
-        if (usersRes.ok) {
-          const data = await usersRes.json();
-          setAllUsers(data);
+        try {
+          const usersRes = await fetch('/api/users/', { 
+            credentials: 'include',
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (usersRes.ok) {
+            const data = await usersRes.json();
+            setAllUsers(data);
+          }
+        } catch (error) {
+          console.error('Error fetching users:', error);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error in fetchData:', error);
       }
     };
 
@@ -115,35 +191,48 @@ export default function Reports() {
 
     setErrors(prev => ({ ...prev, twoCat: '' }));
     setIsLoading(prev => ({ ...prev, twoCat: true }));
-    setTwoCatUsers([]); // Clear previous results
+    setTwoCatUsers([]);
 
     try {
-      const response = await fetch(
-        `/api/reports/users_two_categories?cat1=${encodeURIComponent(cat1)}&cat2=${encodeURIComponent(cat2)}`,
-        { 
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Accept': 'application/json'
-          }
+      const url = `/api/reports/users_two_categories?cat1=${encodeURIComponent(cat1)}&cat2=${encodeURIComponent(cat2)}`;
+      console.log('Fetching:', url); // Debug log
+      
+      const response = await fetch(url, { 
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         }
-      );
+      });
+
+      console.log('Response status:', response.status); // Debug log
+      console.log('Response ok:', response.ok); // Debug log
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to fetch data');
+        let errorMessage = `Server error: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Error parsing error response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      if (!data.users) {
+      console.log('Response data:', data); // Debug log
+      
+      if (!data || typeof data !== 'object') {
         throw new Error('Invalid response format');
       }
-      setTwoCatUsers(data.users);
+      
+      setTwoCatUsers(data.users || []);
     } catch (error) {
       console.error('Error fetching two category users:', error);
       setErrors(prev => ({ 
         ...prev, 
-        twoCat: `Failed to fetch results: ${error.message || 'Please try again.'}`
+        twoCat: `Failed to fetch results: ${error.message}`
       }));
       setTwoCatUsers([]);
     } finally {
@@ -159,19 +248,30 @@ export default function Reports() {
 
     setErrors(prev => ({ ...prev, goodItems: '' }));
     setIsLoading(prev => ({ ...prev, goodItems: true }));
+    setGoodItems([]);
 
     try {
       const response = await fetch(
         `/api/reports/items_only_good_excellent?user=${encodeURIComponent(goodUser)}`,
-        { credentials: 'include' }
+        { 
+          credentials: 'include',
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        }
       );
       
-      if (!response.ok) throw new Error('Failed to fetch data');
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
       
       const data = await response.json();
       setGoodItems(data.items || []);
     } catch (error) {
-      setErrors(prev => ({ ...prev, goodItems: 'Failed to fetch results. Please try again.' }));
+      console.error('Error fetching good items:', error);
+      setErrors(prev => ({ ...prev, goodItems: `Failed to fetch results: ${error.message}` }));
       setGoodItems([]);
     } finally {
       setIsLoading(prev => ({ ...prev, goodItems: false }));
@@ -186,20 +286,32 @@ export default function Reports() {
 
     setErrors(prev => ({ ...prev, topPosters: '' }));
     setIsLoading(prev => ({ ...prev, topPosters: true }));
+    setTopUsers([]);
+    setTopCount(null);
 
     try {
       const response = await fetch(
         `/api/reports/top_posters?date=${encodeURIComponent(date)}`,
-        { credentials: 'include' }
+        { 
+          credentials: 'include',
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        }
       );
       
-      if (!response.ok) throw new Error('Failed to fetch data');
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
       
       const data = await response.json();
       setTopUsers(data.users || []);
       setTopCount(data.max_posts ?? null);
     } catch (error) {
-      setErrors(prev => ({ ...prev, topPosters: 'Failed to fetch results. Please try again.' }));
+      console.error('Error fetching top posters:', error);
+      setErrors(prev => ({ ...prev, topPosters: `Failed to fetch results: ${error.message}` }));
       setTopUsers([]);
       setTopCount(null);
     } finally {
@@ -219,35 +331,45 @@ export default function Reports() {
 
     setErrors(prev => ({ ...prev, followedUsers: '' }));
     setIsLoading(prev => ({ ...prev, followedUsers: true }));
-    setFollowedUsers([]); // Clear previous results
+    setFollowedUsers([]);
 
     try {
-      const response = await fetch(
-        `/api/reports/users_followed_by_both?user1=${encodeURIComponent(user1)}&user2=${encodeURIComponent(user2)}`,
-        { 
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Accept': 'application/json'
-          }
+      const url = `/api/reports/users_followed_by_both?user1=${encodeURIComponent(user1)}&user2=${encodeURIComponent(user2)}`;
+      console.log('Fetching followed users:', url); // Debug log
+      
+      const response = await fetch(url, { 
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         }
-      );
+      });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to fetch data');
+        let errorMessage = `Server error: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error('Error parsing error response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
       
       const data = await response.json();
-      if (!data || !Array.isArray(data.users)) {
+      console.log('Followed users response:', data); // Debug log
+      
+      if (!data || typeof data !== 'object') {
         throw new Error('Invalid response format');
       }
-      setFollowedUsers(data.users);
+      
+      setFollowedUsers(data.users || []);
     } catch (error) {
       console.error('Error fetching followed users:', error);
       setErrors(prev => ({ 
         ...prev, 
-        followedUsers: `Failed to fetch results: ${error.message || 'Please try again.'}`
+        followedUsers: `Failed to fetch results: ${error.message}`
       }));
       setFollowedUsers([]);
     } finally {
@@ -264,20 +386,20 @@ export default function Reports() {
           <section className="report-section most-expensive-section">
             <h2 className="section-title">Most Expensive Items in Each Category</h2>
             {isLoading.mostExpensive ? (
-              <div className="loading-spinner" />
+              <div className="loading-message">Loading most expensive items...</div>
             ) : (
               <div className="expensive-items-grid">
                 {mostExpensive.length === 0 ? (
                   <div className="no-results">No expensive items found</div>
                 ) : (
                   mostExpensive.map(item => (
-                    <div key={item.category} className="expensive-item-card">
+                    <div key={`${item.category}-${item.item_id}`} className="expensive-item-card">
                       <div className="category-label">{item.category}</div>
                       <div className="item-content">
                         <h3 className="item-title">
                           <Link to={`/item/${item.item_id}`}>{item.title}</Link>
                         </h3>
-                        <div className="item-price">{item.price}</div>
+                        <div className="item-price">${item.price}</div>
                         <div className="item-description">{item.description}</div>
                         <div className="item-meta">
                           <span className="seller">Posted by <Link to={`/seller/${item.posted_by}`}>{item.posted_by}</Link></span>
@@ -302,7 +424,7 @@ export default function Reports() {
                 >
                   <option value="">Select First Category</option>
                   {categories.map(c => (
-                    <option key={c.name} value={c.name}>
+                    <option key={`cat1-${c.name}`} value={c.name}>
                       {c.name}
                     </option>
                   ))}
@@ -316,7 +438,7 @@ export default function Reports() {
                 >
                   <option value="">Select Second Category</option>
                   {categories.map(c => (
-                    <option key={c.name} value={c.name}>
+                    <option key={`cat2-${c.name}`} value={c.name}>
                       {c.name}
                     </option>
                   ))}
@@ -332,14 +454,14 @@ export default function Reports() {
             </form>
             {errors.twoCat && <div className="error-message">{errors.twoCat}</div>}
             {isLoading.twoCat ? (
-              <div className="loading-spinner" />
+              <div className="loading-message">Searching for users...</div>
             ) : (
               <div className="user-reviews">
-                {twoCatUsers.length === 0 && !errors.twoCat ? (
+                {twoCatUsers.length === 0 && !errors.twoCat && (cat1 && cat2) ? (
                   <div className="no-results">No users found matching these criteria</div>
                 ) : (
-                  twoCatUsers.map(u => (
-                    <div key={u} className="review-card">
+                  twoCatUsers.map((u, index) => (
+                    <div key={`twocat-${u}-${index}`} className="review-card">
                       <Link to={`/seller/${u}`}>{u}</Link>
                     </div>
                   ))
@@ -354,61 +476,99 @@ export default function Reports() {
               <select value={goodUser} onChange={e => setGoodUser(e.target.value)}>
                 <option value="">Select User</option>
                 {allUsers.map(u => (
-                  <option key={u.username} value={u.username}>
+                  <option key={`gooduser-${u.username}`} value={u.username}>
                     {u.username}
                   </option>
                 ))}
               </select>
-              <button className="search-button" onClick={handleGoodItems}>Search</button>
+              <button 
+                className="search-button" 
+                onClick={handleGoodItems}
+                disabled={isLoading.goodItems || !goodUser}
+              >
+                {isLoading.goodItems ? 'Searching...' : 'Search'}
+              </button>
             </div>
-            <div className="user-reviews">
-              {goodItems.map(item => (
-                <div key={item.item_id} className="category-item">
-                  {item.title}
-                </div>
-              ))}
-            </div>
+            {errors.goodItems && <div className="error-message">{errors.goodItems}</div>}
+            {isLoading.goodItems ? (
+              <div className="loading-message">Loading good items...</div>
+            ) : (
+              <div className="user-reviews">
+                {goodItems.length === 0 && !errors.goodItems && goodUser ? (
+                  <div className="no-results">No items found for this user with only good/excellent reviews</div>
+                ) : (
+                  goodItems.map(item => (
+                    <div key={`gooditem-${item.item_id}`} className="category-item">
+                      <Link to={`/item/${item.item_id}`}>{item.title}</Link>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </section>
 
           <section className="report-section">
             <h2 className="section-title">Top Seller on Given Date</h2>
             <div className="search-form">
               <input type="date" value={date} onChange={e => setDate(e.target.value)} />
-              <button className="search-button" onClick={handleTopPosters}>Search</button>
+              <button 
+                className="search-button" 
+                onClick={handleTopPosters}
+                disabled={isLoading.topPosters || !date}
+              >
+                {isLoading.topPosters ? 'Searching...' : 'Search'}
+              </button>
             </div>
-            {topCount !== null && (
-              <div>
-                <p className="category-item">Posts: {topCount}</p>
-                <div className="user-reviews">
-                  {topUsers.map(u => (
-                    <div key={u} className="review-card">
-                      <Link to={`/seller/${u}`}>{u}</Link>
-                    </div>
-                  ))}
+            {errors.topPosters && <div className="error-message">{errors.topPosters}</div>}
+            {isLoading.topPosters ? (
+              <div className="loading-message">Loading top sellers...</div>
+            ) : (
+              topCount !== null && (
+                <div>
+                  <p className="category-item">Posts: {topCount}</p>
+                  <div className="user-reviews">
+                    {topUsers.length === 0 ? (
+                      <div className="no-results">No users found for this date</div>
+                    ) : (
+                      topUsers.map((u, index) => (
+                        <div key={`topuser-${u}-${index}`} className="review-card">
+                          <Link to={`/seller/${u}`}>{u}</Link>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
-              </div>
+              )
             )}
           </section>
 
           <section className="report-section">
             <h2 className="section-title">Users with Only 'Poor' Reviews</h2>
             <div className="user-reviews">
-              {allPoorUsers.map(u => (
-                <div key={u} className="review-card">
-                  <Link to={`/seller/${u}`}>{u}</Link>
-                </div>
-              ))}
+              {allPoorUsers.length === 0 ? (
+                <div className="no-results">No users found with only poor reviews</div>
+              ) : (
+                allPoorUsers.map((u, index) => (
+                  <div key={`pooruser-${u}-${index}`} className="review-card">
+                    <Link to={`/seller/${u}`}>{u}</Link>
+                  </div>
+                ))
+              )}
             </div>
           </section>
 
           <section className="report-section">
             <h2 className="section-title">Sellers with No 'Poor' Reviews</h2>
             <div className="user-reviews">
-              {noPoorUsers.map(u => (
-                <div key={u} className="review-card">
-                  <Link to={`/seller/${u}`}>{u}</Link>
-                </div>
-              ))}
+              {noPoorUsers.length === 0 ? (
+                <div className="no-results">No users found with no poor reviews</div>
+              ) : (
+                noPoorUsers.map((u, index) => (
+                  <div key={`nopooruser-${u}-${index}`} className="review-card">
+                    <Link to={`/seller/${u}`}>{u}</Link>
+                  </div>
+                ))
+              )}
             </div>
           </section>
 
@@ -423,7 +583,7 @@ export default function Reports() {
                 >
                   <option value="">Select First User</option>
                   {allUsers.map(u => (
-                    <option key={u.username} value={u.username}>
+                    <option key={`user1-${u.username}`} value={u.username}>
                       {u.username}
                     </option>
                   ))}
@@ -437,7 +597,7 @@ export default function Reports() {
                 >
                   <option value="">Select Second User</option>
                   {allUsers.map(u => (
-                    <option key={u.username} value={u.username}>
+                    <option key={`user2-${u.username}`} value={u.username}>
                       {u.username}
                     </option>
                   ))}
@@ -453,14 +613,14 @@ export default function Reports() {
             </form>
             {errors.followedUsers && <div className="error-message">{errors.followedUsers}</div>}
             {isLoading.followedUsers ? (
-              <div className="loading-spinner" />
+              <div className="loading-message">Searching for followed users...</div>
             ) : (
               <div className="user-reviews">
-                {followedUsers.length === 0 && !errors.followedUsers ? (
+                {followedUsers.length === 0 && !errors.followedUsers && (user1 && user2) ? (
                   <div className="no-results">No users found who are followed by both selected users</div>
                 ) : (
-                  followedUsers.map(u => (
-                    <div key={u} className="review-card">
+                  followedUsers.map((u, index) => (
+                    <div key={`followeduser-${u}-${index}`} className="review-card">
                       <Link to={`/seller/${u}`}>{u}</Link>
                     </div>
                   ))
@@ -472,11 +632,15 @@ export default function Reports() {
           <section className="report-section">
             <h2 className="section-title">Users Who Have Never Posted an Item</h2>
             <div className="user-reviews">
-              {neverPosted.map(u => (
-                <div key={u} className="review-card">
-                  <Link to={`/seller/${u}`}>{u}</Link>
-                </div>
-              ))}
+              {neverPosted.length === 0 ? (
+                <div className="no-results">No users found who never posted</div>
+              ) : (
+                neverPosted.map((u, index) => (
+                  <div key={`neverposted-${u}-${index}`} className="review-card">
+                    <Link to={`/seller/${u}`}>{u}</Link>
+                  </div>
+                ))
+              )}
             </div>
           </section>
       </div>
