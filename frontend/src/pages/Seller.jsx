@@ -165,9 +165,7 @@ export default function Seller() {
                   ) : (
                     // paginate over currentItems, not all items
                     currentItems.map(it => (
-                      <div key={it.id} className="item-card">
                         <ItemCard item={it} />
-                      </div>
                     ))
                   )}
                 </div>

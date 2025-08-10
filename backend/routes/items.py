@@ -258,6 +258,8 @@ def get_items_by_user(username):
         'posted_by': item.posted_by,
         'date_posted': item.date_posted.isoformat(),
         'categories': [{'name': c.name} for c in item.categories],
+        # Provide resolved image URL so frontend can display the correct thumbnail
+        'image_url': item.get_image_url(),
         'star_rating': item.star_rating,
         'review_count': item.reviews.count()
       }

@@ -90,6 +90,6 @@ export default function ItemCard({ item, showPostedBy = true }) {
           {item.review_count === 1 ? 'review' : 'reviews'}
         </span>
       </div>
-    </li>
+    </div>
   );
 }
