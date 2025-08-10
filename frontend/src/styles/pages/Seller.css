@@ -85,3 +85,13 @@
   padding: 0 !important;
   border-radius: 0 !important;
 }
+/* in src/styles/pages/Seller.css */
+
+.item-card-grid {
+  display: grid;                        /* switch on CSS Grid */
+  grid-template-columns: repeat(3, 1fr);/* exactly 3 equal-width columns */
+  grid-gap: 1.5rem;                     /* space between cards */
+  /* optional: constrain max width so you don’t get huge gutters */
+  max-width: calc(3 * 20rem + 2 * 1.5rem); 
+  margin: 0 auto;                       /* center the whole thing */
+}
