@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ItemCard from '../components/ItemCard';
-import ReviewCard from '../components/ReviewCard';
 import '../styles/global.css';
+import '../styles/pages/Seller.css';
 import axios from 'axios';
+import '../styles/components/SearchInterface.css';
 
 
 export default function Seller() {
@@ -88,14 +89,14 @@ export default function Seller() {
             </div>
             <div className="seller-info">
               <h1>{seller.username}</h1>
-              <button className="follow-btn" onClick={toggleFollow}>
+              <button className="search-button" onClick={toggleFollow}>
                 {isFollowing ? 'Unfollow' : 'Follow'}
               </button>
             </div>
           </div>
 
           {/* Seller Stats */}
-          <div className="seller-stats">
+          <div className="seller-stats-row">
             <div className="stat-block">
               <div className="stat-label">Sales</div>
               <div className="stat-value">{items.length}</div>
