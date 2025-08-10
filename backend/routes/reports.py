@@ -63,21 +63,28 @@ def users_two_categories():
     # Self-join Item via alias
     ItemA = db.aliased(Item)
     ItemB = db.aliased(Item)
+    # Alias Category for each side of the join
+    CatA = db.aliased(Category)
+    CatB = db.aliased(Category)
 
-    query = (db.session.query(ItemA.posted_by, ItemA.date_posted)
-         .join(ItemA.categories.of_type(Category))
-         .join(ItemB, 
-           (ItemA.posted_by == ItemB.posted_by) &
-           (ItemA.date_posted == ItemB.date_posted)
-         )
-         .join(ItemB.categories.of_type(Category), aliased=True)
-         .filter(Category.name == cat1)  # for ItemA
-         .filter(db.and_(
-           Category.name == cat2  # for ItemB
-         ))
-         .distinct()
+    query = (
+        db.session.query(ItemA.posted_by)
+        # Same user, same calendar day, different items
+        .join(
+            ItemB,
+            (ItemA.posted_by == ItemB.posted_by)
+            & (func.date(ItemA.date_posted) == func.date(ItemB.date_posted))
+            & (ItemA.id != ItemB.id)
+        )
+        # Join categories for each item alias
+        .join(ItemA.categories.of_type(CatA))
+        .join(ItemB.categories.of_type(CatB))
+        # Case-insensitive category name match
+        .filter(func.lower(CatA.name) == cat1)
+        .filter(func.lower(CatB.name) == cat2)
+        .distinct()
     )
-    users = [row.posted_by for row in query.all()]
+    users = [row[0] for row in query.all()]
     return jsonify({'users': users}), 200
 
 
