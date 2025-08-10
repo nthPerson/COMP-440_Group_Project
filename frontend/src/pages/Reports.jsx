@@ -14,6 +14,7 @@ export default function Reports() {
 
   // Loading states
   const [isLoading, setIsLoading] = useState({
+    mostExpensive: true,  // Add loading state for most expensive items
     twoCat: false,
     goodItems: false,
     topPosters: false,
@@ -46,35 +47,57 @@ export default function Reports() {
   const [neverPosted, setNeverPosted] = useState([]);
 
   useEffect(() => {
-    fetch('/api/reports/most_expensive_by_category', { credentials: 'include' })
-      .then(r => (r.ok ? r.json() : []))
-      .then(setMostExpensive)
-      .catch(() => {});
+    const fetchData = async () => {
+      try {
+        // Fetch most expensive items
+        setIsLoading(prev => ({ ...prev, mostExpensive: true }));
+        const expensiveRes = await fetch('/api/reports/most_expensive_by_category', { credentials: 'include' });
+        if (expensiveRes.ok) {
+          const data = await expensiveRes.json();
+          setMostExpensive(data);
+        }
+        setIsLoading(prev => ({ ...prev, mostExpensive: false }));
 
-    fetch('/api/items/categories', { credentials: 'include' })
-      .then(r => (r.ok ? r.json() : { categories: [] }))
-      .then(data => setCategories(data.categories || []))
-      .catch(() => {});
+        // Fetch categories
+        const categoriesRes = await fetch('/api/items/categories', { credentials: 'include' });
+        if (categoriesRes.ok) {
+          const data = await categoriesRes.json();
+          setCategories(data.categories || []);
+        }
 
-    fetch('/api/reports/users_all_poor', { credentials: 'include' })
-      .then(r => (r.ok ? r.json() : { users: [] }))
-      .then(data => setAllPoorUsers(data.users || []))
-      .catch(() => {});
+        // Fetch users with all poor reviews
+        const poorRes = await fetch('/api/reports/users_all_poor', { credentials: 'include' });
+        if (poorRes.ok) {
+          const data = await poorRes.json();
+          setAllPoorUsers(data.users || []);
+        }
 
-    fetch('/api/reports/users_no_poor_reviews_on_items', { credentials: 'include' })
-      .then(r => (r.ok ? r.json() : { users: [] }))
-      .then(data => setNoPoorUsers(data.users || []))
-      .catch(() => {});
+        // Fetch users with no poor reviews
+        const noPoorRes = await fetch('/api/reports/users_no_poor_reviews_on_items', { credentials: 'include' });
+        if (noPoorRes.ok) {
+          const data = await noPoorRes.json();
+          setNoPoorUsers(data.users || []);
+        }
 
-    fetch('/api/reports/users_never_posted', { credentials: 'include' })
-      .then(r => (r.ok ? r.json() : { users: [] }))
-      .then(data => setNeverPosted(data.users || []))
-      .catch(() => {});
+        // Fetch users who never posted
+        const neverPostedRes = await fetch('/api/reports/users_never_posted', { credentials: 'include' });
+        if (neverPostedRes.ok) {
+          const data = await neverPostedRes.json();
+          setNeverPosted(data.users || []);
+        }
 
-    fetch('/api/users/', { credentials: 'include' })
-      .then(r => (r.ok ? r.json() : []))
-      .then(setAllUsers)
-      .catch(() => {});
+        // Fetch all users
+        const usersRes = await fetch('/api/users/', { credentials: 'include' });
+        if (usersRes.ok) {
+          const data = await usersRes.json();
+          setAllUsers(data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleTwoCat = async (e) => {
@@ -92,20 +115,36 @@ export default function Reports() {
 
     setErrors(prev => ({ ...prev, twoCat: '' }));
     setIsLoading(prev => ({ ...prev, twoCat: true }));
+    setTwoCatUsers([]); // Clear previous results
 
     try {
       const response = await fetch(
         `/api/reports/users_two_categories?cat1=${encodeURIComponent(cat1)}&cat2=${encodeURIComponent(cat2)}`,
-        { credentials: 'include' }
+        { 
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json'
+          }
+        }
       );
 
-      if (!response.ok) throw new Error('Failed to fetch data');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to fetch data');
+      }
 
       const data = await response.json();
-      setTwoCatUsers(data.users || []);
+      if (!data.users) {
+        throw new Error('Invalid response format');
+      }
+      setTwoCatUsers(data.users);
     } catch (error) {
       console.error('Error fetching two category users:', error);
-      setErrors(prev => ({ ...prev, twoCat: 'Failed to fetch results. Please try again.' }));
+      setErrors(prev => ({ 
+        ...prev, 
+        twoCat: `Failed to fetch results: ${error.message || 'Please try again.'}`
+      }));
       setTwoCatUsers([]);
     } finally {
       setIsLoading(prev => ({ ...prev, twoCat: false }));
@@ -180,19 +219,36 @@ export default function Reports() {
 
     setErrors(prev => ({ ...prev, followedUsers: '' }));
     setIsLoading(prev => ({ ...prev, followedUsers: true }));
+    setFollowedUsers([]); // Clear previous results
 
     try {
       const response = await fetch(
         `/api/reports/users_followed_by_both?user1=${encodeURIComponent(user1)}&user2=${encodeURIComponent(user2)}`,
-        { credentials: 'include' }
+        { 
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json'
+          }
+        }
       );
       
-      if (!response.ok) throw new Error('Failed to fetch data');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to fetch data');
+      }
       
       const data = await response.json();
-      setFollowedUsers(data.users || []);
+      if (!data || !Array.isArray(data.users)) {
+        throw new Error('Invalid response format');
+      }
+      setFollowedUsers(data.users);
     } catch (error) {
-      setErrors(prev => ({ ...prev, followedUsers: 'Failed to fetch results. Please try again.' }));
+      console.error('Error fetching followed users:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        followedUsers: `Failed to fetch results: ${error.message || 'Please try again.'}`
+      }));
       setFollowedUsers([]);
     } finally {
       setIsLoading(prev => ({ ...prev, followedUsers: false }));
@@ -205,60 +261,91 @@ export default function Reports() {
       <div className="reports-container">
           <h1 className="reports-title">Reports</h1>
 
-          <section className="report-section">
+          <section className="report-section most-expensive-section">
             <h2 className="section-title">Most Expensive Items in Each Category</h2>
-            <div>
-              {mostExpensive.map(item => (
-                <div key={item.category} className="category-item">
-                  <span>{item.category}:</span>
-                  <div>
-                    <Link to={`/item/${item.item_id}`}>{item.title}</Link>
-                    <span className="price"> (${item.price})</span>
-                    <span className="seller"> by <Link to={`/seller/${item.posted_by}`}>{item.posted_by}</Link></span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {isLoading.mostExpensive ? (
+              <div className="loading-spinner" />
+            ) : (
+              <div className="expensive-items-grid">
+                {mostExpensive.length === 0 ? (
+                  <div className="no-results">No expensive items found</div>
+                ) : (
+                  mostExpensive.map(item => (
+                    <div key={item.category} className="expensive-item-card">
+                      <div className="category-label">{item.category}</div>
+                      <div className="item-content">
+                        <h3 className="item-title">
+                          <Link to={`/item/${item.item_id}`}>{item.title}</Link>
+                        </h3>
+                        <div className="item-price">{item.price}</div>
+                        <div className="item-description">{item.description}</div>
+                        <div className="item-meta">
+                          <span className="seller">Posted by <Link to={`/seller/${item.posted_by}`}>{item.posted_by}</Link></span>
+                          <span className="date">{item.date_posted}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </section>
 
           <section className="report-section">
             <h2 className="section-title">User(s) Who Posted Two Different Items On the Same Day</h2>
-            <div className="search-form">
-              <select value={cat1} onChange={e => setCat1(e.target.value)}>
-                <option value="">Select Category</option>
-                {categories.map(c => (
-                  <option key={c.name} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-              <select value={cat2} onChange={e => setCat2(e.target.value)}>
-                <option value="">Select Category</option>
-                {categories.map(c => (
-                  <option key={c.name} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+            <form onSubmit={handleTwoCat} className="search-form">
+              <div style={{ flex: 1 }}>
+                <select 
+                  value={cat1} 
+                  onChange={e => setCat1(e.target.value)}
+                  className="form-select"
+                >
+                  <option value="">Select First Category</option>
+                  {categories.map(c => (
+                    <option key={c.name} value={c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ flex: 1 }}>
+                <select 
+                  value={cat2} 
+                  onChange={e => setCat2(e.target.value)}
+                  className="form-select"
+                >
+                  <option value="">Select Second Category</option>
+                  {categories.map(c => (
+                    <option key={c.name} value={c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <button 
+                type="submit"
                 className="search-button" 
-                onClick={handleTwoCat}
-                disabled={isLoading.twoCat}
+                disabled={isLoading.twoCat || !cat1 || !cat2}
               >
                 {isLoading.twoCat ? 'Searching...' : 'Search'}
               </button>
-            </div>
+            </form>
             {errors.twoCat && <div className="error-message">{errors.twoCat}</div>}
-            <div className="user-reviews">
-              {twoCatUsers.length === 0 && !isLoading.twoCat && !errors.twoCat && (
-                <div className="no-results">No users found matching these criteria</div>
-              )}
-              {twoCatUsers.map(u => (
-                <div key={u} className="review-card">
-                  <Link to={`/seller/${u}`}>{u}</Link>
-                </div>
-              ))}
-            </div>
+            {isLoading.twoCat ? (
+              <div className="loading-spinner" />
+            ) : (
+              <div className="user-reviews">
+                {twoCatUsers.length === 0 && !errors.twoCat ? (
+                  <div className="no-results">No users found matching these criteria</div>
+                ) : (
+                  twoCatUsers.map(u => (
+                    <div key={u} className="review-card">
+                      <Link to={`/seller/${u}`}>{u}</Link>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </section>
 
           <section className="report-section">
@@ -327,32 +414,59 @@ export default function Reports() {
 
           <section className="report-section">
             <h2 className="section-title">Users Followed by Both UserX and UserY</h2>
-            <div className="search-form">
-              <select value={user1} onChange={e => setUser1(e.target.value)}>
-                <option value="">Select User 1</option>
-                {allUsers.map(u => (
-                  <option key={u.username} value={u.username}>
-                    {u.username}
-                  </option>
-                ))}
-              </select>
-              <select value={user2} onChange={e => setUser2(e.target.value)}>
-                <option value="">Select User 2</option>
-                {allUsers.map(u => (
-                  <option key={u.username} value={u.username}>
-                    {u.username}
-                  </option>
-                ))}
-              </select>
-              <button className="search-button" onClick={handleFollowedByBoth}>Search</button>
-            </div>
-            <div className="user-reviews">
-              {followedUsers.map(u => (
-                <div key={u} className="review-card">
-                  <Link to={`/seller/${u}`}>{u}</Link>
-                </div>
-              ))}
-            </div>
+            <form onSubmit={(e) => { e.preventDefault(); handleFollowedByBoth(); }} className="search-form">
+              <div style={{ flex: 1 }}>
+                <select 
+                  value={user1} 
+                  onChange={e => setUser1(e.target.value)}
+                  className="form-select"
+                >
+                  <option value="">Select First User</option>
+                  {allUsers.map(u => (
+                    <option key={u.username} value={u.username}>
+                      {u.username}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ flex: 1 }}>
+                <select 
+                  value={user2} 
+                  onChange={e => setUser2(e.target.value)}
+                  className="form-select"
+                >
+                  <option value="">Select Second User</option>
+                  {allUsers.map(u => (
+                    <option key={u.username} value={u.username}>
+                      {u.username}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button 
+                type="submit"
+                className="search-button" 
+                disabled={isLoading.followedUsers || !user1 || !user2}
+              >
+                {isLoading.followedUsers ? 'Searching...' : 'Search'}
+              </button>
+            </form>
+            {errors.followedUsers && <div className="error-message">{errors.followedUsers}</div>}
+            {isLoading.followedUsers ? (
+              <div className="loading-spinner" />
+            ) : (
+              <div className="user-reviews">
+                {followedUsers.length === 0 && !errors.followedUsers ? (
+                  <div className="no-results">No users found who are followed by both selected users</div>
+                ) : (
+                  followedUsers.map(u => (
+                    <div key={u} className="review-card">
+                      <Link to={`/seller/${u}`}>{u}</Link>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </section>
 
           <section className="report-section">

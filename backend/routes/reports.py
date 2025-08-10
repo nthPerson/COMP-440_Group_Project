@@ -17,19 +17,25 @@ def most_expensive_by_category():
     Security: Requires user authentication (@login_required)
     """
     results = []
-    for cat in Category.query.order_by(Category.name).all():
+    categories = Category.query.order_by(Category.name).all()
+    
+    for cat in categories:
         # Get top-priced item in this category
         top_item = (cat.items.order_by(Item.price.desc()).limit(1).first())
 
         if top_item:
-                results.append({
-                     'category': cat.name,
-                     'item_id': top_item.id,
-                     'title': top_item.title,
-                     'price': str(top_item.price),
-                     'posted_by': top_item.posted_by,
-                     'date_posted': top_item.date_posted.isoformat()
-                })
+            # Format the price with 2 decimal places
+            formatted_price = "${:,.2f}".format(float(top_item.price))
+            
+            results.append({
+                'category': cat.name.title(),  # Capitalize each word
+                'item_id': top_item.id,
+                'title': top_item.title,
+                'price': formatted_price,
+                'posted_by': top_item.posted_by,
+                'date_posted': top_item.date_posted.strftime("%B %d, %Y"),  # Format date nicely
+                'description': top_item.description[:100] + "..." if top_item.description and len(top_item.description) > 100 else top_item.description or ""
+            })
 
     return jsonify(results), 200
     
