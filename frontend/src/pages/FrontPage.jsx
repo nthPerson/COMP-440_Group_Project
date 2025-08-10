@@ -80,14 +80,19 @@ export default function FrontPage() {
                         <span className="meta-label">Categories:</span>
                         <div className="category-list">
                           {item.categories.map(c => (
-                            <span key={c.name} className="category-item">
+                            <Link
+                              key={c.name}
+                              to={`/search?category=${encodeURIComponent(c.name)}`}
+                              className="category-item"
+                              title={`See all in ${c.name}`}
+                            >
                               <img 
                                 src={`https://api.iconify.design/${c.icon_key}.svg`}
                                 alt=""
                                 className="category-icon-small"
                               />
                               {c.name}
-                            </span>
+                            </Link>
                           ))}
                         </div>
                       </div>

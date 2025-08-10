@@ -209,7 +209,10 @@ def get_my_items():
             'price': str(item.price),
             'date_posted': item.date_posted.isoformat(),
             'posted_by': item.posted_by,
-            'categories': [{'name': c.name} for c in item.categories],
+            # Include icon_key for consistency with other endpoints
+            'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
+            # Provide resolved image URL so frontend can display the correct thumbnail
+            'image_url': item.get_image_url(),
             'star_rating': item.star_rating,
             'review_count': item.reviews.count()
         })
