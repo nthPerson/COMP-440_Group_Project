@@ -17,7 +17,7 @@ export default function Seller() {
   const [followingList, setFollowingList] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState('items');
-
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function fetchAll() {
@@ -62,6 +62,15 @@ export default function Seller() {
     );
   }
 
+
+  const totalReviews = items.reduce((sum, i) => sum + i.review_count, 0);
+  const weightedStars = items.reduce(
+    (sum, i) => sum + i.star_rating * i.review_count,
+    0
+  );
+  const avgRating = totalReviews > 0 ? weightedStars / totalReviews : 0;
+
+
   const toggleFollow = async () => {
     try {
       if (isFollowing) {
@@ -83,39 +92,43 @@ export default function Seller() {
       <div className="dashboard-container">
         <div className="dashboard-content">
           {/* Seller Header */}
-          <div className="seller-header">
+          <div className="seller-header seller-profile">
             <div className="seller-avatar">
               {/* optionally: <img src={seller.avatarUrl} alt="" /> */}
             </div>
             <div className="seller-info">
               <h1>{seller.username}</h1>
-              <button className="search-button" onClick={toggleFollow}>
+              <button className="search-button" onClick={toggleFollow} style={{
+                alignSelf: 'center',       
+                margin: '0 auto 2rem'           
+              }}>
                 {isFollowing ? 'Unfollow' : 'Follow'}
               </button>
             </div>
           </div>
 
           {/* Seller Stats */}
-          <div className="seller-stats-row">
-            <div className="stat-block">
-              <div className="stat-label">Sales</div>
-              <div className="stat-value">{items.length}</div>
+          {/* —— STATS GRID —— */}
+          <div className="seller-stats-grid">
+            {/* Row 1: VALUES */}
+            <div className="stat-value">{items.length}</div>
+            <div className="stat-value">
+              <span className="rating-stars">
+                {(() => {
+                  const full = Math.floor(avgRating);
+                  const half = avgRating % 1 >= 0.25 && avgRating % 1 < 0.75;
+                  const empty = 5 - full - (half ? 1 : 0);
+                  return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
+                })()}
+              </span>
+              <span className="rating-info">{avgRating.toFixed(1)}/5</span>
             </div>
-            <div className="stat-block">
-              <div className="stat-label">Rating</div>
-              <div className="stat-value">
-                {(seller.star_rating ?? 0).toFixed(1)}/5
-              </div>
-            </div>
-            {seller.joined_date && (
-              <div className="stat-block">
-                <div className="stat-label">Joined</div>
-                <div className="stat-value">
-                  {new Date(seller.joined_date).toLocaleDateString()}
-                </div>
-              </div>
-            )}
+
+            {/* Row 2: LABELS */}
+            <div className="stat-label">Sales</div>
+            <div className="stat-label">Rating</div>
           </div>
+
 
           {/* Tabs */}
           <div className="follow-tabs">
@@ -147,60 +160,60 @@ export default function Seller() {
             </div>
           )}
           {activeTab === 'reviews' && (
-  <div className="reviews-section">
-    <div className="reviews-header">
-      <h3 className="section-title">Customer Reviews</h3>
-      <span className="reviews-count">
-        {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
-      </span>
-    </div>
-
-    {reviews.length > 0 ? (
-      <div className="reviews-list">
-        {reviews.map(review => (
-          <div key={review.id} className="review-card">
-            <div className="review-header">
-              <div className="reviewer-info">
-                <div className="reviewer-avatar">
-                  {review.user.charAt(0).toUpperCase()}
-                </div>
-                <div className="reviewer-details">
-                  <span className="reviewer-name">{review.user}</span>
-                  <div className="review-rating">
-                    <span
-                      className={`rating-badge rating-${review.score.toLowerCase()}`}
-                    >
-                      {review.score}
-                    </span>
-                  </div>
-                </div>
+            <div className="reviews-section">
+              <div className="reviews-header">
+                <h3 className="section-title">Customer Reviews</h3>
+                <span className="reviews-count">
+                  {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
+                </span>
               </div>
-              <span className="review-date">
-                {review.date
-                  ? new Date(review.date).toLocaleDateString()
-                  : 'Recently'}
-              </span>
+
+              {reviews.length > 0 ? (
+                <div className="reviews-list">
+                  {reviews.map(review => (
+                    <div key={review.id} className="review-card">
+                      <div className="review-header">
+                        <div className="reviewer-info">
+                          <div className="reviewer-avatar">
+                            {review.user.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="reviewer-details">
+                            <span className="reviewer-name">{review.user}</span>
+                            <div className="review-rating">
+                              <span
+                                className={`rating-badge rating-${review.score.toLowerCase()}`}
+                              >
+                                {review.score}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <span className="review-date">
+                          {review.date
+                            ? new Date(review.date).toLocaleDateString()
+                            : 'Recently'}
+                        </span>
+                      </div>
+
+                      {review.remark && (
+                        <div className="review-content">
+                          <p className="review-text">{review.remark}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-reviews">
+                  <div className="no-reviews-icon">💭</div>
+                  <h4 className="no-reviews-title">No reviews yet</h4>
+                  <p className="no-reviews-text">
+                    Be the first to share your experience with this seller!
+                  </p>
+                </div>
+              )}
             </div>
-
-            {review.remark && (
-              <div className="review-content">
-                <p className="review-text">{review.remark}</p>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    ) : (
-      <div className="no-reviews">
-        <div className="no-reviews-icon">💭</div>
-        <h4 className="no-reviews-title">No reviews yet</h4>
-        <p className="no-reviews-text">
-          Be the first to share your experience with this seller!
-        </p>
-      </div>
-    )}
-  </div>
-)}
+          )}
 
 
         </div>
