@@ -50,6 +50,9 @@ class Item(db.Model):
     categories = db.relationship('Category', secondary=item_category, backref=db.backref('items', lazy='dynamic'), lazy='dynamic')
     
     star_rating = db.Column(db.Float, default=0.0) # new column is added in the db
+    
+    # Item image - can be either user-uploaded URL or default icon from first category
+    image_url = db.Column(db.String(512), nullable=True)
 
     def __repr__(self):
         return f'<Item {self.id} "{self.title}">'
@@ -61,12 +64,28 @@ class Item(db.Model):
         total = sum(REVIEW_SCORE_MAP.get(r.score, 0) for r in reviews) # uses our REVIEW_SCORE_MAP to map each score to a number
         return round(total / len(reviews), 2)  # rounded to 2 decimal places
 
+    def get_image_url(self):
+        """Get the item's image URL, falling back to default category icon if none set"""
+        if self.image_url:
+            return self.image_url
+        
+        # Get first category's icon as default
+        first_category = self.categories.first()
+        if first_category and first_category.icon_key:
+            return f"https://api.iconify.design/{first_category.icon_key}.svg"
+        
+        # Ultimate fallback to a generic item icon
+        return "https://api.iconify.design/mdi:package-variant.svg"
+
 class Category(db.Model):
     __tablename__ = 'category'
     name = db.Column(db.String(64), primary_key=True)
 
+    # Generic category icons
+    icon_key = db.Column(db.String(100), nullable=False, default='mdi:help-circle')  # Iconify keys, e.g. 'mdi:headphones', 'mdi:robot', etc.
+
     def __repr__(self):
-        return f'<Category {self.name}>'
+        return f'<Category {self.name} icon={self.icon_key}>'
 
 class Review(db.Model):
     __tablename__ = 'review'

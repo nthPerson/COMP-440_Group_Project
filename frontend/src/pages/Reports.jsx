@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/global.css';
+import '../styles/pages/Reports.css';
 
 export default function Reports() {
   const [mostExpensive, setMostExpensive] = useState([]);

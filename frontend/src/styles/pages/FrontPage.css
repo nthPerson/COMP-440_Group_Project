@@ -1,0 +1,109 @@
+/* Page layout scoped to FrontPage only */
+.dashboard-container.front-page {
+  min-height: 100vh;
+  background: var(--gray-100) !important;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-primary);
+}
+
+.front-page .dashboard-content {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.front-page .page-header {
+  text-align: center;
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  margin-bottom: var(--spacing-lg);
+}
+
+.front-page .page-title {
+  color: var(--gray-800);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm) 0;
+  text-align: center;
+}
+
+/* Item management wrapper used by front page */
+.front-page .item-management { width: 100%; max-width: 1200px; margin: 0 auto; }
+.front-page .item-management-layout { display: flex; flex-direction: column; gap: var(--spacing-xl); }
+/* Scope fixes to the front page only */
+.front-page .item-list-section ul {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: var(--spacing-lg);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Ensure item cards are vertical blocks, not row flex */
+.front-page .item-card {
+  display: block !important;
+}
+
+/* Header row with image + title */
+.fp-item-header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.fp-item-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-200);
+}
+
+.fp-item-title {
+  margin: 0;
+}
+
+.fp-item-description {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--gray-600);
+}
+
+.fp-row.fp-price-seller {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.fp-price {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.fp-posted-by a { color: var(--primary-color); }
+
+.fp-date {
+  color: var(--gray-500);
+  font-size: 0.85rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Category chips already styled by ItemManagement.css (category-item, category-icon-small). No change needed. */
+
+/* Responsive: single column on small screens */
+@media (max-width: 768px) {
+  .front-page .item-list-section ul {
+    grid-template-columns: 1fr !important;
+  }
+}
