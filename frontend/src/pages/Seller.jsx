@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import '../styles/global.css';
+import '../styles/pages/Seller.css';
 
 export default function Seller() {
   return (

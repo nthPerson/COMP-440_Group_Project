@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useItemsList } from "../contexts/ItemsListContext";
 import ReviewForm from "./ReviewForm";
+import '../styles/components/ItemList.css';
 
 /**
  * ENHANCED ITEM LIST COMPONENT

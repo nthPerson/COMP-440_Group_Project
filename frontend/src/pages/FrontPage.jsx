@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { useItemsList } from '../contexts/ItemsListContext';
 import Navbar from '../components/Navbar';
 import '../styles/global.css';
-import '../styles/layout/HomePage.css';
-import '../styles/components/ItemManagement.css';
+import '../styles/components/ItemList.css';
+import '../styles/components/ItemCard.css';
 import '../styles/pages/FrontPage.css';
 
 export default function FrontPage() {

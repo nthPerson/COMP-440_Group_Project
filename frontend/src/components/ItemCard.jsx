@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/components/ItemManagement.css';
+import '../styles/components/ItemCard.css';
 
 export default function ItemCard({ item }) {
   return (

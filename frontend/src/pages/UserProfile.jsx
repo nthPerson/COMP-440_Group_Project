@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from "axios";
 import '../styles/global.css';
-import '../styles/layout/HomePage.css';
-import '../styles/components/FollowTabs.css';
+import '../styles/pages/UserProfile.css';
+import '../styles/components/ItemList.css';
+import '../styles/components/ItemCard.css';
 import ItemCard from '../components/ItemCard';
 
 export default function UserProfile() {

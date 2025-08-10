@@ -3,8 +3,9 @@ import Navbar from '../components/Navbar';
 import NewItemForm from '../components/NewItemForm';
 import ItemList from '../components/ItemList';
 import '../styles/global.css';
-import '../styles/layout/HomePage.css';
-import '../styles/components/ItemManagement.css';
+import '../styles/pages/ItemManagement.css';
+import '../styles/components/ItemList.css';
+import '../styles/components/ItemCard.css';
 
 export default function ItemManagement() {
   return (

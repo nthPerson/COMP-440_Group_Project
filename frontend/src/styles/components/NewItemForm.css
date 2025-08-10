@@ -226,3 +226,21 @@
   color: #6b7280;
   margin-bottom: 0;
 }
+
+/* Primary submit button used by NewItemForm and Profile save */
+.new-item-form .btn-add-item {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all var(--transition-fast);
+}
+
+.new-item-form .btn-add-item:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
