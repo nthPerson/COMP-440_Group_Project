@@ -241,3 +241,27 @@ def update_item_image(item_id):
         'message': 'Image updated successfully',
         'image_url': item.get_image_url()
     }), 200
+
+@items_bp.route('/user/<username>', methods=['GET'])
+def get_items_by_user(username):
+    items = Item.query\
+        .filter_by(posted_by=username)\
+        .order_by(Item.date_posted.desc())\
+        .all()
+
+    return jsonify([
+      {
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'price': str(item.price),
+        'posted_by': item.posted_by,
+        'date_posted': item.date_posted.isoformat(),
+        'categories': [{'name': c.name} for c in item.categories],
+        # Provide resolved image URL so frontend can display the correct thumbnail
+        'image_url': item.get_image_url(),
+        'star_rating': item.star_rating,
+        'review_count': item.reviews.count()
+      }
+      for item in items
+    ]), 200

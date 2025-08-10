@@ -1,8 +1,9 @@
+// src/components/ItemCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/components/ItemCard.css';
 
-export default function ItemCard({ item }) {
+export default function ItemCard({ item, showPostedBy = true }) {
   return (
     <div className="item-card">
       {/* Item Image / Icon (matches FrontPage & ItemList behavior) */}
@@ -66,6 +67,28 @@ export default function ItemCard({ item }) {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="item-rating">
+        <span className="rating-stars">
+          {(() => {
+            const full = Math.floor(item.star_rating);
+            const half =
+              item.star_rating % 1 >= 0.25 &&
+              item.star_rating % 1 < 0.75;
+            const empty = 5 - full - (half ? 1 : 0);
+            return (
+              '★'.repeat(full) +
+              (half ? '☆' : '') +
+              '☆'.repeat(empty)
+            );
+          })()}
+        </span>
+        <span className="rating-info">
+          {item.star_rating.toFixed(1)}/5 •{' '}
+          <strong>{item.review_count}</strong>{' '}
+          {item.review_count === 1 ? 'review' : 'reviews'}
+        </span>
       </div>
     </div>
   );
