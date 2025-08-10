@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ItemCard from '../components/ItemCard';
 import '../styles/global.css';
@@ -204,32 +204,44 @@ export default function Seller() {
                   {reviews.length > 0 ? (
                     <div className="reviews-list">
                       {reviews.map(review => (
-                        <div key={review.id} className="review-card">
-                          <div className="review-header">
-                            <div className="reviewer-info">
-                              <div className="reviewer-avatar">
-                                {review.user.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="reviewer-details">
-                                <span className="reviewer-name">{review.user}</span>
-                                <div className="review-rating">
-                                  <span className={`rating-badge rating-${review.score.toLowerCase()}`}>
-                                    {review.score}
-                                  </span>
+                        <Link
+                          key={review.id}
+                          to={`/item/${review.item_id}`}
+                          style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                          <div className="review-card" style={{ cursor: 'pointer' }}>
+                            {/* —— REVIEW HEADER —— */}
+                            <div className="review-header">
+                              <div className="reviewer-info">
+                                <div className="reviewer-avatar">
+                                  {review.user.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="reviewer-details">
+                                  <span className="reviewer-name">{review.user}</span>
+                                  <div className="review-rating">
+                                    <span className={`rating-badge rating-${review.score.toLowerCase()}`}>
+                                      {review.score}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
+                              <span className="review-date">
+                                {review.date
+                                  ? new Date(review.date).toLocaleDateString()
+                                  : 'Recently'}
+                              </span>
                             </div>
-                            <span className="review-date">
-                              {review.date ? new Date(review.date).toLocaleDateString() : 'Recently'}
-                            </span>
+
+                            {/* —— REVIEW CONTENT —— */}
+                            {review.remark && (
+                              <div className="review-content">
+                                <p className="review-text">{review.remark}</p>
+                              </div>
+                            )}
                           </div>
-                          {review.remark && (
-                            <div className="review-content">
-                              <p className="review-text">{review.remark}</p>
-                            </div>
-                          )}
-                        </div>
+                        </Link>
                       ))}
+
                     </div>
                   ) : (
                     <div className="no-reviews">

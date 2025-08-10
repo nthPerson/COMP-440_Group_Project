@@ -84,3 +84,19 @@ def list_reviews_for_user(username):
             'remark': r.remark
         })
     return jsonify(result), 200
+
+@reviews_bp.route('/user/<username>', methods=['GET']) #this will allow a user to click on a review to that item
+@login_required
+def get_reviews_by_user(username):
+    reviews = Review.query.filter_by(user_username=username).all()
+    payload = []
+    for r in reviews:
+        payload.append({
+            'id': r.id,
+            'user': r.user_username,
+            'item_id': r.item_id,         # <— include this
+            'score': r.score,
+            'remark': r.remark,
+            'date': r.created_at.isoformat()
+        })
+    return jsonify(payload), 200
