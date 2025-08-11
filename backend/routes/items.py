@@ -15,6 +15,7 @@ def create_item():
   description = data.get('description', '').strip()
   price = data.get('price')
   categories = data.get('categories')
+  image_url = data.get('image_url', '').strip()  # Optional image URL
   
   # we need this to check that the input isn't empty and is valid
   if not title:
@@ -41,7 +42,8 @@ def create_item():
     description = description,
     price = price,
     posted_by = current_user.username,
-    date_posted = date.today()
+    date_posted = date.today(),
+    image_url = image_url if image_url else None  # Store image URL if provided
   )
 
   # attach categories to items
@@ -59,7 +61,21 @@ def create_item():
   db.session.add(new_item)
   db.session.commit()
   
-  return jsonify({'message': 'Item created successfully'}), 201
+  # Return the created item with its computed image URL
+  item_data = {
+    'id': new_item.id,
+    'title': new_item.title,
+    'description': new_item.description,
+    'price': str(new_item.price),
+    'posted_by': new_item.posted_by,
+    'date_posted': new_item.date_posted.isoformat(),
+    'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in new_item.categories],
+    'star_rating': new_item.star_rating,
+    'review_count': new_item.reviews.count(),
+    'image_url': new_item.get_image_url()
+  }
+  
+  return jsonify({'message': 'Item created successfully', 'item': item_data}), 201
 
 
 @items_bp.route('/list_items', methods=['GET'])
@@ -76,9 +92,10 @@ def list_items():
       'price': str(item.price),
       'posted_by': item.posted_by,
       'date_posted': item.date_posted.isoformat(),
-      'categories': [{'name': c.name} for c in item.categories],
+      'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
       'star_rating': item.star_rating,
-      'review_count': item.reviews.count()
+      'review_count': item.reviews.count(),
+      'image_url': item.get_image_url()
     })
   
   return jsonify(result), 200
@@ -95,9 +112,10 @@ def get_item(item_id):
       'price': str(item.price),
       'posted_by': item.posted_by,
       'date_posted': item.date_posted.isoformat(),
-      'categories': [{'name': c.name} for c in item.categories],
+      'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
       'star_rating': item.star_rating,
-      'review_count': item.reviews.count()
+      'review_count': item.reviews.count(),
+      'image_url': item.get_image_url()
   }
   return jsonify(data), 200
 
@@ -141,9 +159,10 @@ def search_items():
             'price': str(item.price),
             'posted_by': item.posted_by,
             'date_posted': item.date_posted.isoformat(),
-            'categories': [{'name': c.name} for c in item.categories],
+            'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
             'star_rating': item.star_rating,
-            'review_count': item.reviews.count()
+            'review_count': item.reviews.count(),
+            'image_url': item.get_image_url()
         })
     
     # Return results with metadata
@@ -170,9 +189,79 @@ def get_categories():
     categories = Category.query.order_by(Category.name).all()
     
     # Format as simple array of category names
-    result = [{'name': category.name} for category in categories]
+    result = [{'name': category.name, 'icon_key': category.icon_key} for category in categories]
     
     return jsonify({
         'category_count': len(result),
         'categories': result
     }), 200
+@items_bp.route('/my_items', methods=['GET'])
+@login_required
+def get_my_items():
+    my_items = Item.query.filter_by(posted_by=current_user.username).order_by(Item.date_posted.desc()).all()
+
+    result = []
+    for item in my_items:
+        result.append({
+            'id': item.id,
+            'title': item.title,
+            'description': item.description,
+            'price': str(item.price),
+            'date_posted': item.date_posted.isoformat(),
+            'posted_by': item.posted_by,
+            # Include icon_key for consistency with other endpoints
+            'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
+            # Provide resolved image URL so frontend can display the correct thumbnail
+            'image_url': item.get_image_url(),
+            'star_rating': item.star_rating,
+            'review_count': item.reviews.count()
+        })
+    
+    return jsonify(result), 200
+
+
+@items_bp.route('/<int:item_id>/image', methods=['PUT'])
+@login_required
+def update_item_image(item_id):
+    """Update the image URL for an item. Only the item owner can do this."""
+    item = Item.query.get_or_404(item_id)
+    
+    # Check if current user is the owner of this item
+    if item.posted_by != current_user.username:
+        return jsonify({'error': 'You can only update images for your own items'}), 403
+    
+    data = request.get_json()
+    image_url = data.get('image_url', '').strip()
+    
+    # Update the image URL (can be empty to reset to default)
+    item.image_url = image_url if image_url else None
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'Image updated successfully',
+        'image_url': item.get_image_url()
+    }), 200
+
+@items_bp.route('/user/<username>', methods=['GET'])
+def get_items_by_user(username):
+    items = Item.query\
+        .filter_by(posted_by=username)\
+        .order_by(Item.date_posted.desc())\
+        .all()
+
+    return jsonify([
+      {
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'price': str(item.price),
+        'posted_by': item.posted_by,
+        'date_posted': item.date_posted.isoformat(),
+        'categories': [{'name': c.name} for c in item.categories],
+        # Provide resolved image URL so frontend can display the correct thumbnail
+        'image_url': item.get_image_url(),
+        'star_rating': item.star_rating,
+        'review_count': item.reviews.count()
+      }
+      for item in items
+    ]), 200

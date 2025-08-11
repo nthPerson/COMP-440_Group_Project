@@ -399,7 +399,7 @@ export default function Reports() {
                         <h3 className="item-title">
                           <Link to={`/item/${item.item_id}`}>{item.title}</Link>
                         </h3>
-                        <div className="item-price">${item.price}</div>
+                        <div className="item-price">{item.price}</div>
                         <div className="item-description">{item.description}</div>
                         <div className="item-meta">
                           <span className="seller">Posted by <Link to={`/seller/${item.posted_by}`}>{item.posted_by}</Link></span>
