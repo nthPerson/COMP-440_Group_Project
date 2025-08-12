@@ -282,14 +282,6 @@ export default function UserProfile() {
                         <ItemCard item={item} />
                     ))}
                   </div>
-                {/* <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
-                  <div className="item-card-grid">
-                    {currentItems.map(item => (
-                      <div key={item.id} className="item-card">
-                        <ItemCard item={item} />
-                      </div>
-                    ))}
-                  </div> */}
 
                   {totalPages > 0 && (
                     <div className="pagination-controls">
