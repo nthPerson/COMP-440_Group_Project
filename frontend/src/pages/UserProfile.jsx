@@ -127,7 +127,7 @@ export default function UserProfile() {
           <div className="page-header">
             <h1 className="page-title">User Profile</h1>
           </div>
-          <div className="item-form-section">
+          <div className="new-item-form">
             <form onSubmit={handleSave}>
               <div className="form-group">
                 <input
