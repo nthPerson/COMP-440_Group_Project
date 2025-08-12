@@ -86,6 +86,63 @@ The application emphasizes security with parameterized queries, input validation
 └── README.md                   # This file
 ```
 
+## Database Schema
+```mermaid
+erDiagram
+    USER {
+        string  username PK
+        string  password
+        string  firstName
+        string  lastName
+        string  email UK
+    }
+
+    ITEM {
+        int     id PK
+        string  title
+        text    description
+        date    date_posted
+        decimal price "NUMERIC(10,2)"
+        string  posted_by FK "user.username"
+        float   star_rating
+        string  image_url
+    }
+
+    CATEGORY {
+        string  name PK
+        string  icon_key
+    }
+
+    REVIEW {
+        int     id PK
+        date    review_date
+        string  score "ENUM('Excellent','Good','Fair','Poor')"
+        text    remark
+        string  user_id FK "user.username"
+        int     item_id FK "item.id"
+        %% UNIQUE(user_id, item_id) -- composite unique constraint
+    }
+
+    ITEM_CATEGORY {
+        int     item_id PK "item.id"
+        string  category_name PK "category.name"
+    }
+
+    FOLLOW {
+        string  user_username PK "followee -> user.username"
+        string  follower_username PK "follower -> user.username"
+    }
+
+    %% Relationships
+    USER ||--o{ ITEM : posts
+    USER ||--o{ REVIEW : writes
+    ITEM ||--o{ REVIEW : has
+    ITEM ||--o{ ITEM_CATEGORY : has
+    CATEGORY ||--o{ ITEM_CATEGORY : includes
+    USER ||--o{ FOLLOW : is_followed
+    USER ||--o{ FOLLOW : follows
+```
+
 ## Build
 
 ### Database Setup
