@@ -54,6 +54,7 @@
   display: block !important;
 }
 
+
 /* Header row with image + title */
 .fp-item-header-row {
   display: flex;
@@ -82,7 +83,8 @@
 .fp-row.fp-price-seller {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  min-height: 2.5rem; /* adjust to fit 2 lines of text */
+  align-items: flex-start;
   margin-bottom: var(--spacing-xs);
 }
 
@@ -91,7 +93,19 @@
   font-weight: 600;
 }
 
-.fp-posted-by a { color: var(--primary-color); }
+/* let the username block shrink + wrap */
+.fp-posted-by { 
+  flex: 1 1 auto;
+  min-width: 0;           /* <-- critical for wrapping inside flex */
+  text-align: right;      /* keep it on the right like before */
+}
+
+.fp-posted-by a {
+  overflow-wrap: anywhere;
+  word-break: break-word; /* extra safety */
+}
+
+
 
 .fp-date {
   color: var(--gray-500);
