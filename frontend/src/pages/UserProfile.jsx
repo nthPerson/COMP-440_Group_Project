@@ -279,23 +279,38 @@ export default function UserProfile() {
                 <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
                   <div className="item-card-grid">
                     {currentItems.map(item => (
-                        <ItemCard item={item} />
+                      <ItemCard item={item} />
                     ))}
                   </div>
 
-                  {totalPages > 0 && (
-                    <div className="pagination-controls">
-                      {[...Array(totalPages)].map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentPage(index + 1)}
-                          className={`pagination-button ${currentPage === index + 1 ? 'active-page' : ''}`}
-                        >
-                          {index + 1}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <div className="pagination-controls">
+                    <button
+                      className="pagination-button"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Prev
+                    </button>
+
+                    {[...Array(totalPages)].map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPage(index + 1)}
+                        className={`pagination-button ${currentPage === index + 1 ? 'active-page' : ''}`}
+                      >
+                        {index + 1}
+                      </button>
+                    ))}
+
+                    <button
+                      className="pagination-button"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </button>
+                  </div>
+
                 </div>
               </div>
             </div>

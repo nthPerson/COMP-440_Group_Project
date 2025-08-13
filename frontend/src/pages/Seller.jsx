@@ -165,25 +165,39 @@ export default function Seller() {
                   ) : (
                     // paginate over currentItems, not all items
                     currentItems.map(it => (
-                        <ItemCard item={it} />
+                      <ItemCard item={it} />
                     ))
                   )}
                 </div>
 
-                {totalPages > 1 && (
-                  <div className="pagination-controls">
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setCurrentPage(i + 1)}
-                        className={`pagination-button ${currentPage === i + 1 ? 'active-page' : ''
-                          }`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                <div className="pagination-controls">
+                  <button
+                    className="pagination-button"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Prev
+                  </button>
+
+                  {[...Array(totalPages)].map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentPage(index + 1)}
+                      className={`pagination-button ${currentPage === index + 1 ? 'active-page' : ''}`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    className="pagination-button"
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+
               </div>
             </div>
           )}
