@@ -37,3 +37,16 @@
 /* Item management wrappers used on profile page */
 .item-management { width: 100%; max-width: 1200px; margin: 0 auto; }
 .item-management-layout { display: flex; flex-direction: column; gap: var(--spacing-xl); }
+
+/* Force 1-per-line for the followers/following lists */
+.item-list-section .follow-list {
+  display: block;                /* cancel the grid */
+  grid-template-columns: none; 
+}
+
+/* keep name + button on a single row within each item */
+.item-list-section .follow-list > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
