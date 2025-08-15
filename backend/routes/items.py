@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import db, Item, Category
+from models import db, Item, Category, Review, item_category
 from flask_login import login_required, current_user
 from datetime import datetime, date
 from sqlalchemy import func
@@ -81,10 +81,51 @@ def create_item():
 @items_bp.route('/list_items', methods=['GET'])
 # No @login_required for items shown on the front page
 def list_items():
+  # Fetch items (ordered)
   items = Item.query.order_by(Item.date_posted.desc()).all()
-  result = []
+  if not items:
+    return jsonify([]), 200
+  
+  item_ids = [item.id for item in items]
 
+  # Batch fetch categories for all items
+  cat_rows = (
+    db.session.query(
+      item_category.c.item_id,
+      Category.name,
+      Category.icon_key
+    )
+    .join(Category, Category.name == item_category.c.category_name)
+    .filter(item_category.c.item_id.in_(item_ids))
+    .all()
+  )
+  categories_map = {}
+  for item_id, name, icon_key in cat_rows:
+    categories_map.setdefault(item_id, []).append({'name': name, 'icon_key': icon_key})
+  
+  # Batch fetch review counts per item
+  review_rows = (
+    db.session.query(Review.item_id, func.count(Review.id))
+    .filter(Review.item_id.in_(item_ids))
+    .group_by(Review.item_id)
+    .all()
+  )
+  review_count_map = {item_id: cnt for item_id, cnt in review_rows}
+
+  # Build results without per-item queries
+  result = []
   for item in items:
+    cats = categories_map.get(item.id, [])
+    # Compute reviewed image URL without triggering a categories query
+    if item.image_url:
+      resolved_image_url = item.image_url
+    else:
+      icon_key = cats[0]['icon_key'] if cats else None
+      resolved_image_url = (
+        f"https://api.iconify.design/{icon_key}.svg"
+        if icon_key else "https://api.iconify.design/mdi:package-variant.svg"
+      )
+    
     result.append({
       'id': item.id,
       'title': item.title,
@@ -92,12 +133,12 @@ def list_items():
       'price': str(item.price),
       'posted_by': item.posted_by,
       'date_posted': item.date_posted.isoformat(),
-      'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
+      'categories': cats,
       'star_rating': item.star_rating,
-      'review_count': item.reviews.count(),
-      'image_url': item.get_image_url()
+      'review_count': review_count_map.get(item.id, 0),
+      'image_url': resolved_image_url
     })
-  
+
   return jsonify(result), 200
 
 
