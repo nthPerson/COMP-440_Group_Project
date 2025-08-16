@@ -3,8 +3,14 @@
 .search-results-page {
   padding: 1.5rem;
   max-width: 1400px;
+  min-width: 1350px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
+  background: white;
+}
+
+.search-results-page .dashboard-container {
+  background: var(--gray-200) !important;
 }
 
 /* 3-up grid, but make every row equal height */

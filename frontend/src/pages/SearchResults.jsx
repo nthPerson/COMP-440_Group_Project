@@ -75,7 +75,7 @@ export default function SearchResults() {
   return (
     <>
       <Navbar />
-
+      <div className="dashboard-container">
       <div className="search-results-page">
         {!searchTerm && <p>Please enter something to search.</p>}
 
@@ -134,6 +134,7 @@ export default function SearchResults() {
             )}
           </>
         )}
+        </div>
       </div>
     </>
   );
