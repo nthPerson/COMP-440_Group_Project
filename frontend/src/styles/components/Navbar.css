@@ -28,6 +28,9 @@
   overflow: visible;
   /* above other page content */
   z-index: 10;
+
+  position: relative; /* required for ::after trick too */
+  box-shadow: 0 2px 6px var(--primary-color);
 }
 
 /* Brand/logo on the left */
@@ -55,74 +58,10 @@
 /* ================================
    SPOTLIGHT & LASER ANIMATIONS
    ================================ */
-/* Spotlight gradient sweeping out */
-.navbar::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 4px;
-  width: 0;
-  background: radial-gradient(
-    circle at center,
-    var(--primary-light) 0%,
-    var(--primary-color) 40%,
-    transparent 100%
-  );
-  opacity: 0;
-  animation: spotlight 2.5s ease-out infinite;
-}
 
-/* Laser pulse from center */
-.navbar::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 2px;
-  width: 0;
-  background: var(--primary-dark);
-  box-shadow: 0 0 8px var(--primary-dark), 0 0 16px var(--primary-light);
-  opacity: 0;
-  animation: laserPulse 1.8s ease-in-out infinite;
-  animation-delay: 0.5s;
-}
 
-@keyframes spotlight {
-  0% {
-    width: 0;
-    opacity: 0.3;
-  }
-  50% {
-    width: 100%;
-    opacity: 0.6;
-  }
-  100% {
-    width: 0;
-    opacity: 0;
-  }
-}
 
-@keyframes laserPulse {
-  0% {
-    width: 0;
-    opacity: 0;
-  }
-  30% {
-    width: 60%;
-    opacity: 1;
-  }
-  60% {
-    width: 0;
-    opacity: 0.2;
-  }
-  100% {
-    width: 0;
-    opacity: 0;
-  }
-}
+
 
 /* --------------------------------------
    CENTERED SEARCH INTERFACE

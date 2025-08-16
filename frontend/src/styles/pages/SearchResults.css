@@ -2,9 +2,40 @@
 
 .search-results-page {
   padding: 1.5rem;
-  max-width: 800px;
+  max-width: 1400px;
+  min-width: 1350px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
+  background: white;
+}
+
+.search-results-page .dashboard-container {
+  background: var(--gray-200) !important;
+}
+
+/* 3-up grid, but make every row equal height */
+.search-results-page .item-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+
+  /* key bits for equal-height cards */
+  align-items: stretch;   /* stretch items to row height */
+  grid-auto-rows: 1fr;    /* each grid row has same height */
+}
+
+/* make each card fill its grid cell */
+.search-results-page .item-card {
+  height: 100%;
+}
+
+/* responsive (optional) */
+@media (max-width: 1024px) {
+  .search-results-page .item-card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 640px) {
+  .search-results-page .item-card-grid { grid-template-columns: 1fr; }
 }
 
 .search-results-page h1 {
@@ -174,6 +205,16 @@
   height: auto !important;
 }
 
+
+
+/* Lists and pagination borrowed from layout/HomePage.css */
+.pagination-controls { display: flex; justify-content: center; align-items: center; margin-top: 1.5rem; }
+.pagination-button { all: unset; background-color: var(--gray-100); border-radius: 6px; padding: 0.4rem 0.75rem; margin: 0 0.25rem; font-weight: 600; color: var(--gray-700); cursor: pointer; transition: background-color 0.2s ease; }
+.pagination-button:hover { background-color: var(--gray-300); }
+.pagination-button.active-page { background-color: var(--primary-color); color: white; }
+
+
 .search-results-page .items-container ul li { margin-bottom: 1.5rem; }
 
 .search-results-page ul { max-height: none !important; overflow: visible !important; }
+
