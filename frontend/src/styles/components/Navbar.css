@@ -8,7 +8,7 @@
   --nav-tab-font-size: 1.2rem; /* base font size for nav tabs */
 }
 
-   .navbar {
+  .navbar {
   position: relative;
   /* overall navbar height */
   height: 100px;
@@ -100,19 +100,21 @@
   display: flex;          /* row layout */
   align-items: center;    /* vertical centering */
   width: 100%;            /* fill parent */
-  max-width: 1200px;      /* cap width */
+  max-width: 1400px;      /* cap width (wider for longer search) */
   margin: 0 auto;         /* center horizontally */
 }
+
+/* When the autocomplete is used in the navbar, let it expand much wider */
+.navbar .cat-ac-wrapper { max-width: 1200px; width: 100%; }
+.navbar .cat-ac-wrapper .cat-ac-input { min-width: 900px; max-width: 1200px; }
 
 /* the text input itself */
 .search-input {
   flex: 1;                             /* fill available width */
-  min-width: 600px;                    /* prevent shrinking too far */
-  max-width: 1200px;                   /* cap width */
+  min-width: 800px;                    /* prevent shrinking too far (longer) */
+  max-width: 1400px;                   /* cap width */
   padding: 0.7em 1.2em;                /* inner spacing */
   font-size: 1.1rem;                   /* slightly larger text */
- /* border: 1px solid var(--gray-200);   /* light border */
- /* border-radius: 8px;                  /* rounded corners */
   box-sizing: border-box;              /* include padding in width */
 }
 

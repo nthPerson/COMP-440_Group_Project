@@ -77,9 +77,7 @@ export default function ItemCard({ item, showPostedBy = true }) {
       </span>
       <span className="rating-info">
         {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong>{' '}
-        <Link to={`/item/${item.id}#reviews`} className="review-link">
-          {item.review_count === 1 ? 'review' : 'reviews'}
-        </Link>
+        {item.review_count === 1 ? 'review' : 'reviews'}
       </span>
     </div>
   </div>

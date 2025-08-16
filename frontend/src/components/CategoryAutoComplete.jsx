@@ -7,17 +7,9 @@ export default function CategoryAutocomplete({
   placeholder = "Search…",
   onSubmit,                   // (value: string) => void  (trigger search or navigate)
   defaultValue = "",
-  maxSuggestions = 8,
-  // Controlled props (optional):
-  value: controlledValue,
-  onChange
+  maxSuggestions = 8
 }) {
-  const [value, setValue] = useState(controlledValue ?? defaultValue);
-
-  // keep internal value in sync when controlledValue changes
-  useEffect(() => {
-    if (controlledValue !== undefined) setValue(controlledValue);
-  }, [controlledValue]);
+  const [value, setValue] = useState(defaultValue);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const listboxId = "category-autocomplete-listbox";
@@ -90,13 +82,11 @@ export default function CategoryAutocomplete({
         placeholder={placeholder}
         value={value}
         onChange={(e) => {
-          const v = e.target.value;
-          if (controlledValue === undefined) setValue(v);
-          if (onChange) onChange(v);
+          setValue(e.target.value);
           setOpen(true);
           setActiveIndex(-1);
         }}
-  onFocus={() => { if (suggestions.length) setOpen(true); }}
+        onFocus={() => { if (suggestions.length) setOpen(true); }}
         onKeyDown={onKeyDown}
         aria-autocomplete="list"
         aria-expanded={open}
@@ -104,7 +94,7 @@ export default function CategoryAutocomplete({
         role="combobox"
       />
 
-  {open && suggestions.length > 0 && (
+      {open && suggestions.length > 0 && (
         <ul
           ref={popRef}
           id={listboxId}
@@ -136,4 +126,3 @@ export default function CategoryAutocomplete({
     </div>
   );
 }
-

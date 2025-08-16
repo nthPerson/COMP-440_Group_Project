@@ -32,19 +32,21 @@ export default function SearchInterface() {
 
   return (
     <div className="search-interface">
-      {/* MAIN SEARCH INPUT (with autocomplete) */}
+      {/* MAIN SEARCH INPUT */}
       <form onSubmit={handleSearchSubmit} className="search-form">
-        <CategoryAutocomplete
-          categories={allCategories.map(c => c.name)}
+        <input
+          type="text"
+          className="search-input"
           placeholder="Search items or categories…"
           value={searchCategory}
-          onChange={(v) => setSearchCategory(v)}
-          onSubmit={(val) => {
-            setSearchCategory(val);
-            if (val && val.trim()) navigate(`/search?category=${encodeURIComponent(val.trim())}`);
-          }}
-          maxSuggestions={8}
+          onChange={e => setSearchCategory(e.target.value)}
+          list="categories-datalist"
         />
+        <datalist id="categories-datalist">
+          {allCategories.map(c => (
+            <option key={c.name} value={c.name} />
+          ))}
+        </datalist>
         <button type="submit" className="search-button">
           Search
         </button>
