@@ -116,9 +116,9 @@
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: var(--spacing-md);
-  height: fit-content;
+  height: 100%;
 }
 
 .item-card:hover {
@@ -129,7 +129,7 @@
 
 .item-image-container { width: 80px; height: 80px; flex-shrink: 0; }
 .item-thumbnail { width: 100%; height: 100%; object-fit: cover; border-radius: var(--border-radius); border: 1px solid var(--gray-200); }
-.item-content { flex: 1; display: flex; flex-direction: column; }
+.item-content { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; }
 
 .item-card h3 { color: var(--primary-color); margin-bottom: var(--spacing-sm); font-size: 1.1rem; font-weight: 600; }
 .item-card p { margin-bottom: var(--spacing-sm); color: var(--gray-600); line-height: 1.5; font-size: 0.9rem; }
@@ -145,11 +145,25 @@
 .category-item { background: var(--primary-color); color: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; font-weight: 500; display: flex; align-items: center; gap: 4px; }
 .category-icon-small { width: 12px; height: 12px; flex-shrink: 0; filter: brightness(0) invert(1); }
 
-.item-rating { display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--gray-50); border-radius: var(--border-radius); border: none; }
+.item-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: var(--gray-50);
+  border-radius: var(--border-radius);
+  border: none;
+}
 .rating-stars { color: #f5b301; font-size: 1.1rem; }
 .rating-info { font-size: 0.85rem; color: var(--gray-600); }
 
-.review-section { border-top: 1px solid var(--gray-200); padding-top: var(--spacing-md); margin-top: var(--spacing-md); }
+.review-section {
+  border-top: 1px solid var(--gray-200);
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  margin-bottom: 0;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
