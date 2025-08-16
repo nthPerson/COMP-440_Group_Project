@@ -43,7 +43,8 @@ def get_user(username):
         'username': user.username,
         'first_name': user.firstName,
         'last_name': user.lastName,
-        'email': user.email
+        'email': user.email,
+        'profile_image_url': user.profile_image_url
     })
 
 @users_bp.route('/<username>', methods=['PUT'])  # /api/users/<username>  -- Calling 'PUT' updates the user's data

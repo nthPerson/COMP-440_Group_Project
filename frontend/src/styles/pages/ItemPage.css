@@ -713,6 +713,7 @@
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.15s ease-in-out;
+  z-index: 2; /* ensure the pencil is above the image */
 }
 .item-image-wrapper:hover .edit-image-btn {
   opacity: 1;
