@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import db, Item, Category
+from models import db, Item, Category, Review, item_category
 from flask_login import login_required, current_user
 from datetime import datetime, date
 from sqlalchemy import func
@@ -81,10 +81,51 @@ def create_item():
 @items_bp.route('/list_items', methods=['GET'])
 # No @login_required for items shown on the front page
 def list_items():
+  # Fetch items (ordered)
   items = Item.query.order_by(Item.date_posted.desc()).all()
-  result = []
+  if not items:
+    return jsonify([]), 200
+  
+  item_ids = [item.id for item in items]
 
+  # Batch fetch categories for all items
+  cat_rows = (
+    db.session.query(
+      item_category.c.item_id,
+      Category.name,
+      Category.icon_key
+    )
+    .join(Category, Category.name == item_category.c.category_name)
+    .filter(item_category.c.item_id.in_(item_ids))
+    .all()
+  )
+  categories_map = {}
+  for item_id, name, icon_key in cat_rows:
+    categories_map.setdefault(item_id, []).append({'name': name, 'icon_key': icon_key})
+  
+  # Batch fetch review counts per item
+  review_rows = (
+    db.session.query(Review.item_id, func.count(Review.id))
+    .filter(Review.item_id.in_(item_ids))
+    .group_by(Review.item_id)
+    .all()
+  )
+  review_count_map = {item_id: cnt for item_id, cnt in review_rows}
+
+  # Build results without per-item queries
+  result = []
   for item in items:
+    cats = categories_map.get(item.id, [])
+    # Compute reviewed image URL without triggering a categories query
+    if item.image_url:
+      resolved_image_url = item.image_url
+    else:
+      icon_key = cats[0]['icon_key'] if cats else None
+      resolved_image_url = (
+        f"https://api.iconify.design/{icon_key}.svg"
+        if icon_key else "https://api.iconify.design/mdi:package-variant.svg"
+      )
+    
     result.append({
       'id': item.id,
       'title': item.title,
@@ -92,12 +133,12 @@ def list_items():
       'price': str(item.price),
       'posted_by': item.posted_by,
       'date_posted': item.date_posted.isoformat(),
-      'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
+      'categories': cats,
       'star_rating': item.star_rating,
-      'review_count': item.reviews.count(),
-      'image_url': item.get_image_url()
+      'review_count': review_count_map.get(item.id, 0),
+      'image_url': resolved_image_url
     })
-  
+
   return jsonify(result), 200
 
 
@@ -195,29 +236,94 @@ def get_categories():
         'category_count': len(result),
         'categories': result
     }), 200
+
+
 @items_bp.route('/my_items', methods=['GET'])
 @login_required
 def get_my_items():
-    my_items = Item.query.filter_by(posted_by=current_user.username).order_by(Item.date_posted.desc()).all()
+    # Fetch all items for current user in one query
+    items = (
+        Item.query
+        .filter_by(posted_by=current_user.username)
+        .order_by(Item.date_posted.desc())
+        .all()
+    )
+    if not items:
+        return jsonify([]), 200
 
+    item_ids = [it.id for it in items]
+
+    # Batch fetch categories for all items
+    cat_rows = (
+        db.session.query(
+            item_category.c.item_id,
+            Category.name,
+            Category.icon_key
+        )
+        .join(Category, Category.name == item_category.c.category_name)
+        .filter(item_category.c.item_id.in_(item_ids))
+        .all()
+    )
+    categories_map = {}
+    for item_id, name, icon_key in cat_rows:
+        categories_map.setdefault(item_id, []).append({'name': name, 'icon_key': icon_key})
+
+    # Batch fetch review counts for all items
+    review_rows = (
+        db.session.query(Review.item_id, func.count(Review.id))
+        .filter(Review.item_id.in_(item_ids))
+        .group_by(Review.item_id)
+        .all()
+    )
+    review_count_map = {item_id: cnt for item_id, cnt in review_rows}
+
+    # Build response without per-item queries
     result = []
-    for item in my_items:
+    for it in items:
+        cats = categories_map.get(it.id, [])
+        if it.image_url:
+            resolved_image_url = it.image_url
+        else:
+            icon_key = cats[0]['icon_key'] if cats else None
+            resolved_image_url = (
+                f"https://api.iconify.design/{icon_key}.svg"
+                if icon_key else "https://api.iconify.design/mdi:package-variant.svg"
+            )
+
         result.append({
-            'id': item.id,
-            'title': item.title,
-            'description': item.description,
-            'price': str(item.price),
-            'date_posted': item.date_posted.isoformat(),
-            'posted_by': item.posted_by,
-            # Include icon_key for consistency with other endpoints
-            'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
-            # Provide resolved image URL so frontend can display the correct thumbnail
-            'image_url': item.get_image_url(),
-            'star_rating': item.star_rating,
-            'review_count': item.reviews.count()
+            'id': it.id,
+            'title': it.title,
+            'description': it.description,
+            'price': str(it.price),
+            'date_posted': it.date_posted.isoformat(),
+            'posted_by': it.posted_by,
+            'categories': cats,
+            'image_url': resolved_image_url,
+            'star_rating': it.star_rating,
+            'review_count': review_count_map.get(it.id, 0),
         })
-    
+
     return jsonify(result), 200
+    # my_items = Item.query.filter_by(posted_by=current_user.username).order_by(Item.date_posted.desc()).all()
+
+    # result = []
+    # for item in my_items:
+    #     result.append({
+    #         'id': item.id,
+    #         'title': item.title,
+    #         'description': item.description,
+    #         'price': str(item.price),
+    #         'date_posted': item.date_posted.isoformat(),
+    #         'posted_by': item.posted_by,
+    #         # Include icon_key for consistency with other endpoints
+    #         'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
+    #         # Provide resolved image URL so frontend can display the correct thumbnail
+    #         'image_url': item.get_image_url(),
+    #         'star_rating': item.star_rating,
+    #         'review_count': item.reviews.count()
+    #     })
+    
+    # return jsonify(result), 200
 
 
 @items_bp.route('/<int:item_id>/image', methods=['PUT'])
@@ -244,24 +350,84 @@ def update_item_image(item_id):
 
 @items_bp.route('/user/<username>', methods=['GET'])
 def get_items_by_user(username):
-    items = Item.query\
-        .filter_by(posted_by=username)\
-        .order_by(Item.date_posted.desc())\
+    items = (
+        Item.query
+        .filter_by(posted_by=username)
+        .order_by(Item.date_posted.desc())
         .all()
+    )
+    if not items:
+        return jsonify([]), 200
 
-    return jsonify([
-      {
-        'id': item.id,
-        'title': item.title,
-        'description': item.description,
-        'price': str(item.price),
-        'posted_by': item.posted_by,
-        'date_posted': item.date_posted.isoformat(),
-        'categories': [{'name': c.name} for c in item.categories],
-        # Provide resolved image URL so frontend can display the correct thumbnail
-        'image_url': item.get_image_url(),
-        'star_rating': item.star_rating,
-        'review_count': item.reviews.count()
-      }
-      for item in items
-    ]), 200
+    item_ids = [it.id for it in items]
+
+    cat_rows = (
+        db.session.query(
+            item_category.c.item_id,
+            Category.name,
+            Category.icon_key
+        )
+        .join(Category, Category.name == item_category.c.category_name)
+        .filter(item_category.c.item_id.in_(item_ids))
+        .all()
+    )
+    categories_map = {}
+    for item_id, name, icon_key in cat_rows:
+        categories_map.setdefault(item_id, []).append({'name': name, 'icon_key': icon_key})
+
+    review_rows = (
+        db.session.query(Review.item_id, func.count(Review.id))
+        .filter(Review.item_id.in_(item_ids))
+        .group_by(Review.item_id)
+        .all()
+    )
+    review_count_map = {item_id: cnt for item_id, cnt in review_rows}
+
+    result = []
+    for it in items:
+        cats = categories_map.get(it.id, [])
+        if it.image_url:
+            resolved_image_url = it.image_url
+        else:
+            icon_key = cats[0]['icon_key'] if cats else None
+            resolved_image_url = (
+                f"https://api.iconify.design/{icon_key}.svg"
+                if icon_key else "https://api.iconify.design/mdi:package-variant.svg"
+            )
+
+        result.append({
+            'id': it.id,
+            'title': it.title,
+            'description': it.description,
+            'price': str(it.price),
+            'posted_by': it.posted_by,
+            'date_posted': it.date_posted.isoformat(),
+            'categories': cats,
+            'image_url': resolved_image_url,
+            'star_rating': it.star_rating,
+            'review_count': review_count_map.get(it.id, 0),
+        })
+
+    return jsonify(result), 200
+
+    # items = Item.query\
+    #     .filter_by(posted_by=username)\
+    #     .order_by(Item.date_posted.desc())\
+    #     .all()
+
+    # return jsonify([
+    #   {
+    #     'id': item.id,
+    #     'title': item.title,
+    #     'description': item.description,
+    #     'price': str(item.price),
+    #     'posted_by': item.posted_by,
+    #     'date_posted': item.date_posted.isoformat(),
+    #     'categories': [{'name': c.name} for c in item.categories],
+    #     # Provide resolved image URL so frontend can display the correct thumbnail
+    #     'image_url': item.get_image_url(),
+    #     'star_rating': item.star_rating,
+    #     'review_count': item.reviews.count()
+    #   }
+    #   for item in items
+    # ]), 200
