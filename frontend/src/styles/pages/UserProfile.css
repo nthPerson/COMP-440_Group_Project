@@ -29,8 +29,24 @@
 .unfollow-btn { background: var(--primary-color); color: white; border: none; padding: 0.3rem 0.75rem; border-radius: 5px; cursor: pointer; }
 
 /* Grid container for item cards on profile */
-.item-card-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); margin-top: 1rem; }
+.item-card-grid {  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;}
 
 /* Item management wrappers used on profile page */
 .item-management { width: 100%; max-width: 1200px; margin: 0 auto; }
 .item-management-layout { display: flex; flex-direction: column; gap: var(--spacing-xl); }
+
+/* Force 1-per-line for the followers/following lists */
+.item-list-section .follow-list {
+  display: block;                /* cancel the grid */
+  grid-template-columns: none; 
+}
+
+/* keep name + button on a single row within each item */
+.item-list-section .follow-list > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -6,10 +6,22 @@ import '../styles/global.css';
 import '../styles/components/ItemList.css';
 import '../styles/components/ItemCard.css';
 import '../styles/pages/FrontPage.css';
+import ItemCard from '../components/ItemCard';
 
 export default function FrontPage() {
   // const [items, setItems] = useState([]);
   const { items, isLoading, error } = useItemsList();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
+  // wherever your full items array lives (e.g., items, allItems, searchResults)
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+
+  useEffect(() => { setCurrentPage(1); }, [items]);
 
   // ItemsList context now handles loading items list
   // useEffect(() => {
@@ -38,82 +50,44 @@ export default function FrontPage() {
                   <p className="error-message">{error}</p>
                 </div>
               ) : (
-                <ul>
-                  {items.map(item => (
-                    <li key={item.id} className="item-card">
-                      {/* Row 1: Image (64x64) + Title */}
-                      <div className="fp-item-header-row">
-                        <img
-                          className="fp-item-thumb"
-                          src={
-                            item.image_url ||
-                            (item.categories?.[0]?.icon_key
-                              ? `https://api.iconify.design/${item.categories[0].icon_key}.svg`
-                              : 'https://api.iconify.design/mdi:package-variant.svg')
-                          }
-                          alt={item.title}
-                          onError={(e) => {
-                            e.currentTarget.src = 'https://api.iconify.design/mdi:package-variant.svg';
-                          }}
-                        />
-                        <h3 className="fp-item-title">
-                          <Link to={`/item/${item.id}`}>{item.title}</Link>
-                        </h3>
-                      </div>
+                <div className="items-container">
+                  <div className="item-card-grid">
+                    {currentItems.map(item => (
+                      <ItemCard key={item.id} item={item} />
+                    ))}
+                  </div>
+                  
+                  {totalPages > 1 && (
+                    <div className="pagination-controls">
+                      <button
+                        className="pagination-button"
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                      >
+                        Prev
+                      </button>
 
-                      {/* Row 2: Description */}
-                      <p className="fp-item-description">{item.description}</p>
+                      {[...Array(totalPages)].map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className={`pagination-button ${currentPage === i + 1 ? 'active-page' : ''}`}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
 
-                      {/* Row 3: Price, Posted By */}
-                      <div className="fp-row fp-price-seller">
-                        <div className="fp-price">${parseFloat(item.price).toFixed(2)}</div>
-                        <div className="fp-posted-by">
-                          posted by <Link to={`/seller/${item.posted_by}`}>{item.posted_by}</Link>
-                        </div>
-                      </div>
+                      <button
+                        className="pagination-button"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
 
-                      {/* Row 4: Date Posted */}
-                      <div className="fp-date">{new Date(item.date_posted).toLocaleDateString()}</div>
-
-                      {/* Row 5: Categories (pill with icon + name) */}
-                      <div className="item-categories">
-                        <span className="meta-label">Categories:</span>
-                        <div className="category-list">
-                          {item.categories.map(c => (
-                            <Link
-                              key={c.name}
-                              to={`/search?category=${encodeURIComponent(c.name)}`}
-                              className="category-item"
-                              title={`See all in ${c.name}`}
-                            >
-                              <img 
-                                src={`https://api.iconify.design/${c.icon_key}.svg`}
-                                alt=""
-                                className="category-icon-small"
-                              />
-                              {c.name}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Row 6: Rating */}
-                      <div className="item-rating">
-                        <span className="rating-stars">
-                          {(() => {
-                            const full = Math.floor(item.star_rating);
-                            const half = item.star_rating % 1 >= 0.25 && item.star_rating % 1 < 0.75;
-                            const empty = 5 - full - (half ? 1 : 0);
-                            return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(empty);
-                          })()}
-                        </span>
-                        <span className="rating-info">
-                          {item.star_rating.toFixed(1)}/5 • <strong>{item.review_count}</strong> {item.review_count === 1 ? 'review' : 'reviews'}
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                </div>
               )}
             </div>
           </div>

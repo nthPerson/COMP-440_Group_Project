@@ -20,9 +20,39 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
     const { items: contextItems, isLoading, error, loadItemsList } = useItemsList();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 4;
+
     // Use external items if provided (for search results), otherwise use context items
     const items = externalItems || contextItems;
     const isUsingExternalItems = Boolean(externalItems);
+
+    // Pagination calculations
+    const totalPages = Math.ceil(items.length / itemsPerPage) || 1;
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+
+    // Reset to page 1 when item list changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [items]);
+
+        /**
+     * Set up event listeners and initial data loading
+     * Only when using context data, not external items
+     */
+        useEffect(() => {
+            if (!isUsingExternalItems) {
+                // Reload when new items are created
+                const onNew = () => loadItemsList();
+                window.addEventListener('itemCreated', onNew);
+                
+                // Cleanup event listener on unmount
+                return () => window.removeEventListener('itemCreated', onNew);
+            }
+        }, [isUsingExternalItems, loadItemsList]);
 
     /**
      * Authentication helper - redirects to login on 401 errors
@@ -59,21 +89,6 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
             );
         }
     }
-
-    /**
-     * Set up event listeners and initial data loading
-     * Only when using context data, not external items
-     */
-    useEffect(() => {
-        if (!isUsingExternalItems) {
-            // Reload when new items are created
-            const onNew = () => loadItemsList();
-            window.addEventListener('itemCreated', onNew);
-            
-            // Cleanup event listener on unmount
-            return () => window.removeEventListener('itemCreated', onNew);
-        }
-    }, [isUsingExternalItems, loadItemsList]);
 
     /**
      * Toggle collapse state for better space management
@@ -135,7 +150,7 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
             {/* Items Container - Always expanded when collapse toggle is disabled */}
             <div className={`items-container ${!showCollapseToggle ? 'expanded' : (isCollapsed ? 'collapsed' : 'expanded')}`}>
                 <ul>
-                    {items.map(item => (
+                    {currentItems.map(item => (
                         <li key={item.id} className="item-card">
                             {/* Item Image */}
                             <div className="item-image-container">
@@ -245,6 +260,36 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                         </li>
                     ))}
                 </ul>
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="pagination-controls">
+                        <button
+                            className="pagination-button"
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                        >
+                            Prev
+                        </button>
+
+                        {[...Array(totalPages)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setCurrentPage(i + 1)}
+                                className={`pagination-button ${currentPage === i + 1 ? 'active-page' : ''}`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            className="pagination-button"
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
