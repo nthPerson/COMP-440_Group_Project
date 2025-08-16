@@ -26,6 +26,7 @@
    ================================ */
 .search-form {
   margin-bottom: 1.5rem;
+  border: none !important;
 }
 
 .search-input-group {
