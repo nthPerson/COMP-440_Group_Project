@@ -73,7 +73,8 @@ def get_profile():
         'username': current_user.username,
         'first_name': current_user.firstName,
         'last_name': current_user.lastName,
-        'email': current_user.email
+        'email': current_user.email,
+        'profile_image_url ': current_user.profile_image_url
     })
 
 @users_bp.route('/profile', methods=['POST'])

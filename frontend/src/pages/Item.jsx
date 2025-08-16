@@ -61,7 +61,7 @@ export default function Item() {
   };
 
   const loadCurrentUser = () => {
-    // Use the same endpoint you already use elsewhere for the logged-in user
+    // Use the same endpoint we already use elsewhere for the logged-in user
     fetch('/api/users/me', { credentials: 'include' })
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
@@ -113,7 +113,6 @@ export default function Item() {
           {/* ITEM HEADER SECTION */}
           <div className="item-header">
             <div className="item-image-section">
-              {/* Wrap the image so hover CSS applies */}
               <div className="item-image-wrapper">
                 <img
                   className="item-image"
@@ -122,7 +121,7 @@ export default function Item() {
                   onError={(e) => { e.currentTarget.src = fallbackIcon; }}
                 />
 
-                {/* Show edit button for owner; this toggles the editor */}
+                {/* Show edit button for owner; this toggles the image update editor */}
                 {isOwner && (
                   <button
                     type="button"
@@ -135,7 +134,7 @@ export default function Item() {
                 )}
               </div>
 
-              {/* Collapsible editor panel */}
+              {/* Collapsible image update editor panel */}
               {isOwner && (
                 <ImageUpload
                   itemId={item.id}
@@ -228,9 +227,6 @@ export default function Item() {
                             size={36}
                           />
                         </div>
-                        {/* <div className="reviewer-avatar">
-                          {review.user.charAt(0).toUpperCase()}
-                        </div> */}
                         <div className="reviewer-details">
                           <span className="reviewer-name">{review.user}</span>
                           <div className="review-rating">

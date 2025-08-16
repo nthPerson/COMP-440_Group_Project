@@ -102,7 +102,7 @@ export default function UserProfile() {
   useEffect(() => {
     async function fetchUserProfileAndItems() {
       try {
-        const [profileRes, myItemsRes, followersRes, followingRes] = await Promise.all([
+        const [profileRes, myItemsRes, followersRes, followingRes, meRes] = await Promise.all([
           axios.get("/api/users/profile"),
           axios.get("/api/items/my_items"),
           axios.get("/api/follow/followers"),
@@ -118,19 +118,20 @@ export default function UserProfile() {
           email: profileRes.data.email || ""
         });
 
-        // Accept either array or {items: [...]}
+        // Set the avatar URL from /me (fallback to /profile if provided)
+        setAvatarUrl(
+          meRes.data?.profile_image_url ??
+          profileRes.data?.profile_image_url ??
+          ""
+        );
+
         const itemsPayload = Array.isArray(myItemsRes.data)
-            ? myItemsRes.data
-            : (myItemsRes.data?.items || []);
+          ? myItemsRes.data
+          : (myItemsRes.data?.items || []);
         setMyItems(itemsPayload);
 
         setFollowers(followersRes.data || []);
         setFollowing(followingRes.data || []);
-        // setAvatarUrl(meRes.data?.profile_image_url || '');
-        
-        // setMyItems(myItemsRes.data);
-        // setFollowers(followersRes.data);
-        // setFollowing(followingRes.data);
       } catch (err) {
         console.error("Failed to fetch profile or items", err);
         setStatus({ msg: "Failed to load profile or items", type: "error" });
@@ -167,7 +168,6 @@ export default function UserProfile() {
     }
   };
 
-  //if (!userData) return <p>Loading profile...</p>;
   if (!userData) return <LoadingSpinner text="Loading Profile..." />; //uses the loading spinner component
 
   return (
@@ -190,12 +190,8 @@ export default function UserProfile() {
                 ✎
               </button>
             </div>
-            
-            {/* <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
-              <Avatar src={avatarUrl} username={form.username} size={96} />
-            </div> */}
 
-            {/* Collapsible avatar editor */}
+            {/* Collapsible user avatar editor */}
             {showAvatarEditor && (
               <form className="avatar-editor" onSubmit={submitAvatar}>
                 {avatarError && <div className="alert alert-error">{avatarError}</div>}
