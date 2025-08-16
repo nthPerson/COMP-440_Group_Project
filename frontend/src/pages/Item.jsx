@@ -13,6 +13,7 @@ export default function Item() {
   const [reviews, setReviews] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [reviewerAvatars, setReviewerAvatars] = useState({});
+  const [showImageEditor, setShowImageEditor] = useState(false);
 
   const loadItem = () => {
     fetch(`/api/items/${id}`)
@@ -104,20 +105,26 @@ export default function Item() {
           {/* ITEM HEADER SECTION */}
           <div className="item-header">
             <div className="item-image-section">
-              <img 
+              <img className="item-image" src={item.image_url || fallbackIcon} alt={item.title} />
+              {/* <img 
                 src={item.image_url} 
                 alt={item.title}
                 className="item-image"
                 onError={(e) => {
                   e.target.src = "https://api.iconify.design/mdi:package-variant.svg";
                 }}
-              />
+              /> */}
               {isOwner && (
-                <ImageUpload 
+                  <ImageUpload
                   itemId={item.id}
                   currentImageUrl={item.image_url}
-                  onImageUpdated={handleImageUpdated}
-                />
+                  onImageUpdated={(newUrl) => {
+                      handleImageUpdated(newUrl);
+                      setShowImageEditor(false);
+                  }}
+                  open={showImageEditor}
+                  onClose={() => setShowImageEditor(false)}
+                  />
               )}
             </div>
             

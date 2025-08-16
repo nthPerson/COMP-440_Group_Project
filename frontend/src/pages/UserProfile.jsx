@@ -33,7 +33,45 @@ export default function UserProfile() {
   const [activeTab, setActiveTab] = useState('followers');
   const [showConnections, setShowConnections] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [showAvatarEditor, setShowAvatarEditor] = useState(false);
+  const [avatarUploadMethod, setAvatarUploadMethod] = useState('url'); // 'url' | 'file'
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarUrlInput, setAvatarUrlInput] = useState('');
+  const [avatarSaving, setAvatarSaving] = useState(false);
+  const [avatarError, setAvatarError] = useState('');
 
+
+  const onAvatarFileChange = (e) => {
+    const f = e.target.files?.[0] || null;
+    setAvatarFile(f);
+    setAvatarError('');
+  };
+
+  const submitAvatar = async (e) => {
+    e.preventDefault();
+    setAvatarSaving(true);
+    setAvatarError('');
+    try {
+      if (avatarUploadMethod === 'file' && avatarFile) {
+        const fd = new FormData();
+        fd.append('image', avatarFile);
+        const res = await axios.put('/api/users/me/avatar', fd, { withCredentials: true });
+        setAvatarUrl(res.data?.profile_image_url || '');
+      } else {
+        const url = avatarUrlInput.trim();
+        const res = await axios.put('/api/users/me/avatar', { image_url: url }, { withCredentials: true });
+        setAvatarUrl(res.data?.profile_image_url || '');
+      }
+      setShowAvatarEditor(false);
+      setAvatarFile(null);
+      setAvatarUrlInput('');
+    } catch (err) {
+      console.error('Failed to update avatar', err);
+      setAvatarError('Failed to update profile image. Please try another image.');
+    } finally {
+      setAvatarSaving(false);
+    }
+  };
 
   const handleFollow = async (username) => {
     try {
@@ -79,11 +117,19 @@ export default function UserProfile() {
           email: profileRes.data.email || ""
         });
 
-        setAvatarUrl(meRes.data?.profile_image_url || '');
+        // Accept either array or {items: [...]}
+        const itemsPayload = Array.isArray(myItemsRes.data)
+            ? myItemsRes.data
+            : (myItemsRes.data?.items || []);
+        setMyItems(itemsPayload);
+
+        setFollowers(followersRes.data || []);
+        setFollowing(followingRes.data || []);
+        // setAvatarUrl(meRes.data?.profile_image_url || '');
         
-        setMyItems(myItemsRes.data);
-        setFollowers(followersRes.data);
-        setFollowing(followingRes.data);
+        // setMyItems(myItemsRes.data);
+        // setFollowers(followersRes.data);
+        // setFollowing(followingRes.data);
       } catch (err) {
         console.error("Failed to fetch profile or items", err);
         setStatus({ msg: "Failed to load profile or items", type: "error" });
@@ -130,9 +176,81 @@ export default function UserProfile() {
 
           <div className="page-header">
             <h1 className="page-title">User Profile</h1>
-            <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+            {/* Avatar with hover edit icon */}
+            <div className="avatar-edit-wrapper">
               <Avatar src={avatarUrl} username={form.username} size={96} />
+              <button
+                type="button"
+                className="avatar-edit-btn"
+                title="Edit profile picture"
+                onClick={() => setShowAvatarEditor(v => !v)}
+              >
+                ✎
+              </button>
             </div>
+            
+            {/* <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+              <Avatar src={avatarUrl} username={form.username} size={96} />
+            </div> */}
+
+            {/* Collapsible avatar editor */}
+            {showAvatarEditor && (
+              <form className="avatar-editor" onSubmit={submitAvatar}>
+                {avatarError && <div className="alert alert-error">{avatarError}</div>}
+
+                <div className="upload-method-selector">
+                  <label>
+                    <input
+                      type="radio"
+                      value="url"
+                      checked={avatarUploadMethod === 'url'}
+                      onChange={() => setAvatarUploadMethod('url')}
+                    />
+                    Image URL
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="file"
+                      checked={avatarUploadMethod === 'file'}
+                      onChange={() => setAvatarUploadMethod('file')}
+                    />
+                    Upload File
+                  </label>
+                </div>
+
+                {avatarUploadMethod === 'url' ? (
+                  <input
+                    type="url"
+                    className="form-input"
+                    placeholder="https://example.com/avatar.jpg"
+                    value={avatarUrlInput}
+                    onChange={(e) => setAvatarUrlInput(e.target.value)}
+                  />
+                ) : (
+                  <input
+                    type="file"
+                    className="form-input file-input"
+                    accept="image/*"
+                    onChange={onAvatarFileChange}
+                  />
+                )}
+
+                <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+                  <button className="btn-add-item" type="submit" disabled={avatarSaving}>
+                    {avatarSaving ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    type="button"
+                    className="items-collapse-toggle"
+                    onClick={() => setShowAvatarEditor(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}            
+
           </div>
           <div className="new-item-form">
             <form onSubmit={handleSave}>
@@ -286,7 +404,7 @@ export default function UserProfile() {
                 <div className={`items-container ${showMyItems ? 'expanded' : 'collapsed'}`}>
                   <div className="item-card-grid">
                     {currentItems.map(item => (
-                      <ItemCard item={item} />
+                      <ItemCard key={item.id} item={item} />
                     ))}
                   </div>
 

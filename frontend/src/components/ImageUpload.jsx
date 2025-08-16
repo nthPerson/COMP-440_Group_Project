@@ -1,95 +1,70 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function ImageUpload({ itemId, currentImageUrl, onImageUpdated }) {
-  const [imageUrl, setImageUrl] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('');
-  const [uploadMethod, setUploadMethod] = useState('url'); // 'url' or 'file'
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false);
+export default function ImageUpload({ itemId, currentImageUrl, onImageUpdated, open = false, onClose }) {
+  const [imageUrl, setImageUrl] = React.useState('');
+  const [selectedFile, setSelectedFile] = React.useState(null);
+  const [previewUrl, setPreviewUrl] = React.useState('');
+  const [uploadMethod, setUploadMethod] = React.useState('url'); // 'url' or 'file'
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [error, setError] = React.useState('');
+  const [showForm, setShowForm] = React.useState(open);
+
+  React.useEffect(() => setShowForm(open), [open]);
 
   const handleFileSelect = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
+    setSelectedFile(file || null);
     if (file) {
-      setSelectedFile(file);
-      // Create preview URL
-      const preview = URL.createObjectURL(file);
-      setPreviewUrl(preview);
-      setError('');
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    } else {
+      setPreviewUrl('');
     }
+    setError('');
   };
 
-  const uploadToImgur = async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const response = await fetch('/api/items/upload_image', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData
-    });  
-    // const response = await fetch('https://api.imgur.com/3/image', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': 'Client-ID 546c25a59c58ad7' // Public Imgur client ID
-    //   },
-    //   body: formData
-    // });
-
-    // if (!response.ok) {
-    //   throw new Error('Failed to upload image to Imgur');
-    // }
-
-    const data = await response.json();
-
-    if (!response.ok) throw new Error(data.error || 'Failed to upload image');
+  const uploadFileViaBackend = async (file) => {
+    const fd = new FormData();
+    fd.append('image', file);
+    const res = await fetch('/api/items/upload_image', {
+      method: 'POST',
+      credentials: 'include',
+      body: fd
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to upload image');
     return data.link;
-    // return data.data.link;
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     setIsSubmitting(true);
     setError('');
-
     try {
-      let finalImageUrl = '';
-
+      let finalUrl = '';
       if (uploadMethod === 'file' && selectedFile) {
-        // Upload file to Imgur and get URL
-        finalImageUrl = await uploadToImgur(selectedFile);
-      } else if (uploadMethod === 'url' && imageUrl.trim()) {
-        finalImageUrl = imageUrl.trim();
+        finalUrl = await uploadFileViaBackend(selectedFile);
       } else {
-        setError('Please provide an image URL or select a file');
-        setIsSubmitting(false);
-        return;
+        finalUrl = imageUrl.trim();
       }
 
-      // Update item with the image URL
-      const response = await fetch(`/api/items/${itemId}/image`, {
+      const resp = await fetch(`/api/items/${itemId}/image`, {
         method: 'PUT',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image_url: finalImageUrl }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_url: finalUrl })
       });
+      const json = await resp.json();
+      if (!resp.ok) throw new Error(json.error || 'Failed to update item image');
 
-      const data = await response.json();
-
-      if (response.ok) {
-        onImageUpdated(data.image_url);
-        setImageUrl('');
-        setSelectedFile(null);
-        setPreviewUrl('');
-        setShowForm(false);
-      } else {
-        setError(data.error || 'Failed to update image');
-      }
+      onImageUpdated?.(json.image_url);
+      setShowForm(false);
+      onClose?.();
+      setSelectedFile(null);
+      setPreviewUrl('');
+      setImageUrl('');
     } catch (err) {
-      setError(err.message || 'Error uploading image. Please try again.');
+      setError(err.message || 'Failed to update image');
     } finally {
       setIsSubmitting(false);
     }
@@ -98,62 +73,42 @@ export default function ImageUpload({ itemId, currentImageUrl, onImageUpdated })
   const handleReset = async () => {
     setIsSubmitting(true);
     setError('');
-
     try {
-      const response = await fetch(`/api/items/${itemId}/image`, {
+      const resp = await fetch(`/api/items/${itemId}/image`, {
         method: 'PUT',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image_url: '' }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_url: '' })
       });
+      const json = await resp.json();
+      if (!resp.ok) throw new Error(json.error || 'Failed to reset item image');
 
-      const data = await response.json();
-
-      if (response.ok) {
-        onImageUpdated(data.image_url);
-        setSelectedFile(null);
-        setPreviewUrl('');
-        setShowForm(false);
-      } else {
-        setError(data.error || 'Failed to reset image');
-      }
+      onImageUpdated?.(json.image_url);
+      setShowForm(false);
+      onClose?.();
+      setSelectedFile(null);
+      setPreviewUrl('');
+      setImageUrl('');
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError(err.message || 'Failed to reset image');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Cleanup preview URL on unmount
+  // Cleanup preview blob URL
   React.useEffect(() => {
     return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
 
-  if (!showForm) {
-    return (
-      <div className="image-upload-container">
-        <button 
-          onClick={() => setShowForm(true)}
-          className="btn-edit-image"
-        >
-          📷 Update Image
-        </button>
-      </div>
-    );
-  }
+  if (!showForm) return null;
 
   return (
-    <div className="image-upload-form">
-      <h4>Update Item Image</h4>
-      {error && <div className="error-message">{error}</div>}
-      
-      {/* Upload Method Selector */}
+    <div className="image-upload-panel">
+      {error && <div className="alert alert-error">{error}</div>}
+
       <div className="upload-method-selector">
         <label>
           <input
@@ -174,64 +129,37 @@ export default function ImageUpload({ itemId, currentImageUrl, onImageUpdated })
           Upload File
         </label>
       </div>
-      
-      <form onSubmit={handleSubmit}>
-        {uploadMethod === 'url' ? (
-          <div className="form-group">
-            <input
-              type="url"
-              placeholder="Enter new image URL"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              className="form-input"
-              disabled={isSubmitting}
-            />
-          </div>
-        ) : (
-          <div className="form-group">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="form-input file-input"
-              disabled={isSubmitting}
-            />
-            {previewUrl && (
-              <div className="image-preview">
-                <img src={previewUrl} alt="Preview" className="preview-image" />
-                <p className="preview-text">Preview of selected image</p>
-              </div>
-            )}
-          </div>
-        )}
-        
-        <div className="form-actions">
-          <button 
-            type="submit" 
-            disabled={isSubmitting || (uploadMethod === 'url' && !imageUrl.trim()) || (uploadMethod === 'file' && !selectedFile)}
-            className="btn-primary"
-          >
-            {isSubmitting ? 'Updating...' : 'Update Image'}
-          </button>
-          
-          <button 
-            type="button"
-            onClick={handleReset}
-            disabled={isSubmitting}
-            className="btn-secondary"
-          >
-            {isSubmitting ? 'Resetting...' : 'Reset to Default'}
-          </button>
-          
-          <button 
-            type="button"
-            onClick={() => setShowForm(false)}
-            className="btn-cancel"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+
+      {uploadMethod === 'url' ? (
+        <input
+          type="url"
+          className="form-input"
+          placeholder={currentImageUrl ? 'New image URL' : 'https://example.com/image.jpg'}
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+        />
+      ) : (
+        <>
+          <input type="file" accept="image/*" onChange={handleFileSelect} className="form-input file-input" />
+          {previewUrl && (
+            <div className="image-preview">
+              <img src={previewUrl} alt="Preview" className="preview-image" />
+            </div>
+          )}
+        </>
+      )}
+
+      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <button className="btn-add-item" onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'Saving...' : 'Save'}
+        </button>
+        <button className="items-collapse-toggle" onClick={handleReset} disabled={isSubmitting}>
+          Reset to default
+        </button>
+        <button className="items-collapse-toggle" onClick={() => { setShowForm(false); onClose?.(); }}>
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }

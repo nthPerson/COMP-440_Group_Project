@@ -307,28 +307,6 @@ def get_my_items():
     return jsonify(result), 200
 
 
-@items_bp.route('/<int:item_id>/image', methods=['PUT'])
-@login_required
-def update_item_image(item_id):
-    """Update the image URL for an item. Only the item owner can do this."""
-    item = Item.query.get_or_404(item_id)
-    
-    # Check if current user is the owner of this item
-    if item.posted_by != current_user.username:
-        return jsonify({'error': 'You can only update images for your own items'}), 403
-    
-    data = request.get_json()
-    image_url = data.get('image_url', '').strip()
-    
-    # Update the image URL (can be empty to reset to default)
-    item.image_url = image_url if image_url else None
-    db.session.commit()
-    
-    return jsonify({
-        'message': 'Image updated successfully',
-        'image_url': item.get_image_url()
-    }), 200
-
 @items_bp.route('/user/<username>', methods=['GET'])
 def get_items_by_user(username):
     items = (
@@ -437,3 +415,24 @@ def update_item_image(item_id):
         return jsonify({'message': 'Image updated successfully', 'image_url': item.get_image_url()}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+# @items_bp.route('/<int:item_id>/image', methods=['PUT'])
+# @login_required
+# def update_item_image(item_id):
+#     """Update the image URL for an item. Only the item owner can do this."""
+#     item = Item.query.get_or_404(item_id)
+    
+#     # Check if current user is the owner of this item
+#     if item.posted_by != current_user.username:
+#         return jsonify({'error': 'You can only update images for your own items'}), 403
+    
+#     data = request.get_json()
+#     image_url = data.get('image_url', '').strip()
+    
+#     # Update the image URL (can be empty to reset to default)
+#     item.image_url = image_url if image_url else None
+#     db.session.commit()
+    
+#     return jsonify({
+#         'message': 'Image updated successfully',
+#         'image_url': item.get_image_url()
+#     }), 200

@@ -111,7 +111,7 @@ def update_my_avatar():
         image_url = (data.get('image_url') or '').strip()
         current_user.profile_image_url = image_url or None
 
-    db.session.commmit()
+    db.session.commit()
     return jsonify({
         'message': 'Profile image updated',
         'profile_image_url': current_user.profile_image_url or DEFAULT_AVATAR
