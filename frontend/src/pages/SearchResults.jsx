@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import SearchResultsList from '../components/SearchResultsList';
-import ItemList from '../components/ItemList';
+import ItemCard from  '../components/ItemCard';
+
 import '../styles/pages/SearchResults.css';
+import '../styles/global.css';
 // Spinner styles are imported within the component
 import '../styles/components/ItemList.css';
 import '../styles/components/ItemCard.css';
@@ -14,13 +15,16 @@ function useQuery() {
 }
 
 export default function SearchResults() {
-  const navigate   = useNavigate();
   const query      = useQuery();
   const searchTerm = query.get('category')?.trim() || '';
 
   const [items,   setItems]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState('');
+
+  //Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12; // Number of items to display per page
 
   useEffect(() => {
     if (!searchTerm) {
@@ -57,6 +61,17 @@ export default function SearchResults() {
       .finally(() => setLoading(false));
   }, [searchTerm]);
 
+  //Reset to first page when new search results load
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [items]); //OR SEARCH TERM???
+
+  //Pagination calculations
+  const totalPages = Math.ceil(items.length / itemsPerPage) || 1;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <>
       <Navbar />
@@ -75,10 +90,46 @@ export default function SearchResults() {
               <p>Search results for "{searchTerm}" not found or doesn't exist.</p>
             )}
 
-            {/* Disable collapse toggle for search results */}
+            {/* Disable collapse toggle for search results and RESULTS GRID */}
             {!loading && !error && items.length > 0 && (
               <div className="items-container">
-                <ItemList items={items} showCollapseToggle={false} />
+                <div className="item-card-grid">
+                  {currentItems.map(item => (
+                    <ItemCard key={item.id} item={item} />
+                  ))}
+                </div>
+
+                {/* Pagination controls */}
+                {totalPages > 1 && (
+                  <div className="pagination-controls">
+                    <button
+                      className="pagination-button"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Prev
+                    </button>
+
+                    {[...Array(totalPages)].map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(i + 1)}
+                        className={`pagination-button ${currentPage === i + 1 ? 'active-page' : ''}`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+
+                    <button
+                      className="pagination-button"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+
               </div>
             )}
           </>
