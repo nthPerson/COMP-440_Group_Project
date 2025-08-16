@@ -108,7 +108,7 @@
 }
 
 /* Card base (duplicated in ItemCard.css for standalone usage) */
-.item-card {
+/* .item-card {
   border: none;
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
@@ -119,15 +119,16 @@
   flex-direction: column;
   gap: var(--spacing-md);
   height: 100%;
-}
+} */
 
-.item-card:hover {
+/* .item-card:hover {
   background: var(--white);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
-}
+} */
 
-.item-image-container { width: 80px; height: 80px; flex-shrink: 0; }
+/* Duplicated from ItemCard.css */
+/* .item-image-container { width: 80px; height: 80px; flex-shrink: 0; }
 .item-thumbnail { width: 100%; height: 100%; object-fit: cover; border-radius: var(--border-radius); border: 1px solid var(--gray-200); }
 .item-content { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; }
 
@@ -143,9 +144,9 @@
 .item-categories { margin-bottom: var(--spacing-md); }
 .category-list { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-top: var(--spacing-xs); }
 .category-item { background: var(--primary-color); color: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; font-weight: 500; display: flex; align-items: center; gap: 4px; }
-.category-icon-small { width: 24px; height: 24px; flex-shrink: 0; filter: brightness(0) invert(0); }
+.category-icon-small { width: 24px; height: 24px; flex-shrink: 0; filter: brightness(0) invert(0); } */
 
-.item-rating {
+/* .item-rating {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
@@ -154,16 +155,16 @@
   background: var(--gray-50);
   border-radius: var(--border-radius);
   border: none;
-}
-.rating-stars { color: #f5b301; font-size: 1.1rem; }
-.rating-info { font-size: 0.85rem; color: var(--gray-600); }
-
-.review-section {
+} */
+/* .review-section {
   border-top: 1px solid var(--gray-200);
   padding-top: var(--spacing-md);
   margin-top: var(--spacing-md);
   margin-bottom: 0;
 }
+.rating-stars { color: #f5b301; font-size: 1.1rem; }
+.rating-info { font-size: 0.85rem; color: var(--gray-600); } */
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

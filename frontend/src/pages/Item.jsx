@@ -5,12 +5,16 @@ import ReviewForm from '../components/ReviewForm';
 import ImageUpload from '../components/ImageUpload';
 import '../styles/global.css';
 import '../styles/pages/ItemPage.css';
+import Avatar from '../components/Avatar';
 
 export default function Item() {
   const { id } = useParams();
   const [item, setItem] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [reviewerAvatars, setReviewerAvatars] = useState({});
+  const [showImageEditor, setShowImageEditor] = useState(false);
+  const fallbackIcon = "https://api.iconify.design/mdi:package-variant.svg";
 
   const loadItem = () => {
     fetch(`/api/items/${id}`)
@@ -21,15 +25,50 @@ export default function Item() {
   const loadReviews = () => {
     fetch(`/api/reviews/item/${id}`)
       .then(res => res.json())
-      .then(data => setReviews(data));
+      .then(async (data) => {
+        setReviews(data);
+
+        const uniqueUsers = Array.from(new Set(data.map(r => r.user).filter(Boolean)));
+        const missing = uniqueUsers.filter(u => !reviewerAvatars[u]);
+
+        if (missing.length) {
+          const entries = await Promise.all(missing.map(async (u) => {
+            try {
+              const r = await fetch(`/api/users/${encodeURIComponent(u)}`, { credentials: 'include' });
+              if (!r.ok) return [u, ''];
+              const j = await r.json();
+
+              // Be defensive about possible response shapes
+              const url =
+                j.profile_image_url ||
+                j.user?.profile_image_url ||
+                j.user?.avatar ||
+                j.avatar_url ||
+                '';
+
+              return [u, url];
+            } catch {
+              return [u, ''];
+            }
+          }));
+          setReviewerAvatars(prev => {
+            const next = { ...prev };
+            for (const [u, url] of entries) next[u] = url;
+            return next;
+          });
+        }
+      });
   };
 
   const loadCurrentUser = () => {
-    fetch('/api/auth/status', { credentials: 'include' })
-      .then(res => res.json())
+    // Use the same endpoint we already use elsewhere for the logged-in user
+    fetch('/api/users/me', { credentials: 'include' })
+      .then(res => (res.ok ? res.json() : null))
       .then(data => {
-        if (data.authenticated) {
-          setCurrentUser(data.user);
+        if (data && data.username) {
+          setCurrentUser({ username: data.username });
+        } else {
+          setCurrentUser(null);
         }
       })
       .catch(() => setCurrentUser(null));
@@ -74,19 +113,38 @@ export default function Item() {
           {/* ITEM HEADER SECTION */}
           <div className="item-header">
             <div className="item-image-section">
-              <img 
-                src={item.image_url} 
-                alt={item.title}
-                className="item-image"
-                onError={(e) => {
-                  e.target.src = "https://api.iconify.design/mdi:package-variant.svg";
-                }}
-              />
+              <div className="item-image-wrapper">
+                <img
+                  className="item-image"
+                  src={item.image_url || fallbackIcon}
+                  alt={item.title}
+                  onError={(e) => { e.currentTarget.src = fallbackIcon; }}
+                />
+
+                {/* Show edit button for owner; this toggles the image update editor */}
+                {isOwner && (
+                  <button
+                    type="button"
+                    className="edit-image-btn"
+                    title="Edit item image"
+                    onClick={() => setShowImageEditor(v => !v)}
+                  >
+                    ✎
+                  </button>
+                )}
+              </div>
+
+              {/* Collapsible image update editor panel */}
               {isOwner && (
-                <ImageUpload 
+                <ImageUpload
                   itemId={item.id}
                   currentImageUrl={item.image_url}
-                  onImageUpdated={handleImageUpdated}
+                  onImageUpdated={(newUrl) => {
+                    handleImageUpdated(newUrl);
+                    setShowImageEditor(false);
+                  }}
+                  open={showImageEditor}
+                  onClose={() => setShowImageEditor(false)}
                 />
               )}
             </div>
@@ -162,8 +220,12 @@ export default function Item() {
                   <div key={review.id} className="review-card">
                     <div className="review-header">
                       <div className="reviewer-info">
-                        <div className="reviewer-avatar">
-                          {review.user.charAt(0).toUpperCase()}
+                        <div className="reviewer-avatar" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <Avatar
+                            src={review.user_profile_image_url || reviewerAvatars[review.user]}
+                            username={review.user}
+                            size={36}
+                          />
                         </div>
                         <div className="reviewer-details">
                           <span className="reviewer-name">{review.user}</span>

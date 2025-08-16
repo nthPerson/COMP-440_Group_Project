@@ -1,4 +1,4 @@
-/* ItemCard standalone styles (subset duplicated from ItemList.css to ensure styling when used alone) */
+/* ItemCard standalone styles (duplicated subset in ItemList.css is commented out to ensure card-only styles are handled here) */
 
 .item-card {
   border: none;
@@ -11,6 +11,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  height: 100%;
 }
 
 .item-card:hover {
@@ -46,7 +47,7 @@
 
 .item-categories { margin-bottom: var(--spacing-md); }
 .category-list { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-top: var(--spacing-xs); }
-.category-item { background: var(--primary-color); color: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+.category-item { background: var(--primary-color); color: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 4px; }
 .category-icon-small { width: 24px; height: 24px; flex-shrink: 0; filter: brightness(0) invert(0); }
 
 

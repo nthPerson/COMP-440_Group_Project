@@ -13,6 +13,12 @@ class User(UserMixin, db.Model):
     lastName = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)  # email MUST BE UNIQUE to prevent multiple accounts being registered to the same email
 
+    # User profile image URL
+    profile_image_url = db.Column(db.String(512), nullable=True)
+
+    def get_profile_image_url(self):
+        return self.profile_image_url or "https://api.iconify.design/mdi:account-circle.svg"
+
     def __repr__(self):
         return f'<User {self.username}>'
     

@@ -50,3 +50,33 @@
   justify-content: space-between;
   align-items: center;
 }
+
+/* User avatar */
+.avatar-edit-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 1rem;
+}
+.avatar-edit-btn {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+.avatar-edit-wrapper:hover .avatar-edit-btn {
+  opacity: 1;
+}
+.avatar-editor {
+  margin-top: 12px;
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+}
