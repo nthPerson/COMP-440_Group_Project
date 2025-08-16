@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import db, User
-from flask_login import login_required, current_user  # Ensures that only logged-in users can access CRUD APIs
+from flask_login import login_required, current_user  # Ensures that only logged-in users can access protected backend API functions
+from utils.imgur import upload_to_imgur
 
 users_bp = Blueprint('users', __name__)
 
@@ -88,3 +89,39 @@ def update_profile():
 
     return jsonify({
         'message': 'Profile updated successfully'}), 200
+
+
+
+DEFAULT_AVATAR = "https://api.iconify.design/mdi:account-circle.svg"
+
+@users_bp.route('/me/avatar', methods=['PUT'])
+@login_required
+def update_my_avatar():
+    # Accepts multipart file upload (field name: image) or JSON { image_url }
+    if request.content_type and request.content_type.startswith('multipart/form-data'):
+        file = request.files.get('image')
+        if file and file.filename:
+            link = upload_to_imgur(file)
+            current_user.profile_image_url = link
+        else:
+            image_url = (request.form.get('image_url') or '').strip()
+            current_user.profile_image_url = image_url or None
+    else:
+        data = request.get_json(silent=True) or {}
+        image_url = (data.get('image_url') or '').strip()
+        current_user.profile_image_url = image_url or None
+
+    db.session.commmit()
+    return jsonify({
+        'message': 'Profile image updated',
+        'profile_image_url': current_user.profile_image_url or DEFAULT_AVATAR
+    }), 200
+
+
+@users_bp.route('/me', methods=['GET'])
+@login_required
+def me():
+    return jsonify({
+        'username': current_user.username,
+        'profile_image_url': (current_user.profile_image_url or DEFAULT_AVATAR)
+    })

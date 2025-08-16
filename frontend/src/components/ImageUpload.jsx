@@ -24,20 +24,28 @@ export default function ImageUpload({ itemId, currentImageUrl, onImageUpdated })
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch('https://api.imgur.com/3/image', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Client-ID 546c25a59c58ad7' // Public Imgur client ID
-      },
-      body: formData
-    });
+    const response = await fetch('/api/items/upload_image', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+    });  
+    // const response = await fetch('https://api.imgur.com/3/image', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Authorization': 'Client-ID 546c25a59c58ad7' // Public Imgur client ID
+    //   },
+    //   body: formData
+    // });
 
-    if (!response.ok) {
-      throw new Error('Failed to upload image to Imgur');
-    }
+    // if (!response.ok) {
+    //   throw new Error('Failed to upload image to Imgur');
+    // }
 
     const data = await response.json();
-    return data.data.link;
+
+    if (!response.ok) throw new Error(data.error || 'Failed to upload image');
+    return data.link;
+    // return data.data.link;
   };
 
   const handleSubmit = async (e) => {
