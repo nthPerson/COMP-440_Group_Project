@@ -5,12 +5,14 @@ import ReviewForm from '../components/ReviewForm';
 import ImageUpload from '../components/ImageUpload';
 import '../styles/global.css';
 import '../styles/pages/ItemPage.css';
+import Avatar from '../components/Avatar';
 
 export default function Item() {
   const { id } = useParams();
   const [item, setItem] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [reviewerAvatars, setReviewerAvatars] = useState({});
 
   const loadItem = () => {
     fetch(`/api/items/${id}`)
@@ -21,8 +23,36 @@ export default function Item() {
   const loadReviews = () => {
     fetch(`/api/reviews/item/${id}`)
       .then(res => res.json())
-      .then(data => setReviews(data));
+      .then(async (data) => {
+        setReviews(data);
+
+        // Batch fetch reviewer avatars if not provided in data
+        const uniqueUsers = Array.from(new Set(data.map(r => r.user).filter(Boolean)));
+        const missing = uniqueUsers.filter(u => !reviewerAvatars[u]);
+
+        if (missing.length) {
+          const entries = await Promise.all(missing.map(async (u) => {
+            try {
+              const r = await fetch(`/api/users/${encodeURIComponent(u)}`, { credentials: 'include' });
+              const j = await r.json();
+              return [u, j.profile_image_url || ''];
+            } catch {
+              return [u, ''];
+            }
+          }));
+          setReviewerAvatars(prev => {
+            const next = { ...prev };
+            for (const [u, url] of entries) next[u] = url;
+            return next;
+          });
+        }
+      });
   };
+//   const loadReviews = () => {
+//     fetch(`/api/reviews/item/${id}`)
+//       .then(res => res.json())
+//       .then(data => setReviews(data));
+//   };
 
   const loadCurrentUser = () => {
     fetch('/api/auth/status', { credentials: 'include' })
@@ -162,9 +192,16 @@ export default function Item() {
                   <div key={review.id} className="review-card">
                     <div className="review-header">
                       <div className="reviewer-info">
-                        <div className="reviewer-avatar">
-                          {review.user.charAt(0).toUpperCase()}
+                        <div className="reviewer-avatar" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <Avatar
+                            src={review.user_profile_image_url || reviewerAvatars[review.user]}
+                            username={review.user}
+                            size={36}
+                          />
                         </div>
+                        {/* <div className="reviewer-avatar">
+                          {review.user.charAt(0).toUpperCase()}
+                        </div> */}
                         <div className="reviewer-details">
                           <span className="reviewer-name">{review.user}</span>
                           <div className="review-rating">

@@ -16,7 +16,7 @@ def upload_to_imgur(file_storage: FileStorage):
         )
     }
     headers = {'Authorization': f'Client-ID {client_id}'}
-    resp = requests.post('https/api.imgur.com/3/image'), headers=headers, files=files, timeout=20
+    resp = requests.post('https/api.imgur.com/3/image', headers=headers, files=files, timeout=20)
     if not resp.ok:
         # Try to surface Imgur error message
         try:

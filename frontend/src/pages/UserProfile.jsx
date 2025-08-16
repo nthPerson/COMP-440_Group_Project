@@ -7,6 +7,7 @@ import '../styles/pages/UserProfile.css';
 import '../styles/components/ItemList.css';
 import '../styles/components/ItemCard.css';
 import ItemCard from '../components/ItemCard';
+import Avatar from '../components/Avatar';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
@@ -31,6 +32,7 @@ export default function UserProfile() {
   const [isLoadingFollowing, setIsLoadingFollowing] = useState(true);
   const [activeTab, setActiveTab] = useState('followers');
   const [showConnections, setShowConnections] = useState(true);
+  const [avatarUrl, setAvatarUrl] = useState('');
 
 
   const handleFollow = async (username) => {
@@ -65,7 +67,8 @@ export default function UserProfile() {
           axios.get("/api/users/profile"),
           axios.get("/api/items/my_items"),
           axios.get("/api/follow/followers"),
-          axios.get("/api/follow/following")
+          axios.get("/api/follow/following"),
+          axios.get("/api/users/me", { withCredentials: true })  // fetch avatar
         ]);
 
         setUserData(profileRes.data);
@@ -76,8 +79,9 @@ export default function UserProfile() {
           email: profileRes.data.email || ""
         });
 
+        setAvatarUrl(meRes.data?.profile_image_url || '');
+        
         setMyItems(myItemsRes.data);
-
         setFollowers(followersRes.data);
         setFollowing(followingRes.data);
       } catch (err) {
@@ -126,6 +130,9 @@ export default function UserProfile() {
 
           <div className="page-header">
             <h1 className="page-title">User Profile</h1>
+            <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+              <Avatar src={avatarUrl} username={form.username} size={96} />
+            </div>
           </div>
           <div className="new-item-form">
             <form onSubmit={handleSave}>

@@ -2,14 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import '../styles/components/Navbar.css';
 import SearchInterface from './SearchInterface';
+import Avatar from './Avatar';
 
 export default function Navbar() {
   // pull the last-saved user out of sessionStorage  - if you do useState starting at null, it will always start at null state which causes the glitch
   const [user, setUser] = useState(() => {
     const raw = sessionStorage.getItem('user')
     return raw ? JSON.parse(raw) : null
-  })
+  });
   const navigate = useNavigate();
+  const [me, setMe] = React.useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    fetch('/api/users/me', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (mounted && d) setMe(d); })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
 
   useEffect(() => {
       fetch('/api/auth/status', { credentials: 'include' })
@@ -57,6 +68,11 @@ export default function Navbar() {
             <NavLink to="/profile" className="nav-link">Profile</NavLink>
             <button onClick={handleLogout} className="nav-link nav-button">Logout</button>
           </>
+        )}
+        {me && (
+          <div className="navbar-avatar" style={{ marginLeft: '0.75rem' }}>
+            <Avatar src={me.profile_image_url} username={me.username} size={32} />
+          </div>
         )}
       </div>
     </nav>

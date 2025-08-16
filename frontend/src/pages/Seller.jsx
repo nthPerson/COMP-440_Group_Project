@@ -6,6 +6,7 @@ import '../styles/global.css';
 import '../styles/pages/Seller.css';
 import axios from 'axios';
 import '../styles/components/SearchInterface.css';
+import Avatar from '../components/Avatar';
 
 
 export default function Seller() {
@@ -20,6 +21,7 @@ export default function Seller() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showItems, setShowItems] = useState(true);
   const [showReviews, setShowReviews] = useState(true);
+  const [reviewerAvatars, setReviewerAvatars] = useState({});
 
   const itemsPerPage = 6;
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -50,6 +52,20 @@ export default function Seller() {
         setFollowers(followersRes.data);
         setFollowingList(followingRes.data);
         setIsFollowing(followingRes.data.some(u => u.username === username));
+
+        // Batch fetch reviewer avatars
+        const uniqueUsers = Array.from(new Set(reviewsRes.data.map(r => r.user).filter(Boolean)));
+        if (uniqueUsers.length) {
+          const entries = await Promise.all(uniqueUsers.map(async (u) => {
+            try {
+              const r = await axios.get(`/api/users/${encodeURIComponent(u)}`, { withCredentials: true });
+              return [u, r.data.profile_image_url || ''];
+            } catch {
+              return [u, ''];
+            }
+          }));
+          setReviewerAvatars(Object.fromEntries(entries));
+        }
       } catch (e) {
         console.error('Error fetching seller data:', e);
       }
@@ -102,7 +118,11 @@ export default function Seller() {
           {/* Seller Header */}
           <div className="seller-header seller-profile">
             <div className="seller-avatar">
-              {/* optionally: <img src={seller.avatarUrl} alt="" /> */}
+              <Avatar
+                src={seller.profile_image_url}
+                username={seller.username}
+                size={96}
+              />
             </div>
             <div className="seller-info">
               <h1>{seller.username}</h1>
@@ -226,7 +246,11 @@ export default function Seller() {
                             <div className="review-header">
                               <div className="reviewer-info">
                                 <div className="reviewer-avatar">
-                                  {review.user.charAt(0).toUpperCase()}
+                                  <Avatar
+                                    src={review.user_profile_image_url || reviewerAvatars[review.user]}
+                                    username={review.user}
+                                    size={36}
+                                  />
                                 </div>
                                 <div className="reviewer-details">
                                   <span className="reviewer-name">{review.user}</span>
