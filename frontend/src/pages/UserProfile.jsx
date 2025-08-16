@@ -7,6 +7,7 @@ import '../styles/pages/UserProfile.css';
 import '../styles/components/ItemList.css';
 import '../styles/components/ItemCard.css';
 import ItemCard from '../components/ItemCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 import Avatar from '../components/Avatar';
 
 export default function UserProfile() {
@@ -166,7 +167,8 @@ export default function UserProfile() {
     }
   };
 
-  if (!userData) return <p>Loading profile...</p>;
+  //if (!userData) return <p>Loading profile...</p>;
+  if (!userData) return <LoadingSpinner text="Loading Profile..." />; //uses the loading spinner component
 
   return (
     <>
