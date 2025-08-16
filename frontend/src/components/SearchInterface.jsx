@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchResults from '../pages/SearchResults';
 import '../styles/components/SearchInterface.css';
-
+import CategoryAutocomplete from './CategoryAutoComplete';
 
 export default function SearchInterface() {
   const [searchCategory, setSearchCategory] = useState('');
@@ -32,21 +32,19 @@ export default function SearchInterface() {
 
   return (
     <div className="search-interface">
-      {/* MAIN SEARCH INPUT */}
+      {/* MAIN SEARCH INPUT (with autocomplete) */}
       <form onSubmit={handleSearchSubmit} className="search-form">
-        <input
-          type="text"
-          className="search-input"
+        <CategoryAutocomplete
+          categories={allCategories.map(c => c.name)}
           placeholder="Search items or categories…"
           value={searchCategory}
-          onChange={e => setSearchCategory(e.target.value)}
-          list="categories-datalist"
+          onChange={(v) => setSearchCategory(v)}
+          onSubmit={(val) => {
+            setSearchCategory(val);
+            if (val && val.trim()) navigate(`/search?category=${encodeURIComponent(val.trim())}`);
+          }}
+          maxSuggestions={8}
         />
-        <datalist id="categories-datalist">
-          {allCategories.map(c => (
-            <option key={c.name} value={c.name} />
-          ))}
-        </datalist>
         <button type="submit" className="search-button">
           Search
         </button>
