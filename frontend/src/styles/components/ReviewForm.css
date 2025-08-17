@@ -2,8 +2,22 @@
  * CR440-106: Unified design with clean, professional appearance
  * 
  * Purpose: Beautiful, intuitive review submission interface
- * Features: Minimalist design, excellent readability, smooth interactions
+ * Features: Minimalist design, excellent readability, smooth interactions, color-coded ratings
  */
+
+/* CSS Variables for consistency */
+:root {
+  --white: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --primary-color: #6366f1;
+  --primary-dark: #4f46e5;
+  --gray-400: #9ca3af;
+  --transition-normal: 0.2s ease;
+  --transition-fast: 0.15s ease;
+  --font-primary: system-ui, -apple-system, sans-serif;
+}
 
 /* ================================
    REVIEW FORM CONTAINER - UNIFIED WHITE THEME
@@ -33,7 +47,7 @@
 }
 
 /* ================================
-   RATING SELECTION - MINIMALIST BUTTONS
+   RATING SELECTION - COLOR-CODED BUTTONS
    ================================ */
 .rating-select-wrapper {
   display: flex;
@@ -72,26 +86,72 @@
   min-width: 80px;
   height: 60px;
   color: var(--text-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+.rating-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.5s;
+}
+
+.rating-button:hover::before {
+  left: 100%;
 }
 
 .rating-button:hover,
 .rating-button.hovered {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .rating-button.selected {
-  border-color: var(--primary-color);
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  color: var(--primary-color);
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  transform: translateY(-1px);
 }
 
 .rating-text {
   font-size: 0.85rem;
   line-height: 1;
   font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+
+/* Individual rating colors - applied via inline styles in component */
+.rating-button[data-rating="Excellent"]:hover,
+.rating-button[data-rating="Excellent"].selected {
+  background-color: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #059669;
+}
+
+.rating-button[data-rating="Good"]:hover,
+.rating-button[data-rating="Good"].selected {
+  background-color: #eff6ff;
+  border-color: #93c5fd;
+  color: #3b82f6;
+}
+
+.rating-button[data-rating="Fair"]:hover,
+.rating-button[data-rating="Fair"].selected {
+  background-color: #fffbeb;
+  border-color: #fde68a;
+  color: #f59e0b;
+}
+
+.rating-button[data-rating="Poor"]:hover,
+.rating-button[data-rating="Poor"].selected {
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+  color: #ef4444;
 }
 
 /* ================================
@@ -114,6 +174,23 @@
   min-width: 160px;
   justify-content: center;
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.review-submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.review-submit-btn:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .review-submit-btn:hover:not(:disabled) {
@@ -148,6 +225,7 @@
   resize: vertical;
   min-height: 100px;
   transition: all var(--transition-fast);
+  box-sizing: border-box;
 }
 
 .review-textarea:focus {
@@ -173,6 +251,18 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .review-message.success {
@@ -237,15 +327,15 @@
 
   .rating-button {
     min-width: 70px;
-    height: 60px;
+    height: 50px;
     padding: 0.5rem 0.75rem;
-  }
-
-  .rating-emoji {
-    font-size: 1.1rem;
   }
 
   .rating-text {
     font-size: 0.75rem;
+  }
+
+  .rating-buttons-container {
+    gap: 0.5rem;
   }
 }
