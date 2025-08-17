@@ -1,5 +1,16 @@
 /* ItemList component styles (migrated from ItemManagement.css) */
 
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.5rem;
+  color: var(--gray-600);
+  user-select: none;
+}
+
 /* Section container wrapper used by pages around ItemList */
 .item-list-section {
   background: white;
