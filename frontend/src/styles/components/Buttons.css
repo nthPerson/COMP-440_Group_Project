@@ -1,0 +1,28 @@
+/* Shared button styles for Save/primary action */
+.btn-add-item {
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: var(--border-radius);
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 96px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 2px solid var(--primary-color);
+  transition: all var(--transition-fast);
+}
+
+.btn-add-item[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-add-item:hover {
+  transform: translateY(-1px);
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}

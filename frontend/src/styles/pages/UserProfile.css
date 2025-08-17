@@ -56,11 +56,13 @@
   position: relative;
   display: inline-block;
   margin-top: 1rem;
+  text-align:center;
 }
 .avatar-edit-btn {
   position: absolute;
-  right: 4px;
-  bottom: 4px;
+  right: -8px;
+  bottom: -8px;
+  z-index: 10;
   background: rgba(0,0,0,0.65);
   color: #fff;
   border: none;
@@ -79,4 +81,57 @@
   max-width: 460px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.profile-username {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--gray-800);
+  overflow: hidden;
+}
+
+/* Avatar editor - ensure the Save button isn't squished and Cancel looks like a secondary action 
+.avatar-editor .btn-add-item {
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: var(--border-radius);
+  padding: 8px 12px; 
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 96px;    
+  min-height: 40px;  
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box; 
+  border: 2px solid var(--primary-color); 
+  transition: all var(--transition-fast);
+}
+
+.avatar-editor .btn-add-item[disabled] { 
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+*/
+.avatar-editor .items-collapse-toggle {
+  background: none;
+  border: 2px solid var(--gray-300);
+  color: var(--gray-700);
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  min-height: 40px; /* match Save button height */
+}
+
+.avatar-editor .btn-add-item:hover {
+  transform: translateY(-1px);
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.avatar-editor div[style] {
+  /* keep the two buttons from taking full width inside the inline editor row */
+  align-items: center;
 }
