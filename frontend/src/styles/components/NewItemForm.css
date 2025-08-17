@@ -227,7 +227,7 @@
   margin-bottom: 0;
 }
 
-/* Primary submit button used by NewItemForm and Profile save */
+/* Primary submit button used by NewItemForm and Profile save 
 .new-item-form .btn-add-item {
   background: var(--primary-color);
   color: #fff;
@@ -244,3 +244,4 @@
   background: var(--primary-dark);
   transform: translateY(-1px);
 }
+*/

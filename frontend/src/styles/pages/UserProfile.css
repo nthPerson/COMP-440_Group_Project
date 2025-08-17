@@ -92,28 +92,29 @@
   overflow: hidden;
 }
 
-/* Avatar editor - ensure the Save button isn't squished and Cancel looks like a secondary action */
+/* Avatar editor - ensure the Save button isn't squished and Cancel looks like a secondary action 
 .avatar-editor .btn-add-item {
   background: var(--primary-color);
   color: #fff;
   border-radius: var(--border-radius);
-  padding: 8px 12px; /* align with Cancel padding */
+  padding: 8px 12px; 
   font-weight: 600;
   cursor: pointer;
-  min-width: 96px;    /* slightly wider to match visual weight */
-  min-height: 40px;   /* ensure consistent height with Cancel */
+  min-width: 96px;    
+  min-height: 40px;  
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box; /* include border in size calculations */
-  border: 2px solid var(--primary-color); /* give Save a matching border thickness */
+  box-sizing: border-box; 
+  border: 2px solid var(--primary-color); 
   transition: all var(--transition-fast);
 }
-.avatar-editor .btn-add-item[disabled] {
+
+.avatar-editor .btn-add-item[disabled] { 
   opacity: 0.6;
   cursor: not-allowed;
 }
-
+*/
 .avatar-editor .items-collapse-toggle {
   background: none;
   border: 2px solid var(--gray-300);
