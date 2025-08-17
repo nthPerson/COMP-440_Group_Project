@@ -190,6 +190,8 @@ export default function UserProfile() {
                 ✎
               </button>
             </div>
+            <p className="profile-username">{form.username}</p>
+            
 
             {/* Collapsible user avatar editor */}
             {showAvatarEditor && (

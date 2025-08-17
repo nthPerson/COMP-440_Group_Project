@@ -13,6 +13,7 @@ import Reports     from './pages/Reports';
 import ItemManagement from './pages/ItemManagement';
 import SearchResults from './pages/SearchResults';
 import './styles/global.css';
+import './styles/components/Buttons.css';
 
 // import LandingPage from './pages/LandingPage';  // Deprecated (from single-page UI)
 // import HomePage    from './pages/HomePage';  // Deprecated (from single-page UI)
