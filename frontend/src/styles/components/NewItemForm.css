@@ -374,6 +374,7 @@
   font-weight: 500;
 }
 
+/* Primary submit button used by NewItemForm and Profile save 
 /* Success states */
 .upload-success {
   color: #10b981 !important;
@@ -399,19 +400,6 @@
 }
 
 .new-item-form .btn-add-item:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
-}
-
-.new-item-form .btn-add-item:active {
-  transform: translateY(0);
-}
-
-.new-item-form .btn-add-item:disabled {
-  background: #9ca3af;
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+  background: var(--primary-dark);
+  transform: translateY(-1px);
 }
