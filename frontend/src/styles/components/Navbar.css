@@ -126,7 +126,7 @@
    -------------------------------------- */
 .nav-right {
   display: flex;             /* row layout for tabs */
-  align-items: center;     /* make tabs hug bottom of navbar */
+   align-items: center;     /* make tabs hug bottom of navbar */
   height: 100%;              /* match navbar height */
   gap: var(--spacing-sm); /* space between tabs */
 }
@@ -318,4 +318,96 @@
 .navbar .nav-link[aria-current="page"]::after {
   width: 70%;
   opacity: 1;
+}
+/* DROPDOWN */
+
+/* Make every direct child (links AND .dropdown wrappers) behave like a tab container */
+.nav-right > * {
+  display: flex;
+  align-items: center;
+  height: var(--nav-tab-height); /* 68px */
+}
+
+/* --- Dropdown wrappers --- */
+.dropdown {
+  position: relative;
+  display: flex; /* ensures wrapper follows the same height as siblings */
+}
+
+/* --- Triggers (Items button + Avatar button) ---
+   These buttons should look/size exactly like .nav-link tabs.
+   In JSX they have both classes, e.g. className="nav-link dropdown-trigger" */
+.dropdown-trigger,
+.avatar-trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+/* --- Avatar image sizing + optical nudge --- */
+.nav-right .avatar-trigger img {
+  width: 44px;       
+  height: 44px;
+  border-radius: 50%;
+  display: block;
+}
+
+/* --- Dropdown menu panel --- */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 150px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 0.25rem 0;
+  z-index: 1000;
+}
+
+.dropdown-menu.right {
+  right: 0;
+  left: auto;
+}
+
+/* --- Items inside the menu --- */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--nav-tab-height);   /* keeps menu items visually consistent */
+  padding: 0 1.25rem;
+  width: 100%;  
+  text-align: center;   
+  font-size: 1rem;
+  color: var(--gray-700);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: var(--primary-light);
+  color: var(--gray-900);
+}
+
+.dropdown-item.danger {
+  color: #b00020;
+  
+  
+}
+.dropdown-item.danger:hover {
+  background: rgba(176,0,32,0.08);
+  
+}
+
+.nav-right > .nav-link,
+.nav-right > .dropdown,
+.nav-right > .avatar-dropdown {
+  padding-top: 15px;   /* adjust value to taste */
 }
