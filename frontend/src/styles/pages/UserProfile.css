@@ -135,3 +135,42 @@
   /* keep the two buttons from taking full width inside the inline editor row */
   align-items: center;
 }
+
+/* Light helpers so the avatar editor matches NewItemForm */
+.upload-method-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+/* .upload-method-selector input[type="radio"] {
+  keep radios visible; styling mainly on labels
+} */
+
+.upload-method-selector label {
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  color: var(--gray-700);
+  font-weight: 500;
+}
+.upload-method-selector label.active {
+  background: #eef2ff; /* indigo-50 */
+  border-color: #c7d2fe; /* indigo-200 */
+  color: #4338ca; /* indigo-700 */
+}
+
+/* Alerts if not already defined globally */
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.alert-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
