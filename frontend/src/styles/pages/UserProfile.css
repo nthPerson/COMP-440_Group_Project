@@ -91,3 +91,46 @@
   color: var(--gray-800);
   overflow: hidden;
 }
+
+/* Avatar editor - ensure the Save button isn't squished and Cancel looks like a secondary action */
+.avatar-editor .btn-add-item {
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: var(--border-radius);
+  padding: 8px 12px; /* align with Cancel padding */
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 96px;    /* slightly wider to match visual weight */
+  min-height: 40px;   /* ensure consistent height with Cancel */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box; /* include border in size calculations */
+  border: 2px solid var(--primary-color); /* give Save a matching border thickness */
+  transition: all var(--transition-fast);
+}
+.avatar-editor .btn-add-item[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.avatar-editor .items-collapse-toggle {
+  background: none;
+  border: 2px solid var(--gray-300);
+  color: var(--gray-700);
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  min-height: 40px; /* match Save button height */
+}
+
+.avatar-editor .btn-add-item:hover {
+  transform: translateY(-1px);
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.avatar-editor div[style] {
+  /* keep the two buttons from taking full width inside the inline editor row */
+  align-items: center;
+}
