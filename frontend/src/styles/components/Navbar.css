@@ -352,6 +352,7 @@
   height: 44px;
   border-radius: 50%;
   display: block;
+  margin-bottom: 4px; 
 }
 
 /* --- Dropdown menu panel --- */
@@ -359,7 +360,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 150px;
+  min-width: 120px;
   background: var(--white);
   border: 1px solid var(--gray-200);
   border-radius: 0 0 12px 12px;
@@ -409,5 +410,18 @@
 .nav-right > .nav-link,
 .nav-right > .dropdown,
 .nav-right > .avatar-dropdown {
-  padding-top: 15px;   /* adjust value to taste */
+  padding-top: 13px;   
+}
+
+/* Center the Items dropdown menu under its trigger */
+.nav-right .dropdown:not(.avatar-dropdown) .dropdown-menu {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Keep the avatar menu right-aligned (if you want that behavior) */
+.nav-right .avatar-dropdown .dropdown-menu {
+  right: 0;
+  left: auto;
+  transform: none;
 }
