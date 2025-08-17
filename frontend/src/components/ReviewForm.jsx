@@ -6,7 +6,7 @@ import '../styles/components/ReviewForm.css';
  * 
  * Features:
  * - Clean, minimalist white design
- * - Button-based rating selection with hover effects
+ * - Button-based rating selection with hover effects and color coding
  * - Professional styling with excellent readability
  * - Responsive design for all screen sizes
  * 
@@ -21,14 +21,14 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
     const [hoveredRating, setHoveredRating] = useState('');
 
     /**
-     * Get rating info with colors (no emojis)
+     * Get rating info with colors
      */
     const getRatingInfo = (rating) => {
         const ratingMap = {
-            'Excellent': { color: '#059669' },
-            'Good': { color: '#3b82f6' },
-            'Fair': { color: '#f59e0b' },
-            'Poor': { color: '#ef4444' }
+            'Excellent': { color: '#059669', bgColor: '#ecfdf5', borderColor: '#a7f3d0' },
+            'Good': { color: '#3b82f6', bgColor: '#eff6ff', borderColor: '#93c5fd' },
+            'Fair': { color: '#f59e0b', bgColor: '#fffbeb', borderColor: '#fde68a' },
+            'Poor': { color: '#ef4444', bgColor: '#fef2f2', borderColor: '#fca5a5' }
         };
         return ratingMap[rating] || ratingMap['Excellent'];
     };
@@ -75,18 +75,39 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
                 <div className="rating-select-wrapper">
                     <label className="rating-label">Rating:</label>
                     <div className="rating-buttons-container">
-                        {['Excellent', 'Good', 'Fair', 'Poor'].map((rating) => (
-                            <button
-                                key={rating}
-                                type="button"
-                                className={`rating-button ${score === rating ? 'selected' : ''} ${hoveredRating === rating ? 'hovered' : ''}`}
-                                onClick={() => setScore(rating)}
-                                onMouseEnter={() => setHoveredRating(rating)}
-                                onMouseLeave={() => setHoveredRating('')}
-                            >
-                                <span className="rating-text">{rating}</span>
-                            </button>
-                        ))}
+                        {['Excellent', 'Good', 'Fair', 'Poor'].map((rating) => {
+                            const ratingInfo = getRatingInfo(rating);
+                            const isSelected = score === rating;
+                            const isHovered = hoveredRating === rating;
+                            
+                            return (
+                                <button
+                                    key={rating}
+                                    type="button"
+                                    className={`rating-button ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`}
+                                    onClick={() => setScore(rating)}
+                                    onMouseEnter={() => setHoveredRating(rating)}
+                                    onMouseLeave={() => setHoveredRating('')}
+                                    style={{
+                                        '--rating-color': ratingInfo.color,
+                                        '--rating-bg': ratingInfo.bgColor,
+                                        '--rating-border': ratingInfo.borderColor,
+                                        ...(isSelected && {
+                                            backgroundColor: ratingInfo.bgColor,
+                                            borderColor: ratingInfo.borderColor,
+                                            color: ratingInfo.color
+                                        }),
+                                        ...(isHovered && !isSelected && {
+                                            backgroundColor: ratingInfo.bgColor,
+                                            borderColor: ratingInfo.borderColor,
+                                            color: ratingInfo.color
+                                        })
+                                    }}
+                                >
+                                    <span className="rating-text">{rating}</span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -130,4 +151,3 @@ export default function ReviewForm({ itemId, onReviewSubmitted }) {
         </form>
     );
 }
-
