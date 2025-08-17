@@ -3,6 +3,7 @@ import { useItemsList } from "../contexts/ItemsListContext";
 import ReviewForm from "./ReviewForm";
 import { Link } from 'react-router-dom';
 import '../styles/components/ItemList.css';
+import Pagination from './Pagination';
 
 /**
  * ENHANCED ITEM LIST COMPONENT
@@ -246,33 +247,39 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                 </ul>
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
-                    <div className="pagination-controls">
-                        <button
-                            className="pagination-button"
-                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                            disabled={currentPage === 1}
-                        >
-                            Prev
-                        </button>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        siblingCount={1}
+                    />
+                    // <div className="pagination-controls">
+                    //     <button
+                    //         className="pagination-button"
+                    //         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    //         disabled={currentPage === 1}
+                    //     >
+                    //         Prev
+                    //     </button>
 
-                        {[...Array(totalPages)].map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setCurrentPage(i + 1)}
-                                className={`pagination-button ${currentPage === i + 1 ? 'active-page' : ''}`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
+                    //     {[...Array(totalPages)].map((_, i) => (
+                    //         <button
+                    //             key={i}
+                    //             onClick={() => setCurrentPage(i + 1)}
+                    //             className={`pagination-button ${currentPage === i + 1 ? 'active-page' : ''}`}
+                    //         >
+                    //             {i + 1}
+                    //         </button>
+                    //     ))}
 
-                        <button
-                            className="pagination-button"
-                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                            disabled={currentPage === totalPages}
-                        >
-                            Next
-                        </button>
-                    </div>
+                    //     <button
+                    //         className="pagination-button"
+                    //         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    //         disabled={currentPage === totalPages}
+                    //     >
+                    //         Next
+                    //     </button>
+                    // </div>
                 )}
             </div>
         </div>
