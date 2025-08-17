@@ -110,7 +110,7 @@ export default function Navbar() {
                     role="menuitem"
                     onClick={() => setItemsOpen(false)}
                   >
-                    Items
+                    Browse
                   </NavLink>
                   <NavLink
                     to="/item-management"
@@ -118,7 +118,7 @@ export default function Navbar() {
                     role="menuitem"
                     onClick={() => setItemsOpen(false)}
                   >
-                    Item Management
+                    New Item
                   </NavLink>
                 </div>
               )}
