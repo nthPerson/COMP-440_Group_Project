@@ -62,24 +62,21 @@ export default function NewItemForm() {
         }
     };
 
-    const uploadToImgur = async (file) => {
+    // Use backend route to upload item image to Imgur
+    const uploadImageViaBackend = async (file) => {
         const formData = new FormData();
         formData.append('image', file);
-
-        const response = await fetch('https://api.imgur.com/3/image', {
+        const resp = await fetch('/api/items/upload_image', {
             method: 'POST',
-            headers: {
-                'Authorization': 'Client-ID 546c25a59c58ad7' // Public Imgur client ID
-            },
-            body: formData
+            credentials: 'include',
+            body: formData, // do not set Content-Type; browser will set boundary
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to upload image to Imgur');
+        if (!resp.ok) {
+            const err = await resp.text().catch(() => '');
+            throw new Error(err || 'Upload failed');
         }
-
-        const data = await response.json();
-        return data.data.link;
+        const data = await resp.json();
+        return data.image_url || data.url || data.link;
     };
 
     /**
@@ -106,7 +103,8 @@ export default function NewItemForm() {
             let finalImageUrl = '';
             if (uploadMethod === 'file' && selectedFile) {
                 try {
-                    finalImageUrl = await uploadToImgur(selectedFile);
+                    // Use backend proxy instead of calling Imgur from the browser
+                    finalImageUrl = await uploadImageViaBackend(selectedFile);
                 } catch (uploadError) {
                     setError('Failed to upload image. Please try again or use a URL instead.');
                     setIsSubmitting(false);
