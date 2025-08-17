@@ -3,6 +3,7 @@ from models import db, Item, Category, Review, item_category
 from flask_login import login_required, current_user
 from datetime import datetime, date
 from sqlalchemy import func
+from utils.imgur import upload_to_imgur
 
 items_bp = Blueprint('items', __name__)
 
@@ -304,49 +305,7 @@ def get_my_items():
         })
 
     return jsonify(result), 200
-    # my_items = Item.query.filter_by(posted_by=current_user.username).order_by(Item.date_posted.desc()).all()
 
-    # result = []
-    # for item in my_items:
-    #     result.append({
-    #         'id': item.id,
-    #         'title': item.title,
-    #         'description': item.description,
-    #         'price': str(item.price),
-    #         'date_posted': item.date_posted.isoformat(),
-    #         'posted_by': item.posted_by,
-    #         # Include icon_key for consistency with other endpoints
-    #         'categories': [{'name': c.name, 'icon_key': c.icon_key} for c in item.categories],
-    #         # Provide resolved image URL so frontend can display the correct thumbnail
-    #         'image_url': item.get_image_url(),
-    #         'star_rating': item.star_rating,
-    #         'review_count': item.reviews.count()
-    #     })
-    
-    # return jsonify(result), 200
-
-
-@items_bp.route('/<int:item_id>/image', methods=['PUT'])
-@login_required
-def update_item_image(item_id):
-    """Update the image URL for an item. Only the item owner can do this."""
-    item = Item.query.get_or_404(item_id)
-    
-    # Check if current user is the owner of this item
-    if item.posted_by != current_user.username:
-        return jsonify({'error': 'You can only update images for your own items'}), 403
-    
-    data = request.get_json()
-    image_url = data.get('image_url', '').strip()
-    
-    # Update the image URL (can be empty to reset to default)
-    item.image_url = image_url if image_url else None
-    db.session.commit()
-    
-    return jsonify({
-        'message': 'Image updated successfully',
-        'image_url': item.get_image_url()
-    }), 200
 
 @items_bp.route('/user/<username>', methods=['GET'])
 def get_items_by_user(username):
@@ -410,24 +369,49 @@ def get_items_by_user(username):
 
     return jsonify(result), 200
 
-    # items = Item.query\
-    #     .filter_by(posted_by=username)\
-    #     .order_by(Item.date_posted.desc())\
-    #     .all()
 
-    # return jsonify([
-    #   {
-    #     'id': item.id,
-    #     'title': item.title,
-    #     'description': item.description,
-    #     'price': str(item.price),
-    #     'posted_by': item.posted_by,
-    #     'date_posted': item.date_posted.isoformat(),
-    #     'categories': [{'name': c.name} for c in item.categories],
-    #     # Provide resolved image URL so frontend can display the correct thumbnail
-    #     'image_url': item.get_image_url(),
-    #     'star_rating': item.star_rating,
-    #     'review_count': item.reviews.count()
-    #   }
-    #   for item in items
-    # ]), 200
+# Proxy file uploads to Imgur (used by NewItemForm when user selects a file)
+@items_bp.route('/upload_image', methods=['POST'])
+@login_required
+def upload_item_image_file():
+   if 'image' not in request.files:
+      return jsonify({'error': 'No image provided'}), 400
+   file = request.files['image']
+   if not file or not file.filename:
+      return jsonify({'error': 'Empty filename'}), 400
+   try:
+      link = upload_to_imgur(file)
+      return jsonify({'link': link}), 200
+   except Exception as e:
+      return jsonify({'error': str(e)}), 502
+   
+
+@items_bp.route('/<int:item_id>/image', methods=['PUT'])
+@login_required
+def update_item_image(item_id):
+    """Update the image URL for an item. Only the item owner can do this."""
+    item = Item.query.get_or_404(item_id)
+    
+    # Check ownership
+    if item.posted_by != current_user.username:
+        return jsonify({'error': 'You can only update images for your own items'}), 403
+
+    try:
+        # Support both multipart (file upload) and JSON payloads
+        if request.content_type and request.content_type.startswith('multipart/form-data'):
+            if 'image' in request.files and request.files['image'].filename:
+                link = upload_to_imgur(request.files['image'])
+                item.image_url = link
+            else:
+                # optional: allow image_url in multipart form
+                image_url = (request.form.get('image_url') or '').strip()
+                item.image_url = image_url if image_url else None
+        else:
+            data = request.get_json(silent=True) or {}
+            image_url = (data.get('image_url') or '').strip()
+            item.image_url = image_url if image_url else None
+
+        db.session.commit()
+        return jsonify({'message': 'Image updated successfully', 'image_url': item.get_image_url()}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400

@@ -694,3 +694,34 @@
     font-size: 1rem;
   }
 }
+
+/* Item image update */
+.item-image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.edit-image-btn {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+  z-index: 2; /* ensure the pencil is above the image */
+}
+.item-image-wrapper:hover .edit-image-btn {
+  opacity: 1;
+}
+.image-upload-panel {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  background: #fafafa;
+}
