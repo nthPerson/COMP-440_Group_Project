@@ -725,3 +725,39 @@
   border-radius: 8px;
   background: #fafafa;
 }
+
+/* Vertical spacing between description and meta grid */
+.item-details {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.25rem; /* controls spacing between blocks */
+}
+
+/* Let the description size naturally */
+.item-description {
+  display: block;          /* no need for flex here */
+  width: 100%;
+  max-width: 100%;
+  margin: 0;               /* use gap for spacing */
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  min-width: 0;
+}
+
+.description-text {
+  white-space: normal !important;
+  text-overflow: clip !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+  overflow: visible !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Ensure the grid stays below any floated content in the description */
+.item-meta-grid {
+  margin-top: 0;  /* spacing handled by gap */
+  clear: both;    /* prevent overlap if there are floats above */
+}
