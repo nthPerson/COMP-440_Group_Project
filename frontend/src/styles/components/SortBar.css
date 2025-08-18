@@ -1,12 +1,13 @@
 .sort-bar {
-  position: absolute;
+  position: relative;
   display: flex;
   align-items: center;
 }
 
 .sort-label {
     margin-right: 0.5rem;
-    font-weight: 600;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
 }
 
 .sort-toggle {
@@ -16,13 +17,14 @@
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 1rem;
 }
 
 .sort-options {
   list-style: none;
   margin: 0;
   padding: 0.5rem 0;
-  position: absolute;
+  position: absolute    ;
   top: 100%;
   right: 0;
   left: auto;

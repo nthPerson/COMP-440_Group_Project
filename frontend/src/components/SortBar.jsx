@@ -25,7 +25,7 @@ export default function SortBar({ onSortChange }) {
       onMouseEnter={() => setOpen(true)}  //open while hovering
       onMouseLeave={() => setOpen(false)} //close when leaving
     >
-      <span className="sort-label">Sort By: </span>
+      <span className="sort-label">Sort By </span>
       <button className="sort-toggle">
         {selectedLabel}
       </button>

@@ -15,7 +15,7 @@
 }
 
 /*header with gray divider + count pill next to the title */
-.results-header {
+.search-results-header {
   display: flex;
   align-items: center;
   width: 100%;
@@ -64,7 +64,7 @@
 }
 
 /* Force the pill to sit next to "Results" (no auto-margins or absolute pos) */
-search-results-header .results-count-pill {
+.search-results-header .results-count-pill {
   position: static !important;
   margin-left: 0 !important;
   display: inline-flex;
