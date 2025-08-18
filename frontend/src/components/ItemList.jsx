@@ -167,7 +167,7 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                             
                             <div className="item-content">
                                 {/* Item Title */}
-                                <h3>{item.title}</h3>
+                                <h3><Link to={`/item/${item.id}`}>{item.title}</Link></h3>
                                 
                                 {/* Item Description */}
                                 <p>{item.description}</p>
@@ -180,7 +180,7 @@ export default function ItemList({ items: externalItems, showCollapseToggle = tr
                                     </div>
                                     <div className="item-meta-item">
                                         <span className="meta-label">Posted By</span>
-                                        <span className="meta-value">{item.posted_by}</span>
+                                        <span className="meta-value"><Link to={`/seller/${item.posted_by}`}>{item.posted_by}</Link></span>
                                     </div>
                                     <div className="item-meta-item">
                                         <span className="meta-label">Date Posted</span>

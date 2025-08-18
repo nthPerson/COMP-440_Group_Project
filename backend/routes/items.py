@@ -47,6 +47,9 @@ def create_item():
     image_url = image_url if image_url else None  # Store image URL if provided
   )
 
+  # Add item to the current session before doing any category <-> item relationship stuff
+  db.session.add(new_item)
+
   # attach categories to items
   for cat_name in categories:
     cat_name = cat_name.strip().lower()
@@ -59,7 +62,7 @@ def create_item():
     new_item.categories.append(category) # links the category to the item
 
   # add new items to database
-  db.session.add(new_item)
+#   db.session.add(new_item)
   db.session.commit()
   
   # Return the created item with its computed image URL

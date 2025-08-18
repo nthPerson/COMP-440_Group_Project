@@ -54,6 +54,29 @@
   margin-left: 1.5rem;
 }
 
+/* Logo image styling */
+.navbar-logo {
+  height: 150px;           /* Adjust this value to make logo bigger/smaller */
+  width: auto;            /* Maintains aspect ratio */
+  max-width: 200px;       /* Prevents logo from getting too wide */
+  object-fit: contain;    /* Ensures logo scales properly */
+}
+
+/* Update nav-brand to work with image */
+.nav-brand {
+  align-self: center;
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  color: var(--primary-color);
+  padding: 0 var(--spacing-md);
+  text-decoration: none;
+  user-select: none;
+  margin-right: 1.5rem;
+  margin-left: 1.5rem;
+  display: flex;          /* Add this for image alignment */
+  align-items: center;    /* Add this for image alignment */
+}
 
 /* ================================
    SPOTLIGHT & LASER ANIMATIONS

@@ -5,7 +5,9 @@ import ReviewForm from '../components/ReviewForm';
 import ImageUpload from '../components/ImageUpload';
 import '../styles/global.css';
 import '../styles/pages/ItemPage.css';
+import '../styles/components/NewItemForm.css';  // Reuse the exact styles from the NewItemForm for identical look/feel as user avatar image update
 import Avatar from '../components/Avatar';
+import axios from 'axios';
 
 export default function Item() {
   const { id } = useParams();
@@ -14,6 +16,12 @@ export default function Item() {
   const [currentUser, setCurrentUser] = useState(null);
   const [reviewerAvatars, setReviewerAvatars] = useState({});
   const [showImageEditor, setShowImageEditor] = useState(false);
+  const [imgUploadMethod, setImgUploadMethod] = useState('url'); // 'url' | 'file'
+  const [imgFile, setImgFile] = useState(null);
+  const [imgUrlInput, setImgUrlInput] = useState('');
+  const [imgPreviewUrl, setImgPreviewUrl] = useState('');
+  const [imgSaving, setImgSaving] = useState(false);
+  const [imgError, setImgError] = useState('');
   const fallbackIcon = "https://api.iconify.design/mdi:package-variant.svg";
 
   const loadItem = () => {
@@ -91,6 +99,91 @@ export default function Item() {
 
   const isOwner = currentUser && item && currentUser.username === item.posted_by;
 
+  // If you already have item or id, keep that. This is a safe fallback:
+  const { id: itemIdParam } = useParams();
+  const itemId = item?.id || itemIdParam;
+
+  useEffect(() => {
+    return () => {
+      if (imgPreviewUrl) URL.revokeObjectURL(imgPreviewUrl);
+    };
+  }, [imgPreviewUrl]);
+
+  const onItemFileChange = (e) => {
+    const f = e.target.files?.[0] || null;
+    setImgFile(f);
+    setImgError('');
+    if (f) {
+      const preview = URL.createObjectURL(f);
+      setImgPreviewUrl(preview);
+    } else {
+      setImgPreviewUrl('');
+    }
+  };
+
+  const submitItemImage = async (e) => {
+    e.preventDefault();
+    if (!itemId) {
+      setImgError('Missing item id.');
+      return;
+    }
+    setImgSaving(true);
+    setImgError('');
+    try {
+      if (imgUploadMethod === 'file') {
+        if (!imgFile) {
+          setImgError('Please choose an image file.');
+          return;
+        }
+        const fd = new FormData();
+        fd.append('image', imgFile);
+        // Adjust endpoint if your backend differs
+        const res = await axios.put(`/api/items/${itemId}/image`, fd, { withCredentials: true });
+        // If you keep item in local state, update its image here
+        // setItem(prev => ({ ...prev, image_url: res.data?.image_url }));
+      } else {
+        const url = imgUrlInput.trim();
+        if (!url) {
+          setImgError('Please enter an image URL.');
+          return;
+        }
+        const res = await axios.put(
+          `/api/items/${itemId}/image`,
+          { image_url: url },
+          { withCredentials: true }
+        );
+        // setItem(prev => ({ ...prev, image_url: res.data?.image_url }));
+      }
+      // Reset editor state and close
+      setShowImageEditor(false);
+      setImgFile(null);
+      setImgUrlInput('');
+      setImgPreviewUrl('');
+    } catch (err) {
+      console.error('Failed to update item image', err);
+      setImgError('Failed to update item image. Please try another image.');
+    } finally {
+      setImgSaving(false);
+    }
+  };
+
+  const resetItemImage = async () => {
+    if (!itemId) return;
+    try {
+      // Adjust this endpoint to match your API (examples: PUT /default, POST /reset_image)
+      await axios.put(`/api/items/${itemId}/image/default`, {}, { withCredentials: true });
+      // setItem(prev => ({ ...prev, image_url: res.data?.image_url }));
+      setShowImageEditor(false);
+      setImgFile(null);
+      setImgUrlInput('');
+      setImgPreviewUrl('');
+      setImgError('');
+    } catch (err) {
+      console.error('Failed to reset item image', err);
+      setImgError('Failed to reset image to default.');
+    }
+  };
+
   if (!item) {
     return (
       <>
@@ -135,17 +228,100 @@ export default function Item() {
               </div>
 
               {/* Collapsible image update editor panel */}
-              {isOwner && (
-                <ImageUpload
-                  itemId={item.id}
-                  currentImageUrl={item.image_url}
-                  onImageUpdated={(newUrl) => {
-                    handleImageUpdated(newUrl);
-                    setShowImageEditor(false);
-                  }}
-                  open={showImageEditor}
-                  onClose={() => setShowImageEditor(false)}
-                />
+              {isOwner && showImageEditor && (
+                <form className="item-image-editor" onSubmit={submitItemImage}>
+                  {imgError && <div className="alert alert-error">{imgError}</div>}
+
+                  {/* Same URL/File selector pattern as on UserProfile */}
+                  <div className="upload-method-selector">
+                    <input
+                      type="radio"
+                      id="item-upload-url"
+                      value="url"
+                      checked={imgUploadMethod === 'url'}
+                      onChange={(e) => setImgUploadMethod(e.target.value)}
+                    />
+                    <label htmlFor="item-upload-url" className={imgUploadMethod === 'url' ? 'active' : ''}>
+                      Image URL
+                    </label>
+
+                    <input
+                      type="radio"
+                      id="item-upload-file"
+                      value="file"
+                      checked={imgUploadMethod === 'file'}
+                      onChange={(e) => setImgUploadMethod(e.target.value)}
+                    />
+                    <label htmlFor="item-upload-file" className={imgUploadMethod === 'file' ? 'active' : ''}>
+                      Upload File
+                    </label>
+                  </div>
+
+                  {imgUploadMethod === 'url' ? (
+                    <input
+                      type="url"
+                      className="form-input"
+                      placeholder="https://example.com/item-image.jpg"
+                      value={imgUrlInput}
+                      onChange={(e) => setImgUrlInput(e.target.value)}
+                    />
+                  ) : (
+                    <div className="file-input-wrapper">
+                      {/* Hidden native input triggers the OS file picker via the label */}
+                      <input
+                        type="file"
+                        id="item-file-upload"
+                        accept="image/*"
+                        onChange={onItemFileChange}
+                        className="file-input"
+                      />
+                      <label
+                        htmlFor="item-file-upload"
+                        className={`file-input-custom ${imgFile ? 'has-file' : ''}`}
+                      >
+                        <div className="file-upload-icon"></div>
+                        <div className="file-upload-text">
+                          {imgFile ? `Selected: ${imgFile.name}` : 'Choose an image file'}
+                        </div>
+                        <div className="file-upload-subtext">
+                          {imgFile ? 'Click to change file' : 'PNG, JPG, GIF up to 10MB'}
+                        </div>
+                        <div className="file-upload-button">
+                          {imgFile ? 'Change File' : 'Browse Files'}
+                        </div>
+                      </label>
+
+                      {imgPreviewUrl && (
+                        <div className="image-preview">
+                          <img src={imgPreviewUrl} alt="Preview" className="preview-image" />
+                          <p className="preview-text upload-success"> Image ready to upload!</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+                    <button className="btn-add-item" type="submit" disabled={imgSaving}>
+                      {imgSaving ? 'Saving...' : 'Save'}
+                    </button>
+                    <button type="button" className="items-collapse-toggle" onClick={resetItemImage}>
+                      Reset to default
+                    </button>
+                    <button
+                      type="button"
+                      className="items-collapse-toggle"
+                      onClick={() => {
+                        setShowImageEditor(false);
+                        setImgError('');
+                        setImgFile(null);
+                        setImgUrlInput('');
+                        setImgPreviewUrl('');
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               )}
             </div>
             
@@ -193,14 +369,19 @@ export default function Item() {
                 <span className="meta-label">Categories</span>
                 <div className="categories-container">
                   {item.categories.map(c => (
-                    <span key={c.name} className="category-tag">
-                      <img 
+                    <Link
+                      key={c.name}
+                      to={`/search?category=${encodeURIComponent(c.name)}`}
+                      className="category-tag"
+                      title={`See all in ${c.name}`}
+                    >
+                      <img
                         src={`https://api.iconify.design/${c.icon_key}.svg`}
                         alt=""
                         className="category-icon"
                       />
                       {c.name}
-                    </span>
+                    </Link>
                   ))}
                 </div>
               </div>

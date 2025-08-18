@@ -385,7 +385,8 @@
 }
 /* Fixed Primary submit button used by NewItemForm and Profile save */
 .new-item-form .btn-add-item {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    /* No idea why, but commenting out the line below fixed the color of the User Profile 'Save Profile' button without breaking anything else (that I know of) -Robert */
+  /* background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);  */
   color: #fff;
   border: none;
   border-radius: 8px;

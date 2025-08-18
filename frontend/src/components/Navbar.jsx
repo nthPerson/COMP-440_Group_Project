@@ -3,6 +3,7 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import '../styles/components/Navbar.css';
 import SearchInterface from './SearchInterface';
 import Avatar from './Avatar';
+import shopellaLogo from '../assets/shopella-logo.png';
 
 export default function Navbar() {
   // pull the last-saved user out of sessionStorage  - if you do useState starting at null, it will always start at null state which causes the glitch
@@ -75,7 +76,13 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="nav-left">
-        <Link to="/" className="nav-brand">Shopella</Link>
+        <Link to="/" className="nav-brand">
+          <img 
+            src={shopellaLogo} 
+            alt="Shopella" 
+            className="navbar-logo"
+          />
+        </Link>
       </div>
       <div className="nav-center">
         <SearchInterface />

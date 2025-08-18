@@ -6,6 +6,7 @@ import '../styles/global.css';
 import '../styles/pages/UserProfile.css';
 import '../styles/components/ItemList.css';
 import '../styles/components/ItemCard.css';
+import '../styles/components/NewItemForm.css';
 import ItemCard from '../components/ItemCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Avatar from '../components/Avatar';
@@ -40,12 +41,25 @@ export default function UserProfile() {
   const [avatarUrlInput, setAvatarUrlInput] = useState('');
   const [avatarSaving, setAvatarSaving] = useState(false);
   const [avatarError, setAvatarError] = useState('');
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState('');
 
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreviewUrl) URL.revokeObjectURL(avatarPreviewUrl);
+    };
+  }, [avatarPreviewUrl]);
 
   const onAvatarFileChange = (e) => {
     const f = e.target.files?.[0] || null;
     setAvatarFile(f);
     setAvatarError('');
+    if (f) {
+      const preview = URL.createObjectURL(f);
+      setAvatarPreviewUrl(preview);
+    } else {
+      setAvatarPreviewUrl('');
+    }
   };
 
   const submitAvatar = async (e) => {
@@ -53,19 +67,28 @@ export default function UserProfile() {
     setAvatarSaving(true);
     setAvatarError('');
     try {
-      if (avatarUploadMethod === 'file' && avatarFile) {
+      if (avatarUploadMethod === 'file') {
+        if (!avatarFile) {
+          setAvatarError('Please choose an image file.');
+          return;
+        }
         const fd = new FormData();
         fd.append('image', avatarFile);
         const res = await axios.put('/api/users/me/avatar', fd, { withCredentials: true });
         setAvatarUrl(res.data?.profile_image_url || '');
       } else {
         const url = avatarUrlInput.trim();
+        if (!url) {
+          setAvatarError('Please enter an image URL.');
+          return;
+        }
         const res = await axios.put('/api/users/me/avatar', { image_url: url }, { withCredentials: true });
         setAvatarUrl(res.data?.profile_image_url || '');
       }
       setShowAvatarEditor(false);
       setAvatarFile(null);
       setAvatarUrlInput('');
+      setAvatarPreviewUrl('');
     } catch (err) {
       console.error('Failed to update avatar', err);
       setAvatarError('Failed to update profile image. Please try another image.');
@@ -191,30 +214,33 @@ export default function UserProfile() {
               </button>
             </div>
             <p className="profile-username">{form.username}</p>
-            
 
             {/* Collapsible user avatar editor */}
             {showAvatarEditor && (
               <form className="avatar-editor" onSubmit={submitAvatar}>
                 {avatarError && <div className="alert alert-error">{avatarError}</div>}
 
+                {/* Same URL/File selector pattern as NewItemForm */}
                 <div className="upload-method-selector">
-                  <label>
-                    <input
-                      type="radio"
-                      value="url"
-                      checked={avatarUploadMethod === 'url'}
-                      onChange={() => setAvatarUploadMethod('url')}
-                    />
+                  <input
+                    type="radio"
+                    id="avatar-upload-url"
+                    value="url"
+                    checked={avatarUploadMethod === 'url'}
+                    onChange={(e) => setAvatarUploadMethod(e.target.value)}
+                  />
+                  <label htmlFor="avatar-upload-url" className={avatarUploadMethod === 'url' ? 'active' : ''}>
                     Image URL
                   </label>
-                  <label>
-                    <input
-                      type="radio"
-                      value="file"
-                      checked={avatarUploadMethod === 'file'}
-                      onChange={() => setAvatarUploadMethod('file')}
-                    />
+
+                  <input
+                    type="radio"
+                    id="avatar-upload-file"
+                    value="file"
+                    checked={avatarUploadMethod === 'file'}
+                    onChange={(e) => setAvatarUploadMethod(e.target.value)}
+                  />
+                  <label htmlFor="avatar-upload-file" className={avatarUploadMethod === 'file' ? 'active' : ''}>
                     Upload File
                   </label>
                 </div>
@@ -228,12 +254,38 @@ export default function UserProfile() {
                     onChange={(e) => setAvatarUrlInput(e.target.value)}
                   />
                 ) : (
-                  <input
-                    type="file"
-                    className="form-input file-input"
-                    accept="image/*"
-                    onChange={onAvatarFileChange}
-                  />
+                  <div className="file-input-wrapper">
+                    {/* Hidden native input triggers the OS file picker via the label */}
+                    <input
+                      type="file"
+                      id="avatar-file-upload"
+                      accept="image/*"
+                      onChange={onAvatarFileChange}
+                      className="file-input"
+                    />
+                    <label
+                      htmlFor="avatar-file-upload"
+                      className={`file-input-custom ${avatarFile ? 'has-file' : ''}`}
+                    >
+                      <div className="file-upload-icon"></div>
+                      <div className="file-upload-text">
+                        {avatarFile ? `Selected: ${avatarFile.name}` : 'Choose an image file'}
+                      </div>
+                      <div className="file-upload-subtext">
+                        {avatarFile ? 'Click to change file' : 'PNG, JPG, GIF up to 10MB'}
+                      </div>
+                      <div className="file-upload-button">
+                        {avatarFile ? 'Change File' : 'Browse Files'}
+                      </div>
+                    </label>
+
+                    {avatarPreviewUrl && (
+                      <div className="image-preview">
+                        <img src={avatarPreviewUrl} alt="Preview" className="preview-image" />
+                        <p className="preview-text upload-success"> Image ready to upload!</p>
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
@@ -249,9 +301,9 @@ export default function UserProfile() {
                   </button>
                 </div>
               </form>
-            )}            
-
+            )}
           </div>
+
           <div className="new-item-form">
             <form onSubmit={handleSave}>
               <div className="form-group">
