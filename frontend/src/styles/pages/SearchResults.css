@@ -1,17 +1,90 @@
 /* SearchResults page styles (moved from components/SearchResults.css) */
 
 .search-results-page {
-  padding: 1.5rem;
+  padding: 4rem;
   max-width: 1400px;
   min-width: 1350px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
   background: white;
+  min-height: 100vh;
 }
 
 .search-results-page .dashboard-container {
   background: var(--gray-200) !important;
 }
+
+/*header with gray divider + count pill next to the title */
+.search-results-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.search-results-header .sort-bar {
+  margin-left: auto;
+}
+
+
+.results-info{
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+}
+
+
+.results-title-group { display: flex; align-items: center; gap: 0.5rem; }
+.results-title { 
+  margin-bottom: 1rem; 
+  font-size: 1.75rem; 
+  font-weight: 700; 
+  text-align: center;
+}
+
+/* left label text that says "results" */
+.results-label {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+
+/* pill count badge that is to the left of the word results*/
+.results-count-pill {
+  background-color: #635bff;  /* purple, same as the theme */
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;      /* makes it pill-shaped */
+}
+
+/* Force the pill to sit next to "Results" (no auto-margins or absolute pos) */
+.search-results-header .results-count-pill {
+  position: static !important;
+  margin-left: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  background-color: #635bff;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+/*centered loading state inside the page */
+.loading-center {
+  min-height: 50vh;             /* fill most of the viewport */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 
 /* 3-up grid, but make every row equal height */
 .search-results-page .item-card-grid {

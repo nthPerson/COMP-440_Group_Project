@@ -9,6 +9,7 @@ import '../styles/global.css';
 import '../styles/components/ItemList.css';
 import '../styles/components/ItemCard.css';
 import Spinner from '../components/LoadingSpinner';
+import SortBar from '../components/SortBar';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -21,10 +22,27 @@ export default function SearchResults() {
   const [items,   setItems]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState('');
+  const [sortReset, setSortReset] = useState(0);
 
   //Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12; // Number of items to display per page
+
+   const handleSortChange = (option) => {
+    const sorted = [...items];
+     if (option === 'date-asc') {
+      sorted.sort((a, b) => new Date(a.date_posted) - new Date(b.date_posted));
+    } else if (option === 'date-desc') {
+      sorted.sort((a, b) => new Date(b.date_posted) - new Date(a.date_posted));
+    } else if (option === 'price-desc') {
+      sorted.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (option === 'price-asc') {
+      sorted.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    }
+    setItems(sorted);
+    setCurrentPage(1);
+  };
+
 
   useEffect(() => {
     if (!searchTerm) {
@@ -34,6 +52,7 @@ export default function SearchResults() {
 
     setLoading(true);
     setError('');
+    setSortReset(r => r + 1); // Trigger SortBar reset
 
     fetch(`/api/items/search?category=${encodeURIComponent(searchTerm)}`)
       .then(res => {
@@ -64,7 +83,7 @@ export default function SearchResults() {
   //Reset to first page when new search results load
   useEffect(() => {
     setCurrentPage(1);
-  }, [items]); //OR SEARCH TERM???
+  }, [items]); 
 
   //Pagination calculations
   const totalPages = Math.ceil(items.length / itemsPerPage) || 1;
@@ -82,8 +101,22 @@ export default function SearchResults() {
         {searchTerm && (
           <>
             <h1>Search Results for "{searchTerm}"</h1>
+            {/* Results info and sort options */}
+            <div className="search-results-header">
+                {!loading && (
+                  <div className="results-info">
+                    <span className="results-label">Results</span>
+                    <span className="results-count-pill">{items.length}</span>
+                  </div>
+                )}
+                <SortBar onSortChange={handleSortChange} resetTrigger={sortReset} />
+            </div>
 
-            {loading && <Spinner text="Loading results..." />}
+             {loading && (
+                <div className="loading-center">
+                  <Spinner text="Loading results..." />
+                </div>
+              )}
             {error   && <p className="error">{error}</p>}
 
             {!loading && !error && items.length === 0 && (
