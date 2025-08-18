@@ -50,7 +50,7 @@ export default function ItemCard({ item, showPostedBy = true }) {
           <Link
             key={c.name}
             to={`/search?category=${encodeURIComponent(c.name)}`}
-            className="category-item"
+            className="category-tag"
             title={`See all in ${c.name}`}
           >
             <img

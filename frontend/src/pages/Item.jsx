@@ -369,14 +369,19 @@ export default function Item() {
                 <span className="meta-label">Categories</span>
                 <div className="categories-container">
                   {item.categories.map(c => (
-                    <span key={c.name} className="category-tag">
-                      <img 
+                    <Link
+                      key={c.name}
+                      to={`/search?category=${encodeURIComponent(c.name)}`}
+                      className="category-tag"
+                      title={`See all in ${c.name}`}
+                    >
+                      <img
                         src={`https://api.iconify.design/${c.icon_key}.svg`}
                         alt=""
                         className="category-icon"
                       />
                       {c.name}
-                    </span>
+                    </Link>
                   ))}
                 </div>
               </div>
