@@ -22,6 +22,7 @@ export default function SearchResults() {
   const [items,   setItems]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState('');
+  const [sortReset, setSortReset] = useState(0);
 
   //Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,6 +52,7 @@ export default function SearchResults() {
 
     setLoading(true);
     setError('');
+    setSortReset(r => r + 1); // Trigger SortBar reset
 
     fetch(`/api/items/search?category=${encodeURIComponent(searchTerm)}`)
       .then(res => {
@@ -101,11 +103,13 @@ export default function SearchResults() {
             <h1>Search Results for "{searchTerm}"</h1>
             {/* Results info and sort options */}
             <div className="search-results-header">
-                <div className="results-info">
+                {!loading && (
+                  <div className="results-info">
                     <span className="results-label">Results</span>
                     <span className="results-count-pill">{items.length}</span>
-                </div>
-                <SortBar onSortChange={handleSortChange} />
+                  </div>
+                )}
+                <SortBar onSortChange={handleSortChange} resetTrigger={sortReset} />
             </div>
 
              {loading && (

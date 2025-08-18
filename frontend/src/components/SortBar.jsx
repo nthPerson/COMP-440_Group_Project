@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/components/SortBar.css';
 
-export default function SortBar({ onSortChange }) {
+export default function SortBar({ onSortChange, resetTrigger}) {
     const [open, setOpen] = useState(false);
-    const [selectedLabel, setSelectedLabel] = useState('Posted: Newest to Oldest'); //default state because thats how we rendered the SR page
+    const defaultLabel= 'Posted: Newest to Oldest'
+    const [selectedLabel, setSelectedLabel] = useState(defaultLabel); //default state because thats how we rendered the SR page
 
     const options = [
         {value: 'date-desc', label: 'Posted: Newest to Oldest'},
@@ -18,7 +19,16 @@ export default function SortBar({ onSortChange }) {
             onSortChange(option.value);
         }
         setOpen(false);
-    }
+    };
+
+     useEffect(() => {
+        setSelectedLabel(defaultLabel);
+        setOpen(false);
+        if (onSortChange) {
+            onSortChange('date-desc');
+        }
+    }, [resetTrigger]);
+
  
   return (
     <div className="sort-bar"
