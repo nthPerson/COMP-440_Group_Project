@@ -6,6 +6,17 @@ from flask_login import login_user, logout_user, login_required, current_user  #
 
 auth_bp = Blueprint('auth', __name__)
 
+"""
+START TRANSACTION;
+
+INSERT INTO `user` (
+  `username`, `password`, `firstName`, `lastName`, `email`, `profile_image_url`
+) VALUES (
+  :username, :password_hash, :firstName, :lastName, :email, NULL
+);
+
+COMMIT;
+"""
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json() or {}  # Data sent with request (account registration fields: username, password, firstName, lastName, email)
@@ -49,6 +60,13 @@ def register():
     
     return jsonify({'message': 'User registered successfully and logged in!'}), 201
 
+"""
+SELECT
+  `username`, `password`, `firstName`, `lastName`, `email`, `profile_image_url`
+FROM `user`
+WHERE `username` = :username
+LIMIT 1;
+"""
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()  # Data sent with request (login fields: username, password)
@@ -84,6 +102,13 @@ def logout():
     logout_user()
     return jsonify({'message': "User has been logged out"}), 200
 
+"""
+SELECT
+  `username`, `firstName`, `lastName`, `email`, `profile_image_url`
+FROM `user`
+WHERE `username` = :username
+LIMIT 1;
+"""
 @auth_bp.route('/status', methods=['GET'])
 # Removed @login_required to allow public access
 def status():

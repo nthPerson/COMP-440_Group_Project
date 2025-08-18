@@ -7,6 +7,13 @@ from utils.imgur import upload_to_imgur
 
 items_bp = Blueprint('items', __name__)
 
+"""
+INSERT INTO item (
+  title, description, price, posted_by, date_posted, image_url
+) VALUES (
+  :title, :description, :price, :current_username, :today, :image_url_or_null
+);
+"""
 @items_bp.route('/newitem', methods=['POST'])  
 @login_required
 def create_item():
@@ -81,7 +88,13 @@ def create_item():
   
   return jsonify({'message': 'Item created successfully', 'item': item_data}), 201
 
-
+"""
+SELECT
+  id, title, description, price, posted_by, date_posted,
+  star_rating, image_url
+FROM item
+ORDER BY date_posted DESC;
+"""
 @items_bp.route('/list_items', methods=['GET'])
 # No @login_required for items shown on the front page
 def list_items():
@@ -145,7 +158,14 @@ def list_items():
 
   return jsonify(result), 200
 
-
+"""
+SELECT
+  id, title, description, price, posted_by, date_posted,
+  star_rating, image_url
+FROM item
+WHERE id = :item_id
+LIMIT 1;
+"""
 @items_bp.route('/<int:item_id>', methods=['GET'])
 def get_item(item_id):
   """ Return detailed information for a single item """
@@ -164,6 +184,18 @@ def get_item(item_id):
   }
   return jsonify(data), 200
 
+"""
+SELECT
+  i.id, i.title, i.description, i.price, i.posted_by, i.date_posted,
+  i.star_rating, i.image_url
+FROM item AS i
+JOIN item_category AS ic
+  ON ic.item_id = i.id
+JOIN category AS c
+  ON c.name = ic.category_name
+WHERE c.name = :category_name      -- you already lower() the param; utf8mb4_unicode_ci is case-insensitive
+ORDER BY i.date_posted DESC;
+"""
 @items_bp.route('/search', methods=['GET'])
 #@login_required remove it so unlogged users can search
 def search_items():
@@ -217,7 +249,13 @@ def search_items():
         'items': result
     }), 200
 
-
+"""
+SELECT
+  name,
+  icon_key
+FROM category
+ORDER BY name ASC;
+"""
 @items_bp.route('/categories', methods=['GET'])
 # Removed @login_required to allow public access
 def get_categories():
@@ -241,7 +279,14 @@ def get_categories():
         'categories': result
     }), 200
 
-
+"""
+SELECT
+  id, title, description, price, posted_by, date_posted,
+  star_rating, image_url
+FROM item
+WHERE posted_by = :current_username
+ORDER BY date_posted DESC;
+"""
 @items_bp.route('/my_items', methods=['GET'])
 @login_required
 def get_my_items():
@@ -309,7 +354,14 @@ def get_my_items():
 
     return jsonify(result), 200
 
-
+"""
+SELECT
+  id, title, description, price, posted_by, date_posted,
+  star_rating, image_url
+FROM item
+WHERE posted_by = :username
+ORDER BY date_posted DESC;
+"""
 @items_bp.route('/user/<username>', methods=['GET'])
 def get_items_by_user(username):
     items = (

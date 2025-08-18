@@ -5,6 +5,18 @@ from flask_login import UserMixin  # Session management (avoids the need to writ
 db = SQLAlchemy()  # This is the tool our app uses to interact with the database (automates queries, etc.)
 
 # User table schema: user(username*, password, firstName, lastName, email)  -- note that the * indicates the primary key
+"""
+CREATE TABLE `user` (
+  `username`           VARCHAR(64)  NOT NULL,
+  `password`           VARCHAR(128) NOT NULL,
+  `firstName`          VARCHAR(64)  NOT NULL,
+  `lastName`           VARCHAR(64)  NOT NULL,
+  `email`              VARCHAR(120) NOT NULL,
+  `profile_image_url`  VARCHAR(512) DEFAULT NULL,
+  CONSTRAINT `pk_user` PRIMARY KEY (`username`),
+  CONSTRAINT `uq_user_email` UNIQUE (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+"""
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     username = db.Column(db.String(64), primary_key=True)  # PRIMARY KEY
@@ -27,6 +39,22 @@ class User(UserMixin, db.Model):
     
 
 # Association table for many-to-many relationship between Item and Category
+"""
+CREATE TABLE `item_category` (
+  `item_id`        INT NOT NULL,
+  `category_name`  VARCHAR(64) NOT NULL,
+  CONSTRAINT `pk_item_category` PRIMARY KEY (`item_id`, `category_name`),
+  CONSTRAINT `fk_item_category_item` FOREIGN KEY (`item_id`)
+    REFERENCES `item` (`id`)
+    ON UPDATE RESTRICT ON DELETE RESTRICT,
+  CONSTRAINT `fk_item_category_category` FOREIGN KEY (`category_name`)
+    REFERENCES `category` (`name`)
+    ON UPDATE RESTRICT ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX `ix_item_category_category_name` ON `item_category` (`category_name`);
+CREATE INDEX `ix_item_category_item_id` ON `item_category` (`item_id`);
+"""
 item_category = db.Table('item_category', 
                          db.Column('item_id', db.Integer, db.ForeignKey('item.id'), primary_key=True),
                          db.Column('category_name', db.String(64), db.ForeignKey('category.name'), primary_key=True)
@@ -39,6 +67,26 @@ REVIEW_SCORE_MAP = {
     'Fair': 2.5,
     'Poor': 1.25
 }
+
+"""
+CREATE TABLE `item` (
+  `id`           INT NOT NULL AUTO_INCREMENT,
+  `title`        VARCHAR(255) NOT NULL,
+  `description`  TEXT NOT NULL,
+  -- SQLAlchemy supplies the default date in Python; omit DB default for DATE for portability
+  `date_posted`  DATE NOT NULL,
+  `price`        DECIMAL(10,2) NOT NULL,
+  `posted_by`    VARCHAR(64) NOT NULL,
+  `star_rating`  FLOAT NOT NULL DEFAULT 0.0,
+  `image_url`    VARCHAR(512) DEFAULT NULL,
+  CONSTRAINT `pk_item` PRIMARY KEY (`id`),
+  CONSTRAINT `fk_item_user` FOREIGN KEY (`posted_by`)
+    REFERENCES `user` (`username`)
+    ON UPDATE RESTRICT ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX `ix_item_posted_by` ON `item` (`posted_by`);
+"""
 class Item(db.Model):
     __tablename__ = 'item'
     
@@ -82,7 +130,15 @@ class Item(db.Model):
         
         # Ultimate fallback to a generic item icon
         return "https://api.iconify.design/mdi:package-variant.svg"
+    
 
+"""
+CREATE TABLE `category` (
+  `name`     VARCHAR(64)  NOT NULL,
+  `icon_key` VARCHAR(100) NOT NULL DEFAULT 'mdi:help-circle',
+  CONSTRAINT `pk_category` PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+"""
 class Category(db.Model):
     __tablename__ = 'category'
     name = db.Column(db.String(64), primary_key=True)
@@ -93,6 +149,27 @@ class Category(db.Model):
     def __repr__(self):
         return f'<Category {self.name} icon={self.icon_key}>'
 
+"""
+CREATE TABLE `review` (
+  `id`          INT NOT NULL AUTO_INCREMENT,
+  `review_date` DATE NOT NULL,
+  `score`       ENUM('Excellent','Good','Fair','Poor') NOT NULL,
+  `remark`      TEXT DEFAULT NULL,
+  `user_id`     VARCHAR(64) NOT NULL,
+  `item_id`     INT NOT NULL,
+  CONSTRAINT `pk_review` PRIMARY KEY (`id`),
+  CONSTRAINT `fk_review_user` FOREIGN KEY (`user_id`)
+    REFERENCES `user` (`username`)
+    ON UPDATE RESTRICT ON DELETE RESTRICT,
+  CONSTRAINT `fk_review_item` FOREIGN KEY (`item_id`)
+    REFERENCES `item` (`id`)
+    ON UPDATE RESTRICT ON DELETE RESTRICT,
+  CONSTRAINT `uq_user_item_review` UNIQUE (`user_id`, `item_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX `ix_review_user_id` ON `review` (`user_id`);
+CREATE INDEX `ix_review_item_id` ON `review` (`item_id`);
+"""
 class Review(db.Model):
     __tablename__ = 'review'
 
@@ -119,6 +196,22 @@ class Review(db.Model):
 
 
 # Social "follow" table
+"""
+CREATE TABLE `follow` (
+  `user_username`     VARCHAR(64) NOT NULL,
+  `follower_username` VARCHAR(64) NOT NULL,
+  CONSTRAINT `pk_follow` PRIMARY KEY (`user_username`, `follower_username`),
+  CONSTRAINT `fk_follow_user_followee` FOREIGN KEY (`user_username`)
+    REFERENCES `user` (`username`)
+    ON UPDATE RESTRICT ON DELETE RESTRICT,
+  CONSTRAINT `fk_follow_user_follower` FOREIGN KEY (`follower_username`)
+    REFERENCES `user` (`username`)
+    ON UPDATE RESTRICT ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX `ix_follow_user_username` ON `follow` (`user_username`);
+CREATE INDEX `ix_follow_follower_username` ON `follow` (`follower_username`);
+"""
 class Follow(db.Model):
     __tablename__ = 'follow'
 
