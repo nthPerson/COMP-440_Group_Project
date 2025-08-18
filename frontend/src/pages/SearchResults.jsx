@@ -64,7 +64,7 @@ export default function SearchResults() {
   //Reset to first page when new search results load
   useEffect(() => {
     setCurrentPage(1);
-  }, [items]); //OR SEARCH TERM???
+  }, [items]); 
 
   //Pagination calculations
   const totalPages = Math.ceil(items.length / itemsPerPage) || 1;
@@ -82,8 +82,17 @@ export default function SearchResults() {
         {searchTerm && (
           <>
             <h1>Search Results for "{searchTerm}"</h1>
-
-            {loading && <Spinner text="Loading results..." />}
+            {/* Results count with pill + divider below */}
+            <div className="results-header">
+                <span className="results-label">Results</span>
+                <span className="results-count-pill">{items.length}</span>
+            </div>
+            
+             {loading && (
+                <div className="loading-center">
+                  <Spinner text="Loading results..." />
+                </div>
+              )}
             {error   && <p className="error">{error}</p>}
 
             {!loading && !error && items.length === 0 && (
