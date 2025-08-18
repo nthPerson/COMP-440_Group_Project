@@ -414,7 +414,7 @@ export default function Reports() {
           </section>
 
           <section className="report-section">
-            <h2 className="section-title">User(s) Who Posted Two Different Items On the Same Day</h2>
+            <h2 className="section-title">User(s) Who Posted to Two Different Categories On the Same Day</h2>
             <form onSubmit={handleTwoCat} className="search-form">
               <div style={{ flex: 1 }}>
                 <select 
