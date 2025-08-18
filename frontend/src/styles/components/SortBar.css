@@ -1,6 +1,12 @@
 .sort-bar {
-  position: relative;
-  display: inline-block;
+  position: absolute;
+  display: flex;
+  align-items: center;
+}
+
+.sort-label {
+    margin-right: 0.5rem;
+    font-weight: 600;
 }
 
 .sort-toggle {
@@ -18,12 +24,13 @@
   padding: 0.5rem 0;
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
+  left: auto;
   background: #fff;
   border: 1px solid var(--gray-200);
   border-radius: 4px;
   box-shadow: var(--shadow-md);
-  z-index: 10;
+  z-index: 20;
   min-width: 200px;
 }
 

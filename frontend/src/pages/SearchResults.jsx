@@ -29,8 +29,10 @@ export default function SearchResults() {
 
    const handleSortChange = (option) => {
     const sorted = [...items];
-    if (option === 'date-asc') {
+     if (option === 'date-asc') {
       sorted.sort((a, b) => new Date(a.date_posted) - new Date(b.date_posted));
+    } else if (option === 'date-desc') {
+      sorted.sort((a, b) => new Date(b.date_posted) - new Date(a.date_posted));
     } else if (option === 'price-desc') {
       sorted.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
     } else if (option === 'price-asc') {

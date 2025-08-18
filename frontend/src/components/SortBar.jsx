@@ -2,25 +2,40 @@ import React, { useState } from 'react';
 import '../styles/components/SortBar.css';
 
 export default function SortBar({ onSortChange }) {
-  const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [selectedLabel, setSelectedLabel] = useState('Posted: Newest to Oldest'); //default state because thats how we rendered the SR page
 
-  const handleClick = (option) => {
-    if (onSortChange) {
-      onSortChange(option);
+    const options = [
+        {value: 'date-desc', label: 'Posted: Newest to Oldest'},
+        {value: 'date-asc', label: 'Posted: Oldest to Newest'},
+        {value: 'price-desc', label: 'Price: High to Low'},
+        {value: 'price-asc', label: 'Price: Low to High'},  
+    ];
+
+    const handleClick = (option) => {
+        setSelectedLabel(option.label);
+        if (onSortChange) {
+            onSortChange(option.value);
+        }
+        setOpen(false);
     }
-    setOpen(false);
-  };
-
+ 
   return (
-    <div className="sort-bar">
-      <button className="sort-toggle" onClick={() => setOpen(o => !o)}>
-        Sort
+    <div className="sort-bar"
+      onMouseEnter={() => setOpen(true)}  //open while hovering
+      onMouseLeave={() => setOpen(false)} //close when leaving
+    >
+      <span className="sort-label">Sort By: </span>
+      <button className="sort-toggle">
+        {selectedLabel}
       </button>
       {open && (
         <ul className="sort-options">
-          <li onClick={() => handleClick('date-asc')}>Posted: Oldest to Newest</li>
-          <li onClick={() => handleClick('price-desc')}>Price: High to Low</li>
-          <li onClick={() => handleClick('price-asc')}>Price: Low to High</li>
+          {options.map(opt => (
+            <li key={opt.value} onClick={() => handleClick(opt)}>
+              {opt.label}
+            </li>
+          ))}
         </ul>
       )}
     </div>

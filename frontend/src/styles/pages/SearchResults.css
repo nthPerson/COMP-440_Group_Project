@@ -18,12 +18,17 @@
 .results-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  width: 100%;
 
   padding-bottom: 0.75rem;
   margin-bottom: 1.5rem;
   border-bottom: 2px solid var(--gray-200);
 }
+
+.search-results-header .sort-bar {
+  margin-left: auto;
+}
+
 
 .results-info{
  display: flex;
@@ -79,8 +84,6 @@ search-results-header .results-count-pill {
   align-items: center;
   justify-content: center;
 }
-
-
 
 
 /* 3-up grid, but make every row equal height */
