@@ -18,22 +18,19 @@
 .results-header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 0.5rem;
+  justify-content: space-between;
+
   padding-bottom: 0.75rem;
   margin-bottom: 1.5rem;
   border-bottom: 2px solid var(--gray-200);
 }
 
-/*results pill on the left*/
-.results-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--gray-800);
-  font-size: 1rem;
+.results-info{
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
 }
-.results-meta-label { font-weight: 600; }
+
 
 .results-title-group { display: flex; align-items: center; gap: 0.5rem; }
 .results-title { 
@@ -52,9 +49,17 @@
 
 
 /* pill count badge that is to the left of the word results*/
+.results-count-pill {
+  background-color: #635bff;  /* purple, same as the theme */
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;      /* makes it pill-shaped */
+}
 
 /* Force the pill to sit next to "Results" (no auto-margins or absolute pos) */
-.results-header .results-count-pill {
+search-results-header .results-count-pill {
   position: static !important;
   margin-left: 0 !important;
   display: inline-flex;

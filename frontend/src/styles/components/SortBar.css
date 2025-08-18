@@ -1,0 +1,38 @@
+.sort-bar {
+  position: relative;
+  display: inline-block;
+}
+
+.sort-toggle {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sort-options {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+  min-width: 200px;
+}
+
+.sort-options li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sort-options li:hover {
+  background: var(--gray-100);
+}

@@ -9,6 +9,7 @@ import '../styles/global.css';
 import '../styles/components/ItemList.css';
 import '../styles/components/ItemCard.css';
 import Spinner from '../components/LoadingSpinner';
+import SortBar from '../components/SortBar';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -25,6 +26,20 @@ export default function SearchResults() {
   //Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12; // Number of items to display per page
+
+   const handleSortChange = (option) => {
+    const sorted = [...items];
+    if (option === 'date-asc') {
+      sorted.sort((a, b) => new Date(a.date_posted) - new Date(b.date_posted));
+    } else if (option === 'price-desc') {
+      sorted.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (option === 'price-asc') {
+      sorted.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    }
+    setItems(sorted);
+    setCurrentPage(1);
+  };
+
 
   useEffect(() => {
     if (!searchTerm) {
@@ -82,12 +97,15 @@ export default function SearchResults() {
         {searchTerm && (
           <>
             <h1>Search Results for "{searchTerm}"</h1>
-            {/* Results count with pill + divider below */}
-            <div className="results-header">
-                <span className="results-label">Results</span>
-                <span className="results-count-pill">{items.length}</span>
+            {/* Results info and sort options */}
+            <div className="search-results-header">
+                <div className="results-info">
+                    <span className="results-label">Results</span>
+                    <span className="results-count-pill">{items.length}</span>
+                </div>
+                <SortBar onSortChange={handleSortChange} />
             </div>
-            
+
              {loading && (
                 <div className="loading-center">
                   <Spinner text="Loading results..." />
